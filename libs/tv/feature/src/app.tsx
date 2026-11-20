@@ -134,7 +134,7 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
                     class="source-form storage-recovery"
                     aria-label="Saved TV data"
                 >
-                    <h1>IPTVnator TV</h1>
+                    <h1>Yestream TV</h1>
                     {tv.storageError ? (
                         <>
                             <p role="alert">{tv.storageError}</p>
@@ -152,7 +152,7 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
             ) : null}
             <aside hidden={tv.fullscreen || !tv.storageReady}>
                 <div class="wordmark">
-                    ip<span>tv</span>nator<small>TV EDITION</small>
+                    Ye<span>stream</span><small>TV EDITION</small>
                 </div>
                 <nav aria-label="Main navigation">
                     {mainNavigation.map(([view, label]) => (

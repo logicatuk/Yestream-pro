@@ -16,11 +16,11 @@ import { absoluteUrl } from '../../lib/site';
 
 const comparison = comparisonBySlug('iptvnator-vs-kodi');
 const pageUrl = absoluteUrl('/compare/iptvnator-vs-kodi/');
-const title = 'IPTVnator vs Kodi – A Media Center or a Dedicated IPTV Player';
+const title = 'Yestream vs Kodi – A Media Center or a Dedicated IPTV Player';
 const description =
-  'Kodi is a media center that reaches IPTV through a PVR add-on and does much more besides. IPTVnator only does IPTV, with provider accounts built in and no add-on layer. What each is shaped for, and which fits your setup.';
+  'Kodi is a media center that reaches IPTV through a PVR add-on and does much more besides. Yestream only does IPTV, with provider accounts built in and no add-on layer. What each is shaped for, and which fits your setup.';
 
-const columns = ['Kodi', 'IPTVnator'];
+const columns = ['Kodi', 'Yestream'];
 
 const setupRows = [
   { label: 'M3U or M3U8 playlist', cells: ['Through a PVR add-on', true], note: 'Kodi ships with PVR IPTV Simple Client; it has to be enabled and configured before live TV appears.' },
@@ -53,7 +53,7 @@ const guidance = [
   {
     title: 'Already running Kodi on a TV or a Pi? Stay there',
     description:
-      'Kodi can keep IPTV, your local media library and add-ons in one living-room setup. IPTVnator’s experimental TV builds focus on watching IPTV with a remote.',
+      'Kodi can keep IPTV, your local media library and add-ons in one living-room setup. Yestream’s experimental TV builds focus on watching IPTV with a remote.',
   },
   {
     title: 'IPTV on a computer, and that is the whole job',
@@ -63,12 +63,12 @@ const guidance = [
   {
     title: 'A provider login rather than a file',
     description:
-      'Xtream Codes and Stalker are provider APIs, not playlists. IPTVnator speaks both natively, which is what turns a subscription into live TV, movies and series with posters instead of a flat channel list.',
+      'Xtream Codes and Stalker are provider APIs, not playlists. Yestream speaks both natively, which is what turns a subscription into live TV, movies and series with posters instead of a flat channel list.',
   },
   {
     title: 'They are not in each other’s way',
     description:
-      'Kodi on the TV and IPTVnator on the laptop is a perfectly ordinary setup. The same provider works in both; nothing is locked to one app.',
+      'Kodi on the TV and Yestream on the laptop is a perfectly ordinary setup. The same provider works in both; nothing is locked to one app.',
   },
 ];
 
@@ -78,8 +78,8 @@ const faq: FaqEntry[] = [
     a: 'Almost. Kodi ships with the PVR IPTV Simple Client, but it is disabled until you enable it and point it at your M3U playlist and, if you have one, your XMLTV guide. After that Kodi shows live TV and a guide like any other PVR backend.',
   },
   {
-    q: 'Is IPTVnator a Kodi add-on?',
-    a: 'IPTVnator runs on its own, with desktop apps, a self-hosted browser version and experimental TV builds.',
+    q: 'Is Yestream a Kodi add-on?',
+    a: 'Yestream runs on its own, with desktop apps, a self-hosted browser version and experimental TV builds.',
   },
   {
     q: 'Can Kodi use an Xtream Codes login or a Stalker portal?',
@@ -87,11 +87,11 @@ const faq: FaqEntry[] = [
   },
   {
     q: 'Which is easier to set up just for IPTV?',
-    a: 'IPTVnator, because there is no add-on layer: you add a source and the app is already an IPTV player. Kodi asks you to enable and configure a PVR client first, which is the price of it being a general media center rather than an IPTV app.',
+    a: 'Yestream, because there is no add-on layer: you add a source and the app is already an IPTV player. Kodi asks you to enable and configure a PVR client first, which is the price of it being a general media center rather than an IPTV app.',
   },
   {
-    q: 'What does Kodi do that IPTVnator does not?',
-    a: 'Kodi manages a local video and music library with scraped metadata and offers add-ons and skins. IPTVnator focuses on live TV and catalogs from your IPTV sources.',
+    q: 'What does Kodi do that Yestream does not?',
+    a: 'Kodi manages a local video and music library with scraped metadata and offers add-ons and skins. Yestream focuses on live TV and catalogs from your IPTV sources.',
   },
   {
     q: 'Can I run both?',
@@ -103,7 +103,7 @@ const faq: FaqEntry[] = [
   },
   {
     q: 'I only want the programme guide to work properly. Which one?',
-    a: 'Both read XMLTV. The difference is what happens when it goes wrong: IPTVnator lets you map a channel to a guide entry by hand and shift the guide’s clock when a provider labels times in the wrong timezone. If your guide already works in Kodi, that is not a reason to move.',
+    a: 'Both read XMLTV. The difference is what happens when it goes wrong: Yestream lets you map a channel to a guide entry by hand and shift the guide’s clock when a provider labels times in the wrong timezone. If your guide already works in Kodi, that is not a reason to move.',
   },
 ];
 
@@ -113,18 +113,18 @@ const jsonLd = buildComparisonPageSchema({ comparison, pageUrl, description, faq
 <BaseLayout
   title={title}
   description={description}
-  keywords={['IPTVnator vs Kodi', 'Kodi IPTV alternative', 'IPTV player without Kodi', 'PVR IPTV Simple Client alternative', 'IPTV player for PC', 'open source IPTV player']}
+  keywords={['Yestream vs Kodi', 'Kodi IPTV alternative', 'IPTV player without Kodi', 'PVR IPTV Simple Client alternative', 'IPTV player for PC', 'open source IPTV player']}
   jsonLd={jsonLd}
 >
   <CompareHero
     comparison={comparison}
     titleLead="A media center, or"
     titleAccent="just an IPTV player?"
-    lede="Kodi is a media center that reaches IPTV through an add-on. IPTVnator is a dedicated IPTV player with desktop, browser and experimental TV builds."
-    verdict="Kodi fits a living-room setup that combines IPTV with a local media library and add-ons. IPTVnator fits an IPTV-only setup and connects directly to Xtream Codes and Stalker portals."
+    lede="Kodi is a media center that reaches IPTV through an add-on. Yestream is a dedicated IPTV player with desktop, browser and experimental TV builds."
+    verdict="Kodi fits a living-room setup that combines IPTV with a local media library and add-ons. Yestream fits an IPTV-only setup and connects directly to Xtream Codes and Stalker portals."
   />
 
-  <DownloadSection id="setup" eyebrow="Getting the source in" title="Where IPTV" accent="comes from" lead="Kodi treats IPTV as one kind of PVR backend among many; IPTVnator treats it as the whole application.">
+  <DownloadSection id="setup" eyebrow="Getting the source in" title="Where IPTV" accent="comes from" lead="Kodi treats IPTV as one kind of PVR backend among many; Yestream treats it as the whole application.">
     <ComparisonTable
       columns={columns}
       rows={setupRows}

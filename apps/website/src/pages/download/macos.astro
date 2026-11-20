@@ -22,14 +22,14 @@ const appleSilicon = downloads.find((download) => download.id === 'mac-arm64-dmg
 const dmgSize = appleSilicon ? formatAssetSize(appleSilicon.size) : null;
 const pageUrl = absoluteUrl('/download/macos/');
 
-const title = 'Download IPTVnator for macOS – Free Open-Source IPTV Player for Mac';
+const title = 'Download Yestream for macOS – Free Open-Source IPTV Player for Mac';
 const description =
-  'Download IPTVnator for Mac: a free, open-source IPTV player for Apple Silicon and Intel Macs. M3U/M3U8 playlists, Xtream Codes, Stalker portals and XMLTV EPG. Signed and notarized builds, also available through Homebrew.';
+  'Download Yestream for Mac: a free, open-source IPTV player for Apple Silicon and Intel Macs. M3U/M3U8 playlists, Xtream Codes, Stalker portals and XMLTV EPG. Signed and notarized builds, also available through Homebrew.';
 
 const installSteps = [
   'Download the .dmg for your Mac (Apple Silicon or Intel) with the buttons above, or run the Homebrew command on the right.',
-  'Open the .dmg and drag IPTVnator into the Applications folder.',
-  'Launch IPTVnator from Applications or Spotlight. Current builds are signed and notarized by Apple, so no "unidentified developer" workaround is needed.',
+  'Open the .dmg and drag Yestream into the Applications folder.',
+  'Launch Yestream from Applications or Spotlight. Current builds are signed and notarized by Apple, so no "unidentified developer" workaround is needed.',
   'Add your first source: an M3U/M3U8 file or URL, an Xtream Codes login, or a Stalker portal.',
 ];
 
@@ -52,12 +52,12 @@ const features = [
   {
     title: 'MPV and VLC integration',
     description:
-      'Hand streams that the built-in players cannot decode to MPV or VLC installed on your Mac. Playback positions and the remote control stay inside IPTVnator.',
+      'Hand streams that the built-in players cannot decode to MPV or VLC installed on your Mac. Playback positions and the remote control stay inside Yestream.',
   },
   {
     title: 'Embedded MPV engine (experimental)',
     description:
-      'An optional engine that renders mpv inside the IPTVnator window, with a native path for Apple Silicon. Opt in under Settings › Playback.',
+      'An optional engine that renders mpv inside the Yestream window, with a native path for Apple Silicon. Opt in under Settings › Playback.',
   },
   {
     title: 'Offline downloads',
@@ -77,7 +77,7 @@ const features = [
   {
     title: 'Signed, notarized, self-updating',
     description:
-      'Releases are code-signed and notarized by Apple, and IPTVnator tells you when a new version is available. Homebrew users can upgrade with brew.',
+      'Releases are code-signed and notarized by Apple, and Yestream tells you when a new version is available. Homebrew users can upgrade with brew.',
   },
 ];
 
@@ -89,10 +89,10 @@ const specs = [
   },
   { term: 'Download size', value: dmgSize ? `${dmgSize} disk image` : 'About 150 MB disk image' },
   { term: 'Package manager', value: 'Homebrew cask "iptvnator" installs the same signed build.' },
-  { term: 'Account', value: 'None. IPTVnator never asks you to register.' },
+  { term: 'Account', value: 'None. Yestream never asks you to register.' },
   {
     term: 'Content',
-    value: 'Bring your own playlist or provider login. IPTVnator ships without channels.',
+    value: 'Bring your own playlist or provider login. Yestream ships without channels.',
   },
 ];
 
@@ -102,7 +102,7 @@ const faq: FaqEntry[] = [
     a: 'Open the Apple menu and choose "About This Mac". If it lists a chip such as Apple M1, M2, M3 or M4, take the Apple Silicon build. If it lists an Intel processor, take the Intel build. The Apple Silicon build runs natively and does not need Rosetta.',
   },
   {
-    q: 'Is IPTVnator on the Mac App Store?',
+    q: 'Is Yestream on the Mac App Store?',
     a: 'No. Download the disk image from GitHub releases or install it with Homebrew using "brew install --cask iptvnator". Both deliver the same signed and notarized build.',
   },
   {
@@ -110,8 +110,8 @@ const faq: FaqEntry[] = [
     a: 'That message came from older, unsigned builds. Releases since v0.20 (April 2026) are code-signed and notarized by Apple and open normally. Update to the current version. If you must keep an older build, remove the quarantine flag as described in the linked blog post.',
   },
   {
-    q: 'Does IPTVnator come with channels or playlists?',
-    a: 'No. IPTVnator is a player. You add your own M3U/M3U8 playlist, Xtream Codes login or Stalker portal from your provider. Any website selling "IPTVnator subscriptions" or channel packages is unrelated to this project.',
+    q: 'Does Yestream come with channels or playlists?',
+    a: 'No. Yestream is a player. You add your own M3U/M3U8 playlist, Xtream Codes login or Stalker portal from your provider. Any website selling "Yestream subscriptions" or channel packages is unrelated to this project.',
   },
   {
     q: 'Which macOS versions are supported?',
@@ -119,11 +119,11 @@ const faq: FaqEntry[] = [
   },
   {
     q: 'Can I use MPV or VLC on the Mac?',
-    a: 'Yes. Install MPV (for example with "brew install mpv") or VLC, choose it under Settings › Playback, and IPTVnator launches it for every stream while keeping track of what you watched. The experimental embedded MPV engine additionally plays inside the IPTVnator window.',
+    a: 'Yes. Install MPV (for example with "brew install mpv") or VLC, choose it under Settings › Playback, and Yestream launches it for every stream while keeping track of what you watched. The experimental embedded MPV engine additionally plays inside the Yestream window.',
   },
   {
-    q: 'How do I update IPTVnator on a Mac?',
-    a: 'IPTVnator checks for new releases when it starts and shows a notification with an install button. Homebrew users can run "brew upgrade --cask iptvnator" instead.',
+    q: 'How do I update Yestream on a Mac?',
+    a: 'Yestream checks for new releases when it starts and shows a notification with an install button. Homebrew users can run "brew upgrade --cask iptvnator" instead.',
   },
 ];
 
@@ -142,8 +142,8 @@ const jsonLd = buildDownloadPageSchema({
   title={title}
   description={description}
   keywords={[
-    'IPTVnator macOS',
-    'IPTVnator Mac',
+    'Yestream macOS',
+    'Yestream Mac',
     'IPTV player Mac',
     'IPTV player macOS',
     'IPTV player Apple Silicon',
@@ -157,7 +157,7 @@ const jsonLd = buildDownloadPageSchema({
   <DownloadHero
     platform="macos"
     eyebrow="Download · macOS"
-    titleLead="IPTVnator for"
+    titleLead="Yestream for"
     titleAccent="macOS"
     lede="A free, open-source IPTV player for Apple Silicon and Intel Macs. Load M3U/M3U8 playlists, sign in to Xtream Codes providers or Stalker portals, and watch live TV, movies and series with a full program guide. Builds are signed and notarized, so they open like any other Mac app."
     release={release}
@@ -165,7 +165,7 @@ const jsonLd = buildDownloadPageSchema({
     facts={['macOS 12 Monterey+', 'Apple Silicon & Intel', 'Signed & notarized', 'Free & open source']}
     screenshot={{
       src: '/iptvnator/screenshots/dashboard-cinematic.webp',
-      alt: 'IPTVnator dashboard with continue watching and live favorites',
+      alt: 'Yestream dashboard with continue watching and live favorites',
       width: 1600,
       height: 1100,
     }}
@@ -183,7 +183,7 @@ const jsonLd = buildDownloadPageSchema({
         <Alert type="info" title='Older builds and the "app is damaged" message'>
           <p>
             Releases before v0.20 (April 2026) were not code-signed, and macOS could refuse to open them with
-            "IPTVnator is damaged and can't be opened". If you still run one of those builds, update to the current
+            "Yestream is damaged and can't be opened". If you still run one of those builds, update to the current
             release or follow the one-command fix in{' '}
             <a href="/iptvnator/blog/macos-arm-app-damaged-fix/" class="text-accent-300 underline decoration-accent-500/30 underline-offset-4">this post</a>.
           </p>
@@ -200,7 +200,7 @@ const jsonLd = buildDownloadPageSchema({
     <SpecList items={specs} />
   </DownloadSection>
 
-  <DownloadSection id="faq" eyebrow="FAQ" title="Questions about" accent="IPTVnator on macOS">
+  <DownloadSection id="faq" eyebrow="FAQ" title="Questions about" accent="Yestream on macOS">
     <div class="max-w-3xl">
       <FaqAccordion items={faq} />
     </div>

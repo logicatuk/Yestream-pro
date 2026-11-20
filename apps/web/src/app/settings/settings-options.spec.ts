@@ -101,7 +101,6 @@ describe('buildSettingsSectionNavItems', () => {
             'parental',
             'remote-control',
             'server',
-            'backup',
             'about',
         ]);
     });
@@ -120,7 +119,7 @@ describe('buildSettingsSectionNavItems', () => {
         expect(groupOf('tmdb')).toBe('library');
         expect(groupOf('remote-control')).toBe('devices');
         expect(groupOf('server')).toBe('data');
-        expect(groupOf('backup')).toBe('data');
+        expect(groupOf('backup')).toBeUndefined();
         expect(groupOf('about')).toBeUndefined();
     });
 

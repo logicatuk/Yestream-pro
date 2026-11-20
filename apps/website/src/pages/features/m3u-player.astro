@@ -15,9 +15,9 @@ import { absoluteUrl } from '../../lib/site';
 
 const feature = featureBySlug('m3u-player');
 const pageUrl = absoluteUrl('/features/m3u-player/');
-const title = 'M3U Playlist Player for Windows, macOS and Linux – IPTVnator';
+const title = 'M3U Playlist Player for Windows, macOS and Linux – Yestream';
 const description =
-  'Play M3U and M3U8 IPTV playlists on your desktop with IPTVnator: import from a URL, a file or text, browse channel groups and favorites, search tens of thousands of channels, attach an XMLTV guide with catch-up, and hand hard streams to MPV or VLC. Free and open source.';
+  'Play M3U and M3U8 IPTV playlists on your desktop with Yestream: import from a URL, a file or text, browse channel groups and favorites, search tens of thousands of channels, attach an XMLTV guide with catch-up, and hand hard streams to MPV or VLC. Free and open source.';
 
 const library = [
   {
@@ -70,7 +70,7 @@ const playback = [
   {
     title: 'MPV and VLC handoff',
     description:
-      'Streams the browser engines cannot decode go to MPV or VLC on your machine while IPTVnator keeps the list, the guide and the remote control.',
+      'Streams the browser engines cannot decode go to MPV or VLC on your machine while Yestream keeps the list, the guide and the remote control.',
   },
   {
     title: 'Embedded MPV',
@@ -86,7 +86,7 @@ const playback = [
 
 const faq: FaqEntry[] = [
   {
-    q: 'Does IPTVnator play both M3U and M3U8 playlists?',
+    q: 'Does Yestream play both M3U and M3U8 playlists?',
     a: 'Yes. Both extensions are the same text format; M3U8 only marks the file as UTF-8. Playlists can come from a link, a local file or pasted text, and the same attributes are read from all of them.',
   },
   {
@@ -106,8 +106,8 @@ const faq: FaqEntry[] = [
     a: 'Open it in MPV or VLC via Settings › Playback, or enable the experimental embedded MPV engine. Providers that require a specific User-Agent get it from the playlist details.',
   },
   {
-    q: 'Does IPTVnator provide playlists?',
-    a: 'No. IPTVnator is a player. You bring the playlist you already have from your provider, and nothing in it is sent anywhere except to the stream hosts it points at.',
+    q: 'Does Yestream provide playlists?',
+    a: 'No. Yestream is a player. You bring the playlist you already have from your provider, and nothing in it is sent anywhere except to the stream hosts it points at.',
   },
 ];
 
@@ -152,7 +152,7 @@ const jsonLd = buildFeaturePageSchema({
     <FeatureList items={library} />
   </DownloadSection>
 
-  <DownloadSection id="attributes" eyebrow="Playlist attributes" title="Everything the playlist" accent="declares" lead="IPTVnator reads the extended M3U attributes providers use, so logos, guide ids, catch-up windows and radio flags all mean something.">
+  <DownloadSection id="attributes" eyebrow="Playlist attributes" title="Everything the playlist" accent="declares" lead="Yestream reads the extended M3U attributes providers use, so logos, guide ids, catch-up windows and radio flags all mean something.">
     <SpecList items={declared} />
   </DownloadSection>
 

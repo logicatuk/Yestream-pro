@@ -1,13 +1,13 @@
 /**
  * Registry of the comparison pages under `/compare/`.
  *
- * Most of them compare IPTVnator's own options against each other — connection
+ * Most of them compare Yestream's own options against each other — connection
  * types, playback engines, editions — so every claim can be checked against
  * this repository. A page that names other software follows stricter rules:
  * only platform and feature facts that are stable and publicly documented, a
  * dated `ThirdPartyNote`, no logos or brand styling, no download links to the
  * other project, and no claim that a feature is missing unless it was checked.
- * Prefer describing what IPTVnator does and letting the difference speak.
+ * Prefer describing what Yestream does and letting the difference speak.
  */
 
 export type ComparisonSlug =
@@ -62,7 +62,7 @@ export const COMPARISONS: readonly ComparisonEntry[] = [
   },
   {
     slug: 'iptvnator-vs-vlc',
-    label: 'IPTVnator vs VLC',
+    label: 'Yestream vs VLC',
     eyebrow: 'Compare · Other players',
     question:
       'VLC opens an M3U playlist too. When is that enough, and what does a player built around IPTV add on top?',
@@ -71,7 +71,7 @@ export const COMPARISONS: readonly ComparisonEntry[] = [
   },
   {
     slug: 'iptvnator-vs-kodi',
-    label: 'IPTVnator vs Kodi',
+    label: 'Yestream vs Kodi',
     eyebrow: 'Compare · Other players',
     question:
       'Kodi is a whole media center and reaches IPTV through a PVR add-on. When is that the right shape, and when do you want a player that only does IPTV?',

@@ -31,9 +31,9 @@ const pick = (...ids: string[]): ResolvedDownload[] =>
 const heroDownloads = pick('linux-x86_64-appimage', 'linux-amd64-deb');
 const pageUrl = absoluteUrl('/download/linux/');
 
-const title = 'Download IPTVnator for Linux – AppImage, deb, rpm, Flatpak and Snap';
+const title = 'Download Yestream for Linux – AppImage, deb, rpm, Flatpak and Snap';
 const description =
-  'Download IPTVnator for Linux: a free, open-source IPTV player for M3U/M3U8 playlists, Xtream Codes and Stalker portals with XMLTV EPG. AppImage, .deb, .rpm, pacman, Flatpak and Snap packages for x86_64, arm64 and armv7l.';
+  'Download Yestream for Linux: a free, open-source IPTV player for M3U/M3U8 playlists, Xtream Codes and Stalker portals with XMLTV EPG. AppImage, .deb, .rpm, pacman, Flatpak and Snap packages for x86_64, arm64 and armv7l.';
 
 const installCommands: Record<string, string> = {
   'linux-x86_64-appimage': 'chmod +x iptvnator-*.AppImage && ./iptvnator-*.AppImage',
@@ -101,12 +101,12 @@ const features = [
   {
     title: 'MPV and VLC integration',
     description:
-      'Hand streams that the built-in players cannot decode to the mpv or vlc binary from your distribution. Playback positions and the remote control stay inside IPTVnator.',
+      'Hand streams that the built-in players cannot decode to the mpv or vlc binary from your distribution. Playback positions and the remote control stay inside Yestream.',
   },
   {
     title: 'Embedded MPV engine (experimental)',
     description:
-      'Drives the system mpv inside the IPTVnator window on x86_64 desktops under X11 or Xwayland. Requires mpv on PATH; not available in the Flatpak and Snap sandboxes.',
+      'Drives the system mpv inside the Yestream window on x86_64 desktops under X11 or Xwayland. Requires mpv on PATH; not available in the Flatpak and Snap sandboxes.',
   },
   {
     title: 'Offline downloads',
@@ -146,10 +146,10 @@ const specs = [
     term: '.deb dependencies (x86_64)',
     value: 'libmpv2, libegl1, libgl1, libgbm1. Available on Ubuntu 24.04+ and Debian 12+.',
   },
-  { term: 'Account', value: 'None. IPTVnator never asks you to register.' },
+  { term: 'Account', value: 'None. Yestream never asks you to register.' },
   {
     term: 'Content',
-    value: 'Bring your own playlist or provider login. IPTVnator ships without channels.',
+    value: 'Bring your own playlist or provider login. Yestream ships without channels.',
   },
 ];
 
@@ -159,7 +159,7 @@ const faq: FaqEntry[] = [
     a: 'Take the AppImage if you want a single file that runs on any distribution without installation and can notify you about updates. Take the .deb, .rpm or pacman package if you want the app in your application menu and managed by your package manager. Flatpak and Snap isolate the app in a sandbox, which also means the embedded MPV engine is unavailable there.',
   },
   {
-    q: 'Is IPTVnator on Flathub?',
+    q: 'Is Yestream on Flathub?',
     a: 'Not yet. A Flatpak bundle is attached to every release and installs with "flatpak install --user" as long as the Flathub remote is configured, because the bundle needs the org.freedesktop.Platform 24.08 runtime. The Snap Store listing is official and maintained by the project.',
   },
   {
@@ -168,19 +168,19 @@ const faq: FaqEntry[] = [
   },
   {
     q: 'Does it work on Wayland?',
-    a: 'Yes, through Xwayland. Every launcher starts IPTVnator with --ozone-platform=x11, and GNOME and KDE ship Xwayland by default. If the app exits with Ozone or Wayland errors, start it manually with "iptvnator --ozone-platform=x11".',
+    a: 'Yes, through Xwayland. Every launcher starts Yestream with --ozone-platform=x11, and GNOME and KDE ship Xwayland by default. If the app exits with Ozone or Wayland errors, start it manually with "iptvnator --ozone-platform=x11".',
   },
   {
-    q: 'Does IPTVnator run on a Raspberry Pi or other ARM boards?',
+    q: 'Does Yestream run on a Raspberry Pi or other ARM boards?',
     a: 'Yes. arm64 and armv7l AppImage and .deb builds are attached to every release, and the Snap Store carries an armhf build. The web players and external MPV/VLC work there; the embedded MPV engine is x86_64 only.',
   },
   {
-    q: 'Can I run IPTVnator on a home server instead of installing it?',
+    q: 'Can I run Yestream on a home server instead of installing it?',
     a: 'Yes. The Docker image builds the browser version and its backend into one container; the README in the docker directory has the compose file. The browser version does not include the desktop-only features such as external players, embedded MPV and the download manager.',
   },
   {
-    q: 'Does IPTVnator come with channels or playlists?',
-    a: 'No. IPTVnator is a player. You add your own M3U/M3U8 playlist, Xtream Codes login or Stalker portal from your provider. Any website selling "IPTVnator subscriptions" or channel packages is unrelated to this project.',
+    q: 'Does Yestream come with channels or playlists?',
+    a: 'No. Yestream is a player. You add your own M3U/M3U8 playlist, Xtream Codes login or Stalker portal from your provider. Any website selling "Yestream subscriptions" or channel packages is unrelated to this project.',
   },
 ];
 
@@ -199,7 +199,7 @@ const jsonLd = buildDownloadPageSchema({
   title={title}
   description={description}
   keywords={[
-    'IPTVnator Linux',
+    'Yestream Linux',
     'IPTV player Linux',
     'IPTV player Ubuntu',
     'IPTV player Fedora',
@@ -217,7 +217,7 @@ const jsonLd = buildDownloadPageSchema({
   <DownloadHero
     platform="linux"
     eyebrow="Download · Linux"
-    titleLead="IPTVnator for"
+    titleLead="Yestream for"
     titleAccent="Linux"
     lede="A free, open-source IPTV player packaged for every major Linux distribution. Load M3U/M3U8 playlists, sign in to Xtream Codes providers or Stalker portals, and watch live TV, movies and series with a full program guide. Pick the AppImage for a no-install start or a native package for your distribution."
     release={release}
@@ -225,7 +225,7 @@ const jsonLd = buildDownloadPageSchema({
     facts={['x86_64 · arm64 · armv7l', 'AppImage · deb · rpm · pacman', 'Flatpak & Snap', 'Free & open source']}
     screenshot={{
       src: '/iptvnator/screenshots/multi-epg-view.webp',
-      alt: 'Multi-channel program guide in IPTVnator',
+      alt: 'Multi-channel program guide in Yestream',
       width: 2180,
       height: 1448,
     }}
@@ -238,7 +238,7 @@ const jsonLd = buildDownloadPageSchema({
     </div>
   </DownloadSection>
 
-  <DownloadSection id="install" eyebrow="Installation" title="AppImage in" accent="three steps" lead="The fastest way to try IPTVnator on any distribution. Native packages install with the commands listed above.">
+  <DownloadSection id="install" eyebrow="Installation" title="AppImage in" accent="three steps" lead="The fastest way to try Yestream on any distribution. Native packages install with the commands listed above.">
     <div class="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-start">
       <StepRail title="Run the AppImage" steps={appImageSteps} />
       <div>
@@ -255,7 +255,7 @@ sudo emerge iptvnator-bin</TerminalBlock>
     <div class="grid gap-6 lg:grid-cols-2">
       <Alert type="info" title="Wayland desktops">
         <p>
-          Launchers start IPTVnator with <code>--ozone-platform=x11</code>, so Wayland sessions need Xwayland, which GNOME and KDE
+          Launchers start Yestream with <code>--ozone-platform=x11</code>, so Wayland sessions need Xwayland, which GNOME and KDE
           ship by default. If the app exits with Ozone or Wayland errors, start it with{' '}
           <code>iptvnator --ozone-platform=x11</code>.
         </p>
@@ -291,7 +291,7 @@ sudo emerge iptvnator-bin</TerminalBlock>
     <SpecList items={specs} />
   </DownloadSection>
 
-  <DownloadSection id="faq" eyebrow="FAQ" title="Questions about" accent="IPTVnator on Linux">
+  <DownloadSection id="faq" eyebrow="FAQ" title="Questions about" accent="Yestream on Linux">
     <div class="max-w-3xl">
       <FaqAccordion items={faq} />
     </div>

@@ -97,9 +97,6 @@ export class SettingsAboutSectionComponent {
     readonly installAppUpdate = output<void>();
     readonly openManualAppUpdate = output<void>();
     readonly openAppUpdateReleaseNotes = output<void>();
-    /** The nightly warning offers the backup page before switching. */
-    readonly openBackup = output<void>();
-
     readonly canSelectUpdateChannel = computed(
         () =>
             this.isDesktop() &&

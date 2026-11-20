@@ -52,7 +52,7 @@ import {
     stopHostedServerOnQuit,
 } from './app/services/hosted-server.service';
 
-app.setName('iptvnator');
+app.setName('yestream');
 
 traceStartupPhase('compile-cache', () => readCompileCacheOutcome());
 // Before anything can open the shared database connection.

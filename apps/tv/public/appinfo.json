@@ -1,10 +1,10 @@
 {
-    "id": "com.iptvnator.tv.prototype",
+    "id": "com.yestream.tv.prototype",
     "version": "0.1.25",
-    "vendor": "IPTVnator",
+    "vendor": "Yestream",
     "type": "web",
     "main": "index.html",
-    "title": "IPTVnator TV",
+    "title": "Yestream TV",
     "icon": "icon.png",
     "largeIcon": "large-icon.png",
     "resolution": "1920x1080",

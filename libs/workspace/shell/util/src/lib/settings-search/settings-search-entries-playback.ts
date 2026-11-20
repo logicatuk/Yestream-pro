@@ -197,12 +197,4 @@ export const PLAYBACK_SETTINGS_SEARCH_ENTRIES: readonly SettingsSearchEntry[] =
             keywords: ['playback bar', 'footer', ...MPV, ...VLC],
             requires: ['desktop'],
         },
-        {
-            id: 'recording-folder',
-            section: 'playback',
-            labelKey: 'SETTINGS.RECORDING_FOLDER_LABEL',
-            descriptionKey: 'SETTINGS.RECORDING_FOLDER_DESCRIPTION',
-            keywords: ['recording', 'record', 'dvr', 'folder', 'directory'],
-            requires: ['desktop'],
-        },
     ];

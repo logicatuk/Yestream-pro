@@ -1,6 +1,6 @@
 ---
-title: Share IPTVnator Sources Between Desktop and Browsers
-description: Run IPTVnator in Docker on a NAS or home server, find its address and access token, and connect Electron and PWA clients to one source library.
+title: Share Yestream Sources Between Desktop and Browsers
+description: Run Yestream in Docker on a NAS or home server, find its address and access token, and connect Electron and PWA clients to one source library.
 pubDate: 2026-10-16
 author: 4gray
 tags:
@@ -19,9 +19,9 @@ faq:
       a: No. Connecting uses a separate server library and keeps the original local library. Import local sources copies source definitions to the server; disconnecting returns to your original library.
 ---
 
-The self-hosted image runs the IPTVnator web app and its backend in one Docker
+The self-hosted image runs the Yestream web app and its backend in one Docker
 container. Run it once on a home server or NAS, then connect Electron and browser
-clients to the same source library. IPTVnator does not provide channels or IPTV
+clients to the same source library. Yestream does not provide channels or IPTV
 subscriptions; you still bring your own sources.
 
 This guide covers the current source synchronization feature. **Favorites,
@@ -29,7 +29,7 @@ recently viewed items and watch progress remain on each device.** The
 [Docker README](https://github.com/4gray/iptvnator/blob/master/docker/README.md#connect-your-clients)
 is the canonical connection and troubleshooting reference.
 
-## 1. Start IPTVnator on your server
+## 1. Start Yestream on your server
 
 Use a machine with Docker and Docker Compose, such as a container-capable NAS,
 a home computer or a mini PC. Save this as `compose.yaml`, replacing the example
@@ -63,7 +63,7 @@ repository also includes a [Compose file with a health check](https://github.com
 
 ## 2. Find the two values for the Server page
 
-**Server address:** the address that opens IPTVnator in a browser on the device
+**Server address:** the address that opens Yestream in a browser on the device
 you want to connect. In this example it is `http://192.168.1.20:4333`.
 It is not your IPTV provider's address or the container's internal backend port.
 Do not add `/api/v1`; the client adds `/api` automatically. `localhost` means the
@@ -134,7 +134,7 @@ A format error needs a full `http://` or `https://` address without embedded
 credentials, query parameters or a `#` fragment. If the server is unavailable,
 try opening the same address in this device's browser, then check the container,
 host port, firewall and VPN. If authentication fails, verify the running
-container's token. An incompatible server needs a current IPTVnator image with
+container's token. An incompatible server needs a current Yestream image with
 server storage enabled; a provider portal or the old standalone backend will
 not work.
 

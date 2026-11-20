@@ -16,9 +16,9 @@ import { absoluteUrl } from '../../lib/site';
 
 const feature = featureBySlug('remote-control');
 const pageUrl = absoluteUrl('/features/remote-control/');
-const title = 'Phone Remote Control for IPTVnator – Change Channels from the Couch';
+const title = 'Phone Remote Control for Yestream – Change Channels from the Couch';
 const description =
-  'The IPTVnator desktop app serves a web remote to any phone or tablet on your network: channel up and down, direct channel numbers, volume for the built-in player and a now-playing panel with the current program. No app to install, no account, free and open source.';
+  'The Yestream desktop app serves a web remote to any phone or tablet on your network: channel up and down, direct channel numbers, volume for the built-in player and a now-playing panel with the current program. No app to install, no account, free and open source.';
 
 const setup = [
   'Open Settings › Remote control on the desktop app and enable the remote. The default port is 8765; change it if something else uses it.',
@@ -65,7 +65,7 @@ const details = [
 const faq: FaqEntry[] = [
   {
     q: 'Do I need to install an app on my phone?',
-    a: 'No. The remote is a web page served by the IPTVnator desktop app. Open the address or scan the QR code from the settings in any phone or tablet browser.',
+    a: 'No. The remote is a web page served by the Yestream desktop app. Open the address or scan the QR code from the settings in any phone or tablet browser.',
   },
   {
     q: 'Does the remote work over the internet?',
@@ -80,7 +80,7 @@ const faq: FaqEntry[] = [
     a: 'The position in the list you are currently looking at, counted from one, like the numbering in the sidebar. It is not the channel number a provider may print in its guide.',
   },
   {
-    q: 'Does the remote work with the browser version of IPTVnator?',
+    q: 'Does the remote work with the browser version of Yestream?',
     a: 'No. Serving the remote page requires the desktop app, which hosts the small web server behind it.',
   },
 ];
@@ -103,7 +103,7 @@ const jsonLd = buildFeaturePageSchema({
 <BaseLayout
   title={title}
   description={description}
-  keywords={['IPTV player remote control', 'IPTVnator remote control', 'control IPTV player from phone', 'IPTV player with remote app', 'open-source IPTV player']}
+  keywords={['IPTV player remote control', 'Yestream remote control', 'control IPTV player from phone', 'IPTV player with remote app', 'open-source IPTV player']}
   jsonLd={jsonLd}
 >
   <FeatureHero

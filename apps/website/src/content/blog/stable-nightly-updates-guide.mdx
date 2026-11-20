@@ -1,5 +1,5 @@
 ---
-title: Stable or Nightly? How IPTVnator Updates Work
+title: Stable or Nightly? How Yestream Updates Work
 description: Choose an update channel in the desktop app, understand what happens when you switch back to Stable, and find the build details that make a nightly bug report useful.
 pubDate: 2026-10-04
 author: 4gray
@@ -14,7 +14,7 @@ faq:
       a: Changing the selection does not install anything by itself. Save the setting, let the app check the chosen channel, and follow the update or manual-install action it offers.
     - q: Why am I still on a nightly after choosing Stable?
       a: The updater only moves forward. It keeps the installed nightly until a stable release with a newer version is available. Selecting Stable changes which channel is checked; it does not downgrade the app.
-    - q: Does every Linux package update inside IPTVnator?
+    - q: Does every Linux package update inside Yestream?
       a: No. The update flow depends on the installation format. Linux installations without AppImage use a manual-install fallback in the app. Package-manager installations should follow their package manager's update process.
     - q: What details should I include when reporting a nightly problem?
       a: Include the full version and build commit from About, your operating system, installation format, player and source type, and the shortest steps that reproduce the problem. Do not post account credentials or full playlist URLs.
@@ -23,7 +23,7 @@ faq:
 import ContentDisclaimer from '../../components/blog/ContentDisclaimer.astro';
 
 Stable releases collect changes into a version intended for everyday use. Nightly builds
-let you try work merged since then. Since IPTVnator 0.24, the desktop app lets you choose
+let you try work merged since then. Since Yestream 0.24, the desktop app lets you choose
 between those channels in **Settings → About**.
 
 The choice controls where the app looks for updates. It does not create a second library

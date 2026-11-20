@@ -72,12 +72,6 @@ export const SETTINGS_SECTION_DEFINITIONS: readonly SettingsSectionDefinition[] 
             group: 'devices',
         },
         { id: 'server', navLabelKey: 'SOURCE_SYNC.TITLE', icon: 'dns', group: 'data' },
-        {
-            id: 'backup',
-            navLabelKey: 'SETTINGS.NAV_BACKUP',
-            icon: 'backup',
-            group: 'data',
-        },
         { id: 'about', navLabelKey: 'SETTINGS.NAV_ABOUT', icon: 'info' },
     ];
 

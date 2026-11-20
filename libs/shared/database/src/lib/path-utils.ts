@@ -31,7 +31,7 @@ export function getIptvnatorDataRoot(): string {
         return ensureDirectory(dataDir);
     }
 
-    return ensureDirectory(join(homedir(), '.iptvnator'));
+    return ensureDirectory(join(homedir(), '.yestream'));
 }
 
 export function getIptvnatorDatabaseDirectory(): string {
@@ -43,7 +43,7 @@ export function getIptvnatorDatabaseDirectory(): string {
 }
 
 export function getIptvnatorDatabasePath(): string {
-    return join(getIptvnatorDatabaseDirectory(), 'iptvnator.db');
+    return join(getIptvnatorDatabaseDirectory(), 'yestream.db');
 }
 
 export function getElectronUserDataPath(): string | null {

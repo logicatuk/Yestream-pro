@@ -16,11 +16,11 @@ import { absoluteUrl } from '../../lib/site';
 
 const comparison = comparisonBySlug('iptvnator-vs-vlc');
 const pageUrl = absoluteUrl('/compare/iptvnator-vs-vlc/');
-const title = 'IPTVnator vs VLC – When a Media Player Is Enough for IPTV';
+const title = 'Yestream vs VLC – When a Media Player Is Enough for IPTV';
 const description =
-  'VLC opens an M3U playlist and plays almost anything inside it. IPTVnator adds what a playlist file cannot carry: a searchable catalog, the programme guide, provider accounts, favorites and catch-up — and it can hand the stream to VLC when a codec needs it.';
+  'VLC opens an M3U playlist and plays almost anything inside it. Yestream adds what a playlist file cannot carry: a searchable catalog, the programme guide, provider accounts, favorites and catch-up — and it can hand the stream to VLC when a codec needs it.';
 
-const columns = ['VLC', 'IPTVnator'];
+const columns = ['VLC', 'Yestream'];
 
 const sourceRows = [
   { label: 'Opens an M3U or M3U8 playlist', cells: [true, true] },
@@ -53,19 +53,19 @@ const practicalRows = [
 
 const together = [
   {
-    title: 'IPTVnator can play the stream in VLC',
+    title: 'Yestream can play the stream in VLC',
     description:
-      'Choose VLC under Settings › Playback and IPTVnator launches your own copy for playback. The catalog, the guide, favorites and the phone remote stay in IPTVnator; only the video moves to a VLC window.',
+      'Choose VLC under Settings › Playback and Yestream launches your own copy for playback. The catalog, the guide, favorites and the phone remote stay in Yestream; only the video moves to a VLC window.',
   },
   {
     title: 'The handover carries what VLC cannot guess',
     description:
-      'IPTVnator passes the playlist’s User-Agent, Referer and any custom headers with the stream, so a provider that checks them still answers. It also passes your resume position and the title for the window.',
+      'Yestream passes the playlist’s User-Agent, Referer and any custom headers with the stream, so a provider that checks them still answers. It also passes your resume position and the title for the window.',
   },
   {
     title: 'Progress comes back',
     description:
-      'IPTVnator asks VLC where it is through VLC’s own remote-control interface, so a movie you stopped in VLC resumes from the same place in the library.',
+      'Yestream asks VLC where it is through VLC’s own remote-control interface, so a movie you stopped in VLC resumes from the same place in the library.',
   },
   {
     title: 'A codec problem stops being a dead end',
@@ -81,27 +81,27 @@ const faq: FaqEntry[] = [
   },
   {
     q: 'So why use a dedicated IPTV player at all?',
-    a: 'Because a playlist file carries only names and stream addresses. It has no programme guide, no movie or series catalog, no account status and no catch-up. With a few hundred or a few thousand entries, a flat list also stops being something you can browse. IPTVnator is built around those things; VLC is built around playing a file.',
+    a: 'Because a playlist file carries only names and stream addresses. It has no programme guide, no movie or series catalog, no account status and no catch-up. With a few hundred or a few thousand entries, a flat list also stops being something you can browse. Yestream is built around those things; VLC is built around playing a file.',
   },
   {
     q: 'Does VLC support Xtream Codes logins or Stalker portals?',
-    a: 'No. Those are provider APIs, not stream files: something has to log in, ask for categories, and build a catalog out of the answers. VLC opens files and URLs. If your provider gave you a server address, a username and a password, IPTVnator can use them directly.',
+    a: 'No. Those are provider APIs, not stream files: something has to log in, ask for categories, and build a catalog out of the answers. VLC opens files and URLs. If your provider gave you a server address, a username and a password, Yestream can use them directly.',
   },
   {
     q: 'Can VLC show the programme guide?',
-    a: 'Not for IPTV. XMLTV guide data is a separate file that has to be downloaded, parsed and matched to channels; VLC has no such feature. IPTVnator does this in the background and shows what is on now, a timeline and a full guide.',
+    a: 'Not for IPTV. XMLTV guide data is a separate file that has to be downloaded, parsed and matched to channels; VLC has no such feature. Yestream does this in the background and shows what is on now, a timeline and a full guide.',
   },
   {
     q: 'Which one plays more formats?',
-    a: 'VLC, almost certainly — decoding is what it is for. IPTVnator does not compete there: it lets you send any stream to VLC or MPV on your machine, or to the mpv engine that ships with the desktop app, so the coverage becomes theirs.',
+    a: 'VLC, almost certainly — decoding is what it is for. Yestream does not compete there: it lets you send any stream to VLC or MPV on your machine, or to the mpv engine that ships with the desktop app, so the coverage becomes theirs.',
   },
   {
     q: 'Do I have to choose one?',
-    a: 'No, and most people should not. Keeping VLC installed gives IPTVnator somewhere to send a stubborn stream. Neither installation affects the other.',
+    a: 'No, and most people should not. Keeping VLC installed gives Yestream somewhere to send a stubborn stream. Neither installation affects the other.',
   },
   {
     q: 'What about watching on a phone?',
-    a: 'VLC has mobile apps and IPTVnator does not. The browser version of IPTVnator, which you host yourself, opens on a phone browser, and the desktop app can be controlled from a phone with its web remote — but for playback on the phone itself, a mobile player is the right tool.',
+    a: 'VLC has mobile apps and Yestream does not. The browser version of Yestream, which you host yourself, opens on a phone browser, and the desktop app can be controlled from a phone with its web remote — but for playback on the phone itself, a mobile player is the right tool.',
   },
   {
     q: 'Is either one a source of channels?',
@@ -115,7 +115,7 @@ const jsonLd = buildComparisonPageSchema({ comparison, pageUrl, description, faq
 <BaseLayout
   title={title}
   description={description}
-  keywords={['IPTVnator vs VLC', 'VLC IPTV player', 'play M3U in VLC', 'IPTV player for PC', 'open source IPTV player', 'VLC alternative for IPTV']}
+  keywords={['Yestream vs VLC', 'VLC IPTV player', 'play M3U in VLC', 'IPTV player for PC', 'open source IPTV player', 'VLC alternative for IPTV']}
   jsonLd={jsonLd}
 >
   <CompareHero
@@ -123,7 +123,7 @@ const jsonLd = buildComparisonPageSchema({ comparison, pageUrl, description, faq
     titleLead="VLC plays it."
     titleAccent="Something has to organise it."
     lede="Every guide to IPTV on a computer starts with the same advice: open the playlist in VLC. It works. The question is what happens after the twentieth channel, when you want to know what is on, or when your provider hands you a login instead of a file."
-    verdict="Use VLC when you have a handful of streams and want them to play. Use IPTVnator when the source is an account or a large playlist and you want a catalog, a programme guide, favorites and catch-up around it — and keep VLC installed either way, because IPTVnator can hand it a stream that will not decode."
+    verdict="Use VLC when you have a handful of streams and want them to play. Use Yestream when the source is an account or a large playlist and you want a catalog, a programme guide, favorites and catch-up around it — and keep VLC installed either way, because Yestream can hand it a stream that will not decode."
   />
 
   <DownloadSection id="sources" eyebrow="The source" title="What each one can" accent="connect to" lead="This is the first fork in the road, and it is decided by your provider, not by preference.">
@@ -140,7 +140,7 @@ const jsonLd = buildComparisonPageSchema({ comparison, pageUrl, description, faq
       columns={columns}
       rows={libraryRows}
       rowHeader="Capability"
-      caption="IPTVnator reads the guide from an XMLTV source or from the portal itself, and keeps favorites, history and resume positions in a local database on your machine."
+      caption="Yestream reads the guide from an XMLTV source or from the portal itself, and keeps favorites, history and resume positions in a local database on your machine."
     />
   </DownloadSection>
 
@@ -153,7 +153,7 @@ const jsonLd = buildComparisonPageSchema({ comparison, pageUrl, description, faq
     />
   </DownloadSection>
 
-  <DownloadSection id="together" eyebrow="Not either/or" title="They work" accent="together" lead="The two are complementary by design: IPTVnator treats VLC as one of the players it can send a stream to.">
+  <DownloadSection id="together" eyebrow="Not either/or" title="They work" accent="together" lead="The two are complementary by design: Yestream treats VLC as one of the players it can send a stream to.">
     <FeatureList items={together} />
     <ThirdPartyNote names={['VLC']} checked="September 2026" />
   </DownloadSection>

@@ -17,7 +17,7 @@ export interface BlogTagMeta {
 export const BLOG_TAGS = {
   release: {
     label: 'Release notes',
-    description: 'What changed in every IPTVnator release: new features, fixes and known issues.',
+    description: 'What changed in every Yestream release: new features, fixes and known issues.',
   },
   guide: {
     label: 'Guides',
@@ -49,11 +49,11 @@ export const BLOG_TAGS = {
   },
   macos: {
     label: 'macOS',
-    description: 'Installing and running IPTVnator on Apple Silicon and Intel Macs.',
+    description: 'Installing and running Yestream on Apple Silicon and Intel Macs.',
   },
   security: {
     label: 'Security',
-    description: 'Unofficial websites, fake apps and how to get the real IPTVnator.',
+    description: 'Unofficial websites, fake apps and how to get the real Yestream.',
   },
 } as const satisfies Record<string, BlogTagMeta>;
 

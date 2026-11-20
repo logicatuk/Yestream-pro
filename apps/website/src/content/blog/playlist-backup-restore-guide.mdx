@@ -1,6 +1,6 @@
 ---
 title: Back Up Your Playlists and Move to a New Computer
-description: Export and restore an IPTVnator playlist backup, understand which favorites and playback state it carries, and check what needs to be moved separately when changing computers.
+description: Export and restore an Yestream playlist backup, understand which favorites and playback state it carries, and check what needs to be moved separately when changing computers.
 pubDate: 2026-10-04
 author: 4gray
 heroImage: /iptvnator/blog/feature-guides/screenshots/guide-backup-dark.png
@@ -18,7 +18,7 @@ faq:
     - q: Does the backup include my provider password?
       a: The current export includes connection secrets so sources can be restored. Playlist and EPG URLs can also contain credentials. Treat the JSON file as private account data and do not attach it to a public issue.
     - q: Can I import an old raw JSON playlist dump?
-      a: The current importer expects a versioned IPTVnator playlist backup, not the older raw array of playlists. Use a backup exported through the current Settings → Backup workflow.
+      a: The current importer expects a versioned Yestream playlist backup, not the older raw array of playlists. Use a backup exported through the current Settings → Backup workflow.
 ---
 
 import ContentDisclaimer from '../../components/blog/ContentDisclaimer.astro';
@@ -27,7 +27,7 @@ Adding a source takes a moment. Rebuilding favorites, hidden categories and play
 positions takes longer. A playlist backup keeps the supported parts of that library
 together so you can restore them after a problem or move them to another computer.
 
-This guide describes the versioned backup available in IPTVnator 0.24. Its scope varies
+This guide describes the versioned backup available in Yestream 0.24. Its scope varies
 by source type, so check the table below before relying on it as your only copy of data.
 
 <ContentDisclaimer />
@@ -70,7 +70,7 @@ redacted example rather than sharing your backup.
 
 ## Restore on the destination
 
-1. Install a current supported version of IPTVnator on the destination computer.
+1. Install a current supported version of Yestream on the destination computer.
 2. Open **Settings → Backup**, choose **Import**, and select the exported file.
 3. Read the summary: it reports sources that were imported, merged, skipped or failed.
 4. Open each restored source and let any required catalog initialization finish.
@@ -112,4 +112,4 @@ importing snapshots can make it harder to tell which state you are examining.
 - [Add an M3U playlist and EPG](/iptvnator/blog/m3u-playlist-epg-setup-guide/)
 - [Connect an Xtream account](/iptvnator/blog/xtream-codes-setup-guide/)
 - [Connect a Stalker portal](/iptvnator/blog/stalker-portal-setup-guide/)
-- [Download IPTVnator](/iptvnator/download/)
+- [Download Yestream](/iptvnator/download/)

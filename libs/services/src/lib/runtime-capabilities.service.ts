@@ -309,16 +309,8 @@ export class RuntimeCapabilitiesService {
     // all-or-nothing, and folding the recordings bridge into it would make
     // older Electron builds lose the entire download manager.
     get supportsRecordings(): boolean {
-        return [
-            'recordingsGetList',
-            'recordingsGet',
-            'recordingsStop',
-            'recordingsRemove',
-            'recordingsUpdatePrograms',
-            'recordingsRevealFile',
-            'recordingsPlayFile',
-            'onRecordingsUpdate',
-        ].every((methodName) => this.hasElectronMethod(methodName));
+        // Yestream: live recording UI and settings are disabled product-wide.
+        return false;
     }
 
     get supportsPortalActivityStorage(): boolean {

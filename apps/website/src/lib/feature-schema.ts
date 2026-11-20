@@ -21,7 +21,7 @@ export function buildFeaturePageSchema(input: FeaturePageSchemaInput): Array<Rec
     {
       '@context': 'https://schema.org',
       '@type': 'SoftwareApplication',
-      name: 'IPTVnator',
+      name: 'Yestream',
       applicationCategory: 'MultimediaApplication',
       applicationSubCategory: 'IPTV player',
       operatingSystem: 'Windows, macOS, Linux',
@@ -48,7 +48,7 @@ export function buildFeaturePageSchema(input: FeaturePageSchemaInput): Array<Rec
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'IPTVnator', item: absoluteUrl('/') },
+        { '@type': 'ListItem', position: 1, name: 'Yestream', item: absoluteUrl('/') },
         { '@type': 'ListItem', position: 2, name: 'Features', item: absoluteUrl(FEATURES_HUB_HREF.replace('/iptvnator', '')) },
         { '@type': 'ListItem', position: 3, name: feature.label, item: pageUrl },
       ],

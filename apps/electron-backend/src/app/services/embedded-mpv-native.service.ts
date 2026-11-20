@@ -365,7 +365,8 @@ export class EmbeddedMpvNativeService {
                 playbackSpeed: true,
                 aspectOverride: true,
                 screenshot: false,
-                recording: true,
+                // Yestream: live recording is disabled product-wide.
+                recording: false,
                 externalSubtitles: true,
                 subtitleDelay: true,
                 subtitleStyle: true,
@@ -377,9 +378,8 @@ export class EmbeddedMpvNativeService {
             playbackSpeed: typeof addon?.setSpeed === 'function',
             aspectOverride: typeof addon?.setAspect === 'function',
             screenshot: false,
-            recording:
-                typeof addon?.startRecording === 'function' &&
-                typeof addon?.stopRecording === 'function',
+            // Yestream: live recording is disabled product-wide.
+            recording: false,
             externalSubtitles: typeof addon?.addSubtitle === 'function',
             subtitleDelay: typeof addon?.setSubtitleDelay === 'function',
             subtitleStyle: typeof addon?.setSubtitleStyle === 'function',

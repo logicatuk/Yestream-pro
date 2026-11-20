@@ -4,41 +4,41 @@
 
 ## Canonical URLs
 
-- Website: https://4gray.github.io/iptvnator/
-- Blog: https://4gray.github.io/iptvnator/blog/
-- Guides by task: https://4gray.github.io/iptvnator/guides/
+- Website: https://yestream.ai.studio/downloads
+- Blog: https://yestream.ai.studio/downloadsblog/
+- Guides by task: https://yestream.ai.studio/downloadsguides/
 - Latest Release: https://github.com/4gray/iptvnator/releases/latest
-- Downloads overview: https://4gray.github.io/iptvnator/download/
-- Download for Windows: https://4gray.github.io/iptvnator/download/windows/
-- Download for macOS: https://4gray.github.io/iptvnator/download/macos/
-- Download for Linux: https://4gray.github.io/iptvnator/download/linux/
-- Self-host the browser version with Docker: https://4gray.github.io/iptvnator/download/docker/
-- Blog topic, all guides: https://4gray.github.io/iptvnator/blog/tag/guide/
-- Blog topic, release notes: https://4gray.github.io/iptvnator/blog/tag/release/
-- Blog topic, troubleshooting: https://4gray.github.io/iptvnator/blog/tag/troubleshooting/
-- Guide, Xtream Codes setup: https://4gray.github.io/iptvnator/blog/xtream-codes-setup-guide/
-- Guide, Stalker/Ministra portal setup: https://4gray.github.io/iptvnator/blog/stalker-portal-setup-guide/
-- Guide, M3U playlist and EPG setup: https://4gray.github.io/iptvnator/blog/m3u-playlist-epg-setup-guide/
-- Guide, offline viewing with the download manager (desktop): https://4gray.github.io/iptvnator/blog/offline-downloads-guide/
-- Guide, alternative sources for a movie across your own playlists (desktop): https://4gray.github.io/iptvnator/blog/alternative-sources-guide/
-- Guide, phone remote control setup (desktop): https://4gray.github.io/iptvnator/blog/remote-control-guide/
-- Troubleshooting, EPG shows the wrong program or nothing (channel mapping, time offset): https://4gray.github.io/iptvnator/blog/epg-wrong-program-fix/
-- Guide, optional TMDB metadata enrichment (what is sent, API key, cache): https://4gray.github.io/iptvnator/blog/tmdb-metadata-guide/
-- Features overview: https://4gray.github.io/iptvnator/features/
-- Feature, M3U playlist player: https://4gray.github.io/iptvnator/features/m3u-player/
-- Feature, Xtream Codes player: https://4gray.github.io/iptvnator/features/xtream-codes-player/
-- Feature, Stalker portal player: https://4gray.github.io/iptvnator/features/stalker-portal-player/
-- Feature, TV guide (EPG): https://4gray.github.io/iptvnator/features/epg/
-- Feature, phone remote control: https://4gray.github.io/iptvnator/features/remote-control/
-- Comparisons overview: https://4gray.github.io/iptvnator/compare/
-- Compare, M3U vs Xtream Codes vs Stalker portal: https://4gray.github.io/iptvnator/compare/m3u-vs-xtream-vs-stalker/
-- Compare, playback engines (built-in vs MPV/VLC vs embedded MPV): https://4gray.github.io/iptvnator/compare/playback-engines/
-- Compare, desktop app vs self-hosted browser version: https://4gray.github.io/iptvnator/compare/desktop-vs-browser/
-- Compare, IPTVnator vs VLC (when a general media player is enough): https://4gray.github.io/iptvnator/compare/iptvnator-vs-vlc/
-- Compare, IPTVnator vs Kodi (media center with a PVR add-on vs dedicated player): https://4gray.github.io/iptvnator/compare/iptvnator-vs-kodi/
-- Compare, IPTV on a computer vs on a TV box (which room does what): https://4gray.github.io/iptvnator/compare/computer-vs-tv-box/
-- Release Notes (v0.18): https://4gray.github.io/iptvnator/blog/v0-18-release-notes/
-- Troubleshooting (macOS app damaged fix): https://4gray.github.io/iptvnator/blog/macos-arm-app-damaged-fix/
+- Downloads overview: https://yestream.ai.studio/downloadsdownload/
+- Download for Windows: https://yestream.ai.studio/downloadsdownload/windows/
+- Download for macOS: https://yestream.ai.studio/downloadsdownload/macos/
+- Download for Linux: https://yestream.ai.studio/downloadsdownload/linux/
+- Self-host the browser version with Docker: https://yestream.ai.studio/downloadsdownload/docker/
+- Blog topic, all guides: https://yestream.ai.studio/downloadsblog/tag/guide/
+- Blog topic, release notes: https://yestream.ai.studio/downloadsblog/tag/release/
+- Blog topic, troubleshooting: https://yestream.ai.studio/downloadsblog/tag/troubleshooting/
+- Guide, Xtream Codes setup: https://yestream.ai.studio/downloadsblog/xtream-codes-setup-guide/
+- Guide, Stalker/Ministra portal setup: https://yestream.ai.studio/downloadsblog/stalker-portal-setup-guide/
+- Guide, M3U playlist and EPG setup: https://yestream.ai.studio/downloadsblog/m3u-playlist-epg-setup-guide/
+- Guide, offline viewing with the download manager (desktop): https://yestream.ai.studio/downloadsblog/offline-downloads-guide/
+- Guide, alternative sources for a movie across your own playlists (desktop): https://yestream.ai.studio/downloadsblog/alternative-sources-guide/
+- Guide, phone remote control setup (desktop): https://yestream.ai.studio/downloadsblog/remote-control-guide/
+- Troubleshooting, EPG shows the wrong program or nothing (channel mapping, time offset): https://yestream.ai.studio/downloadsblog/epg-wrong-program-fix/
+- Guide, optional TMDB metadata enrichment (what is sent, API key, cache): https://yestream.ai.studio/downloadsblog/tmdb-metadata-guide/
+- Features overview: https://yestream.ai.studio/downloadsfeatures/
+- Feature, M3U playlist player: https://yestream.ai.studio/downloadsfeatures/m3u-player/
+- Feature, Xtream Codes player: https://yestream.ai.studio/downloadsfeatures/xtream-codes-player/
+- Feature, Stalker portal player: https://yestream.ai.studio/downloadsfeatures/stalker-portal-player/
+- Feature, TV guide (EPG): https://yestream.ai.studio/downloadsfeatures/epg/
+- Feature, phone remote control: https://yestream.ai.studio/downloadsfeatures/remote-control/
+- Comparisons overview: https://yestream.ai.studio/downloadscompare/
+- Compare, M3U vs Xtream Codes vs Stalker portal: https://yestream.ai.studio/downloadscompare/m3u-vs-xtream-vs-stalker/
+- Compare, playback engines (built-in vs MPV/VLC vs embedded MPV): https://yestream.ai.studio/downloadscompare/playback-engines/
+- Compare, desktop app vs self-hosted browser version: https://yestream.ai.studio/downloadscompare/desktop-vs-browser/
+- Compare, IPTVnator vs VLC (when a general media player is enough): https://yestream.ai.studio/downloadscompare/iptvnator-vs-vlc/
+- Compare, IPTVnator vs Kodi (media center with a PVR add-on vs dedicated player): https://yestream.ai.studio/downloadscompare/iptvnator-vs-kodi/
+- Compare, IPTV on a computer vs on a TV box (which room does what): https://yestream.ai.studio/downloadscompare/computer-vs-tv-box/
+- Release Notes (v0.18): https://yestream.ai.studio/downloadsblog/v0-18-release-notes/
+- Troubleshooting (macOS app damaged fix): https://yestream.ai.studio/downloadsblog/macos-arm-app-damaged-fix/
 - Source Code: https://github.com/4gray/iptvnator
 - Telegram: https://t.me/iptvnator
 - GitHub Sponsors: https://github.com/sponsors/4gray
@@ -52,5 +52,5 @@
 
 ## Machine-readable Discovery
 
-- Sitemap: https://4gray.github.io/iptvnator/sitemap-index.xml
-- Robots: https://4gray.github.io/iptvnator/robots.txt
+- Sitemap: https://yestream.ai.studio/downloadssitemap-index.xml
+- Robots: https://yestream.ai.studio/downloadsrobots.txt

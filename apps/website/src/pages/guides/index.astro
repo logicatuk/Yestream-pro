@@ -20,12 +20,12 @@ const groups = GUIDE_GROUPS.map((group) => {
   return { ...group, posts };
 }).filter((group) => group.posts.length > 0);
 const pageUrl = absoluteUrl('/guides/');
-const description = 'Practical IPTVnator guides organized by task: getting started, live TV and EPG, player controls, your library and updates.';
+const description = 'Practical Yestream guides organized by task: getting started, live TV and EPG, player controls, your library and updates.';
 const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'IPTVnator Guides',
+    name: 'Yestream Guides',
     description,
     url: pageUrl,
     hasPart: groups.flatMap((group) => group.posts.map((post) => ({
@@ -38,26 +38,26 @@ const jsonLd = [
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'IPTVnator', item: absoluteUrl('/') },
+      { '@type': 'ListItem', position: 1, name: 'Yestream', item: absoluteUrl('/') },
       { '@type': 'ListItem', position: 2, name: 'Guides', item: pageUrl },
     ],
   },
 ];
 ---
 
-<BaseLayout title="Guides | IPTVnator" description={description} jsonLd={jsonLd}>
+<BaseLayout title="Guides | Yestream" description={description} jsonLd={jsonLd}>
   <div class="mx-auto max-w-6xl px-6 pt-36 pb-24 sm:pt-40">
     <header class="max-w-3xl">
       <span class="font-mono text-xs uppercase tracking-[0.2em] text-accent-500">Guides</span>
       <h1 class="mt-4 font-display text-4xl font-bold tracking-tight text-surface-50 sm:text-5xl lg:text-6xl">
-        Get more from<br /><span class="text-accent-400">IPTVnator.</span>
+        Get more from<br /><span class="text-accent-400">Yestream.</span>
       </h1>
       <p class="mt-6 max-w-2xl text-lg leading-relaxed text-surface-400">
         Set up your first source, find something to watch, or get playback working
         the way you want. Pick a task and start there.
       </p>
       <p class="mt-5 text-sm text-surface-400">
-        New to the app? <a href={siteHref('/download/')} class="guide-link">Download IPTVnator</a>
+        New to the app? <a href={siteHref('/download/')} class="guide-link">Download Yestream</a>
         or <a href={siteHref('/compare/m3u-vs-xtream-vs-stalker/')} class="guide-link">compare source types</a>.
       </p>
     </header>

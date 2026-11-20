@@ -18,7 +18,7 @@ import ReleaseMeta from '../../components/blog/ReleaseMeta.astro';
 import Spoiler from '../../components/blog/Spoiler.astro';
 import StatusPill from '../../components/blog/StatusPill.astro';
 
-IPTVnator **v0.24** makes it easier to find what is on and keep watching. The **programme guide** follows your M3U playlist, **channels and episodes** are a keypress away in fullscreen, and **stream information** tells you what the player is receiving while it plays.
+Yestream **v0.24** makes it easier to find what is on and keep watching. The **programme guide** follows your M3U playlist, **channels and episodes** are a keypress away in fullscreen, and **stream information** tells you what the player is receiving while it plays.
 
 There is plenty around those three changes: local XMLTV files, catch-up downloads, automatic reconnection for embedded MPV, richer season artwork, and fixes for sources that disappeared during an upgrade. This release brings **27 features, 54 fixes and one performance improvement**.
 
@@ -39,7 +39,7 @@ There is plenty around those three changes: local XMLTV files, catch-up download
 />
 
 <Alert type="info" title="About the screenshots">
-These screenshots were captured with the release mock servers and fictional demonstration content. IPTVnator does not provide streams, playlists or media; you bring your own sources. The announcement cover is an AI-generated illustration, not an application screenshot.
+These screenshots were captured with the release mock servers and fictional demonstration content. Yestream does not provide streams, playlists or media; you bring your own sources. The announcement cover is an AI-generated illustration, not an application screenshot.
 </Alert>
 
 ## Programme guide, rebuilt
@@ -127,10 +127,10 @@ The player overlay now shows stream information: resolution, playback and source
 
 <BlogImageSlider
     images={[
-        { src: '/iptvnator/blog/v0-24/screenshots/dashboard-dark.png', alt: 'IPTVnator dashboard with fictional mock content in dark theme', caption: 'Dashboard, dark theme.' },
+        { src: '/iptvnator/blog/v0-24/screenshots/dashboard-dark.png', alt: 'Yestream dashboard with fictional mock content in dark theme', caption: 'Dashboard, dark theme.' },
         { src: '/iptvnator/blog/v0-24/screenshots/xtream-series-season-open-dark.png', alt: 'Series details with fictional mock episodes', caption: 'Series details and season navigation.' },
         { src: '/iptvnator/blog/v0-24/screenshots/m3u-live-groups-two-column-light.png', alt: 'M3U channel groups in light theme', caption: 'Live TV groups, light theme.' },
-        { src: '/iptvnator/blog/v0-24/screenshots/settings-light.png', alt: 'IPTVnator settings in light theme', caption: 'Settings, light theme.' },
+        { src: '/iptvnator/blog/v0-24/screenshots/settings-light.png', alt: 'Yestream settings in light theme', caption: 'Settings, light theme.' },
         { src: '/iptvnator/blog/v0-24/screenshots/xtream-vod-details-dark.png', alt: 'Movie details with fictional mock content', caption: 'Movie details, dark theme.' },
     ]}
 />
@@ -162,7 +162,7 @@ The remaining fixes are grouped below. The full changelog also records maintenan
 - Embedded MPV controls and programme-guide panels now follow the visual theme and stay readable in light and dark mode. Video overlays retain their contrasting dark backgrounds. ([#1541](https://github.com/4gray/iptvnator/pull/1541), closes [#1530](https://github.com/4gray/iptvnator/issues/1530))
 - The built-in HTML5 player now plays `.mkv`, `.webm`, `.avi`, `.mov` and other non-HLS video files directly instead of handing them to the HLS engine, which failed with a "network or provider loading error" on many Xtream episodes and movies. ArtPlayer and the HTML5 player now choose their engine by the same rule. ([#1510](https://github.com/4gray/iptvnator/pull/1510))
 - Keyboard shortcuts work again right after you click a button in the built-in player controls. Previously the clicked button kept the keyboard: after clicking fullscreen, Space left fullscreen instead of pausing, and the seek, volume and mute keys did nothing until you clicked the video. Applies to the shared controls in the web players and the Embedded MPV frame-copy engine. ([#1516](https://github.com/4gray/iptvnator/pull/1516))
-- With IPTVnator's shared controls turned off, the Video.js player's keyboard shortcuts now work again right after you click a button in its control bar. Previously the clicked button kept the keyboard: after clicking fullscreen, Space left fullscreen instead of pausing, and the seek, volume and mute keys did nothing until you clicked the video. ([#1523](https://github.com/4gray/iptvnator/pull/1523))
+- With Yestream's shared controls turned off, the Video.js player's keyboard shortcuts now work again right after you click a button in its control bar. Previously the clicked button kept the keyboard: after clicking fullscreen, Space left fullscreen instead of pausing, and the seek, volume and mute keys did nothing until you clicked the video. ([#1523](https://github.com/4gray/iptvnator/pull/1523))
 - VLC now opens without an extra console window on Windows when playback progress tracking or Reuse VLC instance is enabled. ([#1533](https://github.com/4gray/iptvnator/pull/1533), closes [#871](https://github.com/4gray/iptvnator/issues/871))
 
 **Movies, series and the dashboard**
@@ -241,7 +241,7 @@ Thank you also to [@thejdubb02](https://github.com/thejdubb02) for the original 
 
 Welcome to Bpl5966, mark-jardine and thejdubb02, whose first contributions are included in this release.
 
-A warm thank-you to everyone who reported issues, tested builds and helped others in the [Telegram community](https://t.me/iptvnator), and to the sponsors and donors who make time for this project possible. 💙 If IPTVnator is useful to you, you can support its development through [GitHub Sponsors](https://github.com/sponsors/4gray) or [Ko-fi](https://ko-fi.com/4gray).
+A warm thank-you to everyone who reported issues, tested builds and helped others in the [Telegram community](https://t.me/iptvnator), and to the sponsors and donors who make time for this project possible. 💙 If Yestream is useful to you, you can support its development through [GitHub Sponsors](https://github.com/sponsors/4gray) or [Ko-fi](https://ko-fi.com/4gray).
 
 ## Download
 
@@ -268,7 +268,7 @@ A warm thank-you to everyone who reported issues, tested builds and helped other
         {
             label: 'All Releases',
             href: 'https://github.com/4gray/iptvnator/releases',
-            hint: 'Browse every IPTVnator release.',
+            hint: 'Browse every Yestream release.',
             icon: 'github',
         },
     ]}

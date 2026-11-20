@@ -1,14 +1,14 @@
 {
-    "name": "iptvnator",
+    "name": "yestream",
     "version": "0.25.0",
     "engines": {
         "node": "^22.23.4 || ^24.22.1"
     },
     "license": "MIT",
-    "description": "IPTV player application.",
+    "description": "Yestream IPTV player application.",
     "homepage": "https://github.com/4gray/iptvnator",
     "author": {
-        "name": "4gray",
+        "name": "Yestream",
         "email": "fourgray@proton.me"
     },
     "keywords": [

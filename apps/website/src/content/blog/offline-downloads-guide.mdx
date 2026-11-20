@@ -1,5 +1,5 @@
 ---
-title: How to Download Movies and Episodes for Offline Viewing in IPTVnator
+title: How to Download Movies and Episodes for Offline Viewing in Yestream
 description: Save a movie or a whole season from your own Xtream Codes or Stalker source to disk with the desktop app, follow the queue, resume interrupted transfers, and watch from the offline library without a connection.
 pubDate: 2026-09-06
 author: 4gray
@@ -10,14 +10,14 @@ tags:
     - stalker-portal
 draft: false
 faq:
-- q: Is it legal to download movies and episodes with IPTVnator?
-  a: That depends on your provider's terms and on the law where you live, not on the app. IPTVnator only saves a copy of something your account can already stream, for personal offline viewing on the same device. It does not bypass DRM, does not provide any content, and cannot reach titles your subscription does not include. If your provider's terms forbid saving copies, do not use the feature with that source.
+- q: Is it legal to download movies and episodes with Yestream?
+  a: That depends on your provider's terms and on the law where you live, not on the app. Yestream only saves a copy of something your account can already stream, for personal offline viewing on the same device. It does not bypass DRM, does not provide any content, and cannot reach titles your subscription does not include. If your provider's terms forbid saving copies, do not use the feature with that source.
 - q: Where are the files saved, and can I move them?
   a: In your system Downloads folder unless you pick another one with Change Folder on the Downloads page. The files are ordinary media files that any player can open. If you move or rename one, the manager marks it as File missing; it keeps the entry so you can download it again or remove it.
 - q: Which file format do I get?
-  a: Exactly what the provider serves, usually an mp4 or mkv file. IPTVnator does not convert, re-encode or strip anything; the bytes on disk are the bytes the stream would have delivered to the player.
+  a: Exactly what the provider serves, usually an mp4 or mkv file. Yestream does not convert, re-encode or strip anything; the bytes on disk are the bytes the stream would have delivered to the player.
 - q: Does a download count as a connection on my account?
-  a: While a file is transferring it uses one connection, just like a playing stream. IPTVnator downloads one file at a time and queues the rest, so a season never opens six connections at once. If your subscription allows a single connection, wait for the queue to finish before you start playing.
+  a: While a file is transferring it uses one connection, just like a playing stream. Yestream downloads one file at a time and queues the rest, so a season never opens six connections at once. If your subscription allows a single connection, wait for the queue to finish before you start playing.
 - q: Can I download live TV?
   a: No. Live channels have no file to save. The Embedded MPV player can record a live stream while you watch it, and recordings appear in the same manager under Recordings; that feature is still experimental and described in the v0.23 release notes.
 - q: Does this work in the browser version or the Docker image?
@@ -25,7 +25,7 @@ faq:
 - q: What happens to my downloads if I delete the source playlist?
   a: Nothing. Downloads are stored independently of the source, so the files and their library cards stay. Only View in portal is disabled until the source exists again.
 - q: Why does a download stop at the same size every time?
-  a: Some panels cap every connection at a few hundred megabytes or a few minutes. IPTVnator reconnects automatically and continues from where the transfer stopped, verifying the last part of the file before it appends. If a transfer still ends up in Needs attention, Retry resumes it; it never starts over from zero as long as the partial file is on disk.
+  a: Some panels cap every connection at a few hundred megabytes or a few minutes. Yestream reconnects automatically and continues from where the transfer stopped, verifying the last part of the file before it appends. If a transfer still ends up in Needs attention, Retry resumes it; it never starts over from zero as long as the partial file is on disk.
 - q: Does Remove delete the file?
   a: For a finished download, no. Remove and Clear finished take the entry out of the manager and leave the media file on disk. For a failed or canceled download, the retained partial data is deleted, because it can no longer be resumed.
 ---
@@ -37,7 +37,7 @@ import StepRail from '../../components/blog/StepRail.astro';
 import LinkCards from '../../components/blog/LinkCards.astro';
 
 A long flight, a train through a tunnel, a holiday flat with Wi-Fi that gives up every evening:
-that is what the download manager in IPTVnator is for. It saves a movie or a batch of episodes
+that is what the download manager in Yestream is for. It saves a movie or a batch of episodes
 from a source you already have to your disk, and later plays them from an offline library that
 works without any connection to the provider.
 
@@ -56,7 +56,7 @@ Windows, macOS and Linux.
 - **Desktop only.** The browser version and the Docker image cannot write to your disk, so they
   show no download buttons.
 
-IPTVnator transfers **one file at a time** and queues the rest. That keeps the load on your
+Yestream transfers **one file at a time** and queues the rest. That keeps the load on your
 provider the same as one playing stream, and it keeps season downloads from opening a dozen
 connections at once.
 
@@ -68,7 +68,7 @@ system folder picker; the choice is remembered. The **Tracked downloads** figure
 the disk space used by everything the manager knows about.
 
 <Alert type="info" title="Folders and permissions">
-  IPTVnator writes only into the folder you selected. Downloads that were saved to an earlier
+  Yestream writes only into the folder you selected. Downloads that were saved to an earlier
   folder stay where they are and keep playing from there.
 </Alert>
 
@@ -111,7 +111,7 @@ the bytes received so far and the percentage, followed by everything waiting in 
 - **Pause** keeps the partial file. Resume continues from the same byte, also after you closed
   the app or it crashed; unfinished transfers come back as paused, not lost.
 - **Cancel** stops the transfer and discards the partial file.
-- Connection drops are handled for you. When a provider cuts a long connection, IPTVnator
+- Connection drops are handled for you. When a provider cuts a long connection, Yestream
   reconnects and continues from where it stopped, verifying the tail of the file before it
   appends anything. Panels that cap every connection at a few hundred megabytes no longer need a
   click per slice.
@@ -170,10 +170,10 @@ Transfers that stopped without finishing move to a **Needs attention** section:
 
 <LinkCards
   links={[
-    { label: 'Download IPTVnator', href: '/iptvnator/download/', hint: 'The desktop app for Windows, macOS and Linux is where downloads live.', icon: 'download' },
+    { label: 'Download Yestream', href: '/iptvnator/download/', hint: 'The desktop app for Windows, macOS and Linux is where downloads live.', icon: 'download' },
     { label: 'Add an Xtream Codes account', href: '/iptvnator/blog/xtream-codes-setup-guide/', hint: 'Connect the source whose movies and series you want to save.', icon: 'docs' },
     { label: 'v0.23 release notes', href: '/iptvnator/blog/v0-23-release-notes/', hint: 'The release that turned the queue into an offline library, with Live-TV recordings.', icon: 'docs' },
   ]}
 />
 
-<PostButton href="/iptvnator/download/" label="Get IPTVnator for your platform" external={false} />
+<PostButton href="/iptvnator/download/" label="Get Yestream for your platform" external={false} />

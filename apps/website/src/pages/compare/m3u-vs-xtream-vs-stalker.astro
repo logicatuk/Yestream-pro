@@ -17,7 +17,7 @@ const comparison = comparisonBySlug('m3u-vs-xtream-vs-stalker');
 const pageUrl = absoluteUrl('/compare/m3u-vs-xtream-vs-stalker/');
 const title = 'M3U vs Xtream Codes vs Stalker Portal – Which One Should You Use?';
 const description =
-  'The three ways IPTV providers hand out access, compared: an M3U playlist link, an Xtream Codes login, and a Stalker or Ministra portal with a MAC address. What each one gives you inside IPTVnator, how to tell which one you were given, and when the same account works both ways.';
+  'The three ways IPTV providers hand out access, compared: an M3U playlist link, an Xtream Codes login, and a Stalker or Ministra portal with a MAC address. What each one gives you inside Yestream, how to tell which one you were given, and when the same account works both ways.';
 
 const columns = ['M3U playlist', 'Xtream Codes', 'Stalker portal'];
 
@@ -55,7 +55,7 @@ const identify = [
   {
     title: 'A portal address and a MAC address',
     description:
-      'A Stalker or Ministra portal, the kind MAG set-top boxes use. The MAC address is the account; IPTVnator authenticates with it the way a box does.',
+      'A Stalker or Ministra portal, the kind MAG set-top boxes use. The MAC address is the account; Yestream authenticates with it the way a box does.',
   },
 ];
 
@@ -66,7 +66,7 @@ const faq: FaqEntry[] = [
   },
   {
     q: 'My M3U link contains get.php. Is that an Xtream account?',
-    a: 'Almost always, yes. Panels generate that link from an Xtream Codes account, so the same credentials work in the Xtream form and unlock the movie and series catalog. Paste the whole link into the Server URL field and IPTVnator fills in the username and password for you.',
+    a: 'Almost always, yes. Panels generate that link from an Xtream Codes account, so the same credentials work in the Xtream form and unlock the movie and series catalog. Paste the whole link into the Server URL field and Yestream fills in the username and password for you.',
   },
   {
     q: 'Can I add all three kinds of sources at once?',
@@ -77,12 +77,12 @@ const faq: FaqEntry[] = [
     a: 'Xtream and Stalker portals publish their own schedule, so the guide works without any setup. An M3U playlist needs an XMLTV source, which you add once in the settings, or which the playlist declares in its header. On the desktop app your own XMLTV sources can also fill gaps in a portal guide.',
   },
   {
-    q: 'Does IPTVnator convert a Stalker portal into an M3U playlist?',
+    q: 'Does Yestream convert a Stalker portal into an M3U playlist?',
     a: 'No. It talks to the portal directly for every list and resolves a fresh link for every stream, which is what keeps favorites and history working when temporary links expire. There is no export of portal content into a playlist file.',
   },
   {
     q: 'Where do I get any of these?',
-    a: 'From an IPTV provider you have a contract with. IPTVnator is a player: it ships without channels, playlists or accounts, and it never sells them.',
+    a: 'From an IPTV provider you have a contract with. Yestream is a player: it ships without channels, playlists or accounts, and it never sells them.',
   },
 ];
 
@@ -99,7 +99,7 @@ const jsonLd = buildComparisonPageSchema({ comparison, pageUrl, description, faq
     comparison={comparison}
     titleLead="M3U, Xtream Codes or"
     titleAccent="Stalker portal?"
-    lede="Providers hand out access in three shapes, and the shape decides how much of their library you actually see. All three work in IPTVnator; they are not equally rich."
+    lede="Providers hand out access in three shapes, and the shape decides how much of their library you actually see. All three work in Yestream; they are not equally rich."
     verdict="If your provider gave you a username and a password, use Xtream Codes. If they gave you a MAC address, use the Stalker portal form. Use a plain M3U playlist only when a link is all you have, because a playlist carries channels but no movie catalog, no provider guide and no account information."
   />
 
@@ -107,7 +107,7 @@ const jsonLd = buildComparisonPageSchema({ comparison, pageUrl, description, faq
     <ComparisonTable
       columns={columns}
       rows={rows}
-      rowHeader="Inside IPTVnator"
+      rowHeader="Inside Yestream"
       caption="Offline downloads, the local catalog and XMLTV guides are desktop-app features; the browser version plays all three source types but leaves those out."
     />
   </DownloadSection>

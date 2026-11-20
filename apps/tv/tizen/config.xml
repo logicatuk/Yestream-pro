@@ -2,17 +2,17 @@
 <widget
     xmlns="http://www.w3.org/ns/widgets"
     xmlns:tizen="http://tizen.org/ns/widgets"
-    id="https://github.com/4gray/iptvnator/tv"
+    id="https://github.com/4gray/yestream/tv"
     version="__TV_VERSION__"
     viewmodes="maximized"
 >
     <tizen:application
-        id="IPTVnatorT.TV"
-        package="IPTVnatorT"
+        id="YestreamTV.TV"
+        package="YestreamTV"
         required_version="5.5"
     />
     <tizen:profile name="tv-samsung" />
-    <name>IPTVnator TV</name>
+    <name>Yestream TV</name>
     <icon src="icon.png" />
     <content src="index.html" />
     <access origin="*" subdomains="true" />

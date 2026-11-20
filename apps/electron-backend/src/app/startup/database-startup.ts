@@ -97,7 +97,7 @@ export function reportDatabaseStartupFailure(
     void showMessageBox({
         type: 'error',
         title: 'Library could not be opened',
-        message: 'IPTVnator could not open its library database.',
-        detail: 'Sources, favorites and downloads are unavailable for now. Close any other IPTVnator window, check that the disk has free space, then restart IPTVnator.',
+        message: 'Yestream could not open its library database.',
+        detail: 'Sources, favorites and downloads are unavailable for now. Close any other Yestream window, check that the disk has free space, then restart Yestream.',
     }).catch(() => undefined);
 }

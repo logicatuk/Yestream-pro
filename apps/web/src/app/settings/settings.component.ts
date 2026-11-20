@@ -42,7 +42,6 @@ import { BUILD_COMMIT } from '../../environments/build-commit';
 import { shouldEnableServiceWorker } from '../services/runtime-config';
 import { SettingsAboutSectionComponent } from './settings-about-section.component';
 import { SettingsAppUpdateFacade } from './settings-app-update.facade';
-import { SettingsBackupSectionComponent } from './settings-backup-section.component';
 import {
     sectionOfSettingsPath,
     SETTINGS_RESTART_CONTROLS,
@@ -83,9 +82,6 @@ import {
 } from './settings-unsaved-changes-dialog.component';
 import { SettingsLeaveConfirmation } from './settings-unsaved-changes.guard';
 import { SettingsUnloadGuardService } from './settings-unload-guard.service';
-import { waitForSettingsUiFeedbackFrame } from './settings-ui-feedback';
-import { SettingsBackupFacade } from './settings-backup.facade';
-import { SettingsPlaylistResetFacade } from './settings-playlist-reset.facade';
 import { SettingsSnackbarService } from './settings-snackbar.service';
 
 /**
@@ -112,7 +108,6 @@ import { SettingsSnackbarService } from './settings-snackbar.service';
         ReactiveFormsModule,
         TranslateModule,
         SettingsAboutSectionComponent,
-        SettingsBackupSectionComponent,
         SettingsDashboardSectionComponent,
         SettingsEpgSectionComponent,
         SettingsGeneralSectionComponent,
@@ -127,12 +122,10 @@ import { SettingsSnackbarService } from './settings-snackbar.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         SettingsAppUpdateFacade,
-        SettingsBackupFacade,
         SettingsEmbeddedMpvFacade,
         SettingsEpgFacade,
         SettingsFormFacade,
         SettingsParentalLockFacade,
-        SettingsPlaylistResetFacade,
         SettingsRemoteControlFacade,
         SettingsSearchFacade,
         SettingsSnackbarService,
@@ -143,7 +136,6 @@ export class SettingsComponent
     implements OnInit, OnDestroy, SettingsLeaveConfirmation
 {
     readonly appUpdate = inject(SettingsAppUpdateFacade);
-    readonly backup = inject(SettingsBackupFacade);
     readonly embeddedMpv = inject(SettingsEmbeddedMpvFacade);
     readonly epg = inject(SettingsEpgFacade);
     private readonly libraryStore = inject(Store);
@@ -156,7 +148,6 @@ export class SettingsComponent
 
     readonly form = inject(SettingsFormFacade);
     readonly parentalLock = inject(SettingsParentalLockFacade);
-    readonly playlistReset = inject(SettingsPlaylistResetFacade);
     readonly remoteControl = inject(SettingsRemoteControlFacade);
     readonly search = inject(SettingsSearchFacade);
 
@@ -406,15 +397,6 @@ export class SettingsComponent
         });
     }
 
-    /** Picks a recording folder in the desktop shell and stages it in the form */
-    async selectRecordingFolder(): Promise<void> {
-        const folder = await this.embeddedMpv.selectRecordingFolder();
-
-        if (folder) {
-            this.form.setRecordingFolder(folder);
-        }
-    }
-
     /**
      * Triggers on form submit and saves the config object to
      * the indexed db store
@@ -503,21 +485,6 @@ export class SettingsComponent
         this.settingsSnackbar.open(
             this.translate.instant('SETTINGS.SETTINGS_SAVED')
         );
-    }
-
-    async exportData(): Promise<void> {
-        if (this.playlistReset.isRemovingAllPlaylists()) return;
-        await this.backup.exportData(waitForSettingsUiFeedbackFrame);
-    }
-
-    importData(): void {
-        if (this.playlistReset.isRemovingAllPlaylists()) return;
-        this.backup.importData(() => this.form.syncWithStore());
-    }
-
-    removeAll(): void {
-        if (this.backup.isBusy()) return;
-        this.playlistReset.confirmAndRemoveAll(waitForSettingsUiFeedbackFrame);
     }
 
     private isNavigableSection(sectionId: string): boolean {

@@ -15,9 +15,9 @@ import { absoluteUrl } from '../../lib/site';
 
 const comparison = comparisonBySlug('playback-engines');
 const pageUrl = absoluteUrl('/compare/playback-engines/');
-const title = 'Built-in Players vs MPV vs VLC in IPTVnator – Which Engine to Use';
+const title = 'Built-in Players vs MPV vs VLC in Yestream – Which Engine to Use';
 const description =
-  'IPTVnator can play a stream in three built-in web players, in an embedded mpv engine, or in MPV or VLC on your machine. What each one decodes, which in-app controls it keeps, and what you give up by switching.';
+  'Yestream can play a stream in three built-in web players, in an embedded mpv engine, or in MPV or VLC on your machine. What each one decodes, which in-app controls it keeps, and what you give up by switching.';
 
 const engineColumns = ['HTML5 / hls.js', 'Video.js', 'ArtPlayer'];
 
@@ -54,12 +54,12 @@ const guidance = [
   {
     title: 'Reach for MPV or VLC when a stream refuses',
     description:
-      'Odd codecs, unusual containers and streams that stutter in a browser engine usually play immediately in MPV or VLC. IPTVnator keeps the library, the guide and the phone remote; only the video moves to another window.',
+      'Odd codecs, unusual containers and streams that stutter in a browser engine usually play immediately in MPV or VLC. Yestream keeps the library, the guide and the phone remote; only the video moves to another window.',
   },
   {
     title: 'Try embedded MPV to keep it in the window',
     description:
-      'The experimental engine renders mpv inside IPTVnator, so you get mpv decoding without a second window, plus live-TV recording. It is opt-in under Settings › Playback and can be switched off again.',
+      'The experimental engine renders mpv inside Yestream, so you get mpv decoding without a second window, plus live-TV recording. It is opt-in under Settings › Playback and can be switched off again.',
   },
   {
     title: 'Radio and DASH decide for themselves',
@@ -75,11 +75,11 @@ const faq: FaqEntry[] = [
   },
   {
     q: 'What is the difference between MPV and embedded MPV?',
-    a: 'Both use mpv to decode. MPV opens its own window and is a stable, long-standing option. Embedded MPV renders inside the IPTVnator window, keeps the app controls and can record live TV, but it is experimental and must be enabled in Settings › Playback.',
+    a: 'Both use mpv to decode. MPV opens its own window and is a stable, long-standing option. Embedded MPV renders inside the Yestream window, keeps the app controls and can record live TV, but it is experimental and must be enabled in Settings › Playback.',
   },
   {
     q: 'Do I need to install MPV or VLC myself?',
-    a: 'For the external MPV and VLC options, yes: IPTVnator launches the copy on your machine and you can point it at a specific path in the settings. The built-in players need nothing, and embedded MPV ships with the app except on the Linux packages that use your system mpv.',
+    a: 'For the external MPV and VLC options, yes: Yestream launches the copy on your machine and you can point it at a specific path in the settings. The built-in players need nothing, and embedded MPV ships with the app except on the Linux packages that use your system mpv.',
   },
   {
     q: 'Why do subtitles behave differently between players?',
@@ -101,14 +101,14 @@ const jsonLd = buildComparisonPageSchema({ comparison, pageUrl, description, faq
 <BaseLayout
   title={title}
   description={description}
-  keywords={['IPTV player MPV', 'IPTV player VLC', 'IPTVnator playback engine', 'hls.js IPTV player', 'embedded mpv IPTV', 'IPTV player comparison']}
+  keywords={['IPTV player MPV', 'IPTV player VLC', 'Yestream playback engine', 'hls.js IPTV player', 'embedded mpv IPTV', 'IPTV player comparison']}
   jsonLd={jsonLd}
 >
   <CompareHero
     comparison={comparison}
     titleLead="Built-in players, MPV,"
     titleAccent="or VLC?"
-    lede="A stream that refuses to play is almost always a decoding problem, not a broken subscription. IPTVnator can hand the same stream to a different engine, and each engine trades something for what it gains."
+    lede="A stream that refuses to play is almost always a decoding problem, not a broken subscription. Yestream can hand the same stream to a different engine, and each engine trades something for what it gains."
     verdict="Keep the built-in player until a stream refuses to play, then send that stream to MPV or VLC. The built-in players keep every in-app control and are the only ones whose failures the app can react to; MPV and VLC decode almost anything but play in their own window."
   />
 

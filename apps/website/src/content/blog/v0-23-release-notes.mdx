@@ -18,7 +18,7 @@ import ReleaseMeta from '../../components/blog/ReleaseMeta.astro';
 import Spoiler from '../../components/blog/Spoiler.astro';
 import StatusPill from '../../components/blog/StatusPill.astro';
 
-IPTVnator **v0.23** is out — and by change count it's the largest release the project has shipped.
+Yestream **v0.23** is out — and by change count it's the largest release the project has shipped.
 
 v0.23 is about watching on your own terms. Movies and episodes can now leave the stream behind: a full **download manager** keeps an offline library, records live TV, and survives flaky providers by pausing, resuming and reconnecting on its own. When you do stream, the built-in players finally share **one set of controls** — quality selection, external subtitles, picture-in-picture — turned on by default, and a film that exists in several of your playlists offers its **alternative sources** right where playback fails. Around all of that, browsing got calmer: catalogs **scroll endlessly** instead of flipping pages, series open on the season you would actually continue, and Stalker portals authenticate, recover and explain themselves far more like real set-top boxes do.
 
@@ -101,7 +101,7 @@ v0.23 is about watching on your own terms. Movies and episodes can now leave the
 />
 
 <Alert type="info" title="About the screenshots">
-The screenshots and posters shown here come from the project's own mock servers with fictional catalog data. IPTVnator is a pure media player — it does not provide, host, bundle, or distribute any streams, playlists, or media content. You bring your own sources; the app just plays them.
+The screenshots and posters shown here come from the project's own mock servers with fictional catalog data. Yestream is a pure media player — it does not provide, host, bundle, or distribute any streams, playlists, or media content. You bring your own sources; the app just plays them.
 </Alert>
 
 ## Download manager with offline library
@@ -184,7 +184,7 @@ Shipped in [#1392](https://github.com/4gray/iptvnator/pull/1392) and [#1395](htt
 
 <StatusPill type="improved" />
 
-The biggest under-the-hood effort of this release. IPTVnator now treats a Stalker/Ministra portal the way a real MAG box does — from the first probe to the last stream header — and a long tail of "works in every other player" reports is closed as a result.
+The biggest under-the-hood effort of this release. Yestream now treats a Stalker/Ministra portal the way a real MAG box does — from the first probe to the last stream header — and a long tail of "works in every other player" reports is closed as a result.
 
 - **Portals that ask for a login and password work.** The import dialog gained username/password fields and completes the portal's `do_auth` step; a refusal shows the portal's own explanation, saved sessions resume without re-authenticating, and the keep-alive ping follows the portal's cadence ([#1354](https://github.com/4gray/iptvnator/pull/1354)).
 - **Setup discovers the real endpoint** instead of guessing from the URL: paste a bare host or a `/c` address and the app probes `portal.php` versus `server/load.php` and checks whether authentication is required. Canonical Ministra URLs finally load content, misclassified portals repair themselves on their first failure, and edited connection details are rechecked before they are saved ([#1344](https://github.com/4gray/iptvnator/pull/1344), [#1391](https://github.com/4gray/iptvnator/pull/1391), closes [#850](https://github.com/4gray/iptvnator/issues/850), [#686](https://github.com/4gray/iptvnator/issues/686) and [#755](https://github.com/4gray/iptvnator/issues/755)).
@@ -213,11 +213,11 @@ The biggest under-the-hood effort of this release. IPTVnator now treats a Stalke
 
 - **Settings are separate pages** with shareable URLs and a floating Save/Discard bar. Leaving with pending edits — by navigation, closing the window, quitting or reloading — asks whether to save, discard or keep editing ([#1384](https://github.com/4gray/iptvnator/pull/1384), [#1394](https://github.com/4gray/iptvnator/pull/1394)).
 - **Auto-detect import.** Paste whatever your provider sent you — links, Xtream credentials, a MAC with device IDs — and the Add playlist dialog prefills the matching form. Nothing you paste leaves the app ([#1445](https://github.com/4gray/iptvnator/pull/1445)).
-- **.m3u and .m3u8 files open from the file manager.** IPTVnator registers as a handler with the OS, and opening a playlist from the command line or by double-click actually imports it — previously nothing happened at all ([#1299](https://github.com/4gray/iptvnator/pull/1299), [#1301](https://github.com/4gray/iptvnator/pull/1301)).
+- **.m3u and .m3u8 files open from the file manager.** Yestream registers as a handler with the OS, and opening a playlist from the command line or by double-click actually imports it — previously nothing happened at all ([#1299](https://github.com/4gray/iptvnator/pull/1299), [#1301](https://github.com/4gray/iptvnator/pull/1301)).
 - **A second launch brings the running window to the front** instead of starting a rival copy that could not save anything — the usual reason settings appeared to reset on restart ([#1272](https://github.com/4gray/iptvnator/pull/1272), closes [#1156](https://github.com/4gray/iptvnator/issues/1156) and [#102](https://github.com/4gray/iptvnator/issues/102)).
 - **Usable on a phone again**: the navigation bar stays on screen, lists take the full width, and the categories panel became a slide-in drawer ([#1326](https://github.com/4gray/iptvnator/pull/1326), [#1332](https://github.com/4gray/iptvnator/pull/1332), closes [#1100](https://github.com/4gray/iptvnator/issues/1100)).
 - **Embedded MPV** gains an experimental *frame-copy* engine that draws the video inside the app window, so menus, dialogs and controls stop being swallowed by the picture (macOS Apple Silicon, Windows and Linux x64; needs a restart — [#1263](https://github.com/4gray/iptvnator/pull/1263)).
-- IPTVnator speaks **Hungarian**, its 19th language, contributed by [@htibcsike](https://github.com/htibcsike) ([#1263](https://github.com/4gray/iptvnator/pull/1263), closes [#1192](https://github.com/4gray/iptvnator/issues/1192)); desktop builds run on Electron 43 with native rounded corners on Linux ([#1414](https://github.com/4gray/iptvnator/pull/1414)).
+- Yestream speaks **Hungarian**, its 19th language, contributed by [@htibcsike](https://github.com/htibcsike) ([#1263](https://github.com/4gray/iptvnator/pull/1263), closes [#1192](https://github.com/4gray/iptvnator/issues/1192)); desktop builds run on Electron 43 with native rounded corners on Linux ([#1414](https://github.com/4gray/iptvnator/pull/1414)).
 
 ## Playback
 
@@ -308,7 +308,7 @@ Please back up your playlists, credentials, URLs, and other important data befor
 
 This release is shaped by the Telegram group, GitHub issues, and the people who keep the project sustainable. Thank you to everyone who sponsored or donated — it's a small group, and it's the reason this project gets real time rather than spare minutes — and to everyone who tested builds against their own portals, reported the "works in every other player" cases that make up half of this changelog, contributed translations, or answered other people's questions. 💙
 
-If IPTVnator is useful to you, the easiest way to keep it moving is [GitHub Sponsors](https://github.com/sponsors/4gray) or [Ko-fi](https://ko-fi.com/4gray).
+If Yestream is useful to you, the easiest way to keep it moving is [GitHub Sponsors](https://github.com/sponsors/4gray) or [Ko-fi](https://ko-fi.com/4gray).
 
 ## Download
 

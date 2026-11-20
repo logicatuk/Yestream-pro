@@ -7,5 +7,5 @@ contact_links:
       url: https://github.com/4gray/iptvnator/blob/master/docker/README.md
       about: Setup, environment variables and reverse-proxy notes for the self-hosted web app.
     - name: 🌐 Website and downloads
-      url: https://4gray.github.io/iptvnator/
+      url: https://yestream.ai.studio/downloads
       about: Download links for every platform, FAQ and release announcements.

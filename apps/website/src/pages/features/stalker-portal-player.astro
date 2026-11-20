@@ -15,9 +15,9 @@ import { absoluteUrl } from '../../lib/site';
 
 const feature = featureBySlug('stalker-portal-player');
 const pageUrl = absoluteUrl('/features/stalker-portal-player/');
-const title = 'Stalker Portal Player for Windows, macOS and Linux – IPTVnator';
+const title = 'Stalker Portal Player for Windows, macOS and Linux – Yestream';
 const description =
-  'IPTVnator is a free, open-source Stalker and Ministra portal player for the desktop: MAC address identity like a MAG box, automatic endpoint and portal-type detection, live TV with a program guide, radio, movies and series in every portal shape, and an account page with your expiry date.';
+  'Yestream is a free, open-source Stalker and Ministra portal player for the desktop: MAC address identity like a MAG box, automatic endpoint and portal-type detection, live TV with a program guide, radio, movies and series in every portal shape, and an account page with your expiry date.';
 
 const capabilities = [
   {
@@ -28,7 +28,7 @@ const capabilities = [
   {
     title: 'Finds the right endpoint',
     description:
-      'Enter a bare host, /c, portal.php or server/load.php. IPTVnator probes the usual endpoints, classifies the portal by how it behaves, and repairs the stored connection if the provider migrates.',
+      'Enter a bare host, /c, portal.php or server/load.php. Yestream probes the usual endpoints, classifies the portal by how it behaves, and repairs the stored connection if the provider migrates.',
   },
   {
     title: 'Live TV and radio',
@@ -70,7 +70,7 @@ const capabilities = [
 const details = [
   { term: 'Portal URL', value: 'Any http or https address: bare host, /c, portal.php or server/load.php. The proven endpoint is stored with the source.' },
   { term: 'MAC address', value: 'Normalized to 00:1A:79:XX:XX:XX; dashes, dots and lowercase are accepted. Addresses outside the Infomir range get a hint, not a refusal.' },
-  { term: 'Login and password', value: 'Only when the portal demands them; IPTVnator says so and retries once you fill them in.' },
+  { term: 'Login and password', value: 'Only when the portal demands them; Yestream says so and retries once you fill them in.' },
   { term: 'Portal messages', value: 'Refusals are shown with the portal\'s own words: login required, login rejected, device conflict, blocked.' },
   { term: 'Program guide', value: 'Portal schedule first; XMLTV sources from the desktop settings as a fallback, plus manual channel mapping.' },
   { term: 'Browser version', value: 'Works in the self-hosted web version through its backend proxy; downloads are a desktop feature.' },
@@ -79,27 +79,27 @@ const details = [
 const faq: FaqEntry[] = [
   {
     q: 'What is a Stalker portal player?',
-    a: 'A player that speaks the Stalker or Ministra middleware protocol used by MAG set-top boxes. It authenticates with a MAC address instead of a username, fetches channel lists and movie catalogs on demand, and resolves a temporary link for every stream. IPTVnator does all of that on the desktop.',
+    a: 'A player that speaks the Stalker or Ministra middleware protocol used by MAG set-top boxes. It authenticates with a MAC address instead of a username, fetches channel lists and movie catalogs on demand, and resolves a temporary link for every stream. Yestream does all of that on the desktop.',
   },
   {
     q: 'Which portal URL do I need?',
-    a: 'Whatever your provider gave you, as long as it starts with http or https. IPTVnator tries the usual endpoints behind that address and keeps the one that answers, so a bare host, /c, portal.php or server/load.php all work.',
+    a: 'Whatever your provider gave you, as long as it starts with http or https. Yestream tries the usual endpoints behind that address and keeps the one that answers, so a bare host, /c, portal.php or server/load.php all work.',
   },
   {
     q: 'Do I need a real MAG box or a serial number?',
     a: 'No. The MAC address the provider registered is enough for most portals. Serial number, device IDs and signatures are optional and only needed when the provider registered a specific box and told you the values.',
   },
   {
-    q: 'Does IPTVnator support Ministra portals with a login?',
-    a: 'Yes. When a portal asks for a login and password on top of the MAC address, IPTVnator reports it, and the optional username and password fields in the Add playlist dialog complete the authentication.',
+    q: 'Does Yestream support Ministra portals with a login?',
+    a: 'Yes. When a portal asks for a login and password on top of the MAC address, Yestream reports it, and the optional username and password fields in the Add playlist dialog complete the authentication.',
   },
   {
     q: 'Does the program guide and catch-up work with portals?',
     a: 'Yes. The portal schedule is loaded for a week and shown in the channel list and the timeline under the player. Channels the portal marks as archived can be played from the timeline.',
   },
   {
-    q: 'Does IPTVnator provide portal accounts?',
-    a: 'No. IPTVnator is a player. The portal URL and MAC address come from the provider you already have a contract with, and they are only sent to that portal.',
+    q: 'Does Yestream provide portal accounts?',
+    a: 'No. Yestream is a player. The portal URL and MAC address come from the provider you already have a contract with, and they are only sent to that portal.',
   },
 ];
 
@@ -130,7 +130,7 @@ const jsonLd = buildFeaturePageSchema({
     feature={feature}
     titleLead="A Stalker portal player"
     titleAccent="without the set-top box"
-    lede="IPTVnator talks to Stalker and Ministra middleware the way a MAG box does: MAC address identity, handshake and profile, live TV with a program guide, radio, movies and series in all three portal shapes, and an account page with your expiry date."
+    lede="Yestream talks to Stalker and Ministra middleware the way a MAG box does: MAC address identity, handshake and profile, live TV with a program guide, radio, movies and series in all three portal shapes, and an account page with your expiry date."
     facts={['MAC address identity', 'Ministra & reseller panels', 'ITV, radio, movies, series', 'Endpoint discovery']}
     screenshot={{
       src: '/iptvnator/blog/guides/screenshots/guide-stalker-live-dark.png',
@@ -149,11 +149,11 @@ const jsonLd = buildFeaturePageSchema({
       <div class="space-y-4 text-base leading-relaxed text-surface-400">
         <p>
           The Add playlist dialog asks for a title, the portal URL and the MAC address. Everything else is optional and
-          stays empty unless your provider gave you values. When you click Add, IPTVnator probes the portal, authenticates
+          stays empty unless your provider gave you values. When you click Add, Yestream probes the portal, authenticates
           with your MAC address, saves the endpoint and mode that worked, and opens the source.
         </p>
         <p>
-          Providers that migrate their portal do not break the source: on the first failure IPTVnator re-probes once and
+          Providers that migrate their portal do not break the source: on the first failure Yestream re-probes once and
           repairs the stored connection.
         </p>
       </div>

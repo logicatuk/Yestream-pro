@@ -1,6 +1,6 @@
 ---
-title: Install IPTVnator 0.25.0 on LG webOS
-description: Install the experimental IPTVnator TV package with LG Developer Mode and connect it to your self-hosted backend.
+title: Install Yestream 0.25.0 on LG webOS
+description: Install the experimental Yestream TV package with LG Developer Mode and connect it to your self-hosted backend.
 pubDate: 2026-11-12
 author: 4gray
 tags:
@@ -15,7 +15,7 @@ The experimental TV app ships as a ready-to-install IPK. It targets LG webOS 5.x
 
 ## Before you install
 
-You need a **compatible self-hosted IPTVnator backend** reachable from the TV, even if you add sources on the TV. Follow the [v0.25.0 backend setup](https://github.com/4gray/iptvnator/blob/v0.25.0/apps/tv/README.md#1-prepare-the-backend) for the matching Docker build. In `CLIENT_URL`, allow your web origin and `file://com.iptvnator.tv.prototype-webos`.
+You need a **compatible self-hosted Yestream backend** reachable from the TV, even if you add sources on the TV. Follow the [v0.25.0 backend setup](https://github.com/4gray/iptvnator/blob/v0.25.0/apps/tv/README.md#1-prepare-the-backend) for the matching Docker build. In `CLIENT_URL`, allow your web origin and `file://com.iptvnator.tv.prototype-webos`.
 
 ## Enable Developer Mode and pair the TV
 
@@ -31,6 +31,6 @@ You need a **compatible self-hosted IPTVnator backend** reachable from the TV, e
 ares-install --device living-room-tv com.iptvnator.tv.prototype_0.1.25_all.ipk
 ```
 
-Open **IPTVnator TV**. Under **Sources** or **Settings → Connection**, use **Find backend** and select your server if prompted. To connect manually, enter the API URL (for example, `http://iptvnator.home.test:4333/api`) and choose **Check and connect**. Enter your server’s access token before connecting if required.
+Open **Yestream TV**. Under **Sources** or **Settings → Connection**, use **Find backend** and select your server if prompted. To connect manually, enter the API URL (for example, `http://iptvnator.home.test:4333/api`) and choose **Check and connect**. Enter your server’s access token before connecting if required.
 
 Press **EXTEND** in Developer Mode before the session expires. LG removes sideloaded apps when Developer Mode is disabled.

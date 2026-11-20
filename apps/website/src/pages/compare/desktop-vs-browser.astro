@@ -17,9 +17,9 @@ import { absoluteUrl } from '../../lib/site';
 
 const comparison = comparisonBySlug('desktop-vs-browser');
 const pageUrl = absoluteUrl('/compare/desktop-vs-browser/');
-const title = 'IPTVnator Desktop App vs Self-Hosted Browser Version – What Differs';
+const title = 'Yestream Desktop App vs Self-Hosted Browser Version – What Differs';
 const description =
-  'IPTVnator ships as a desktop app for Windows, macOS and Linux and as a self-hosted browser version you run from one Docker container. Both play M3U, Xtream Codes and Stalker sources; the browser version leaves out external players, downloads, the XMLTV guide and the phone remote.';
+  'Yestream ships as a desktop app for Windows, macOS and Linux and as a self-hosted browser version you run from one Docker container. Both play M3U, Xtream Codes and Stalker sources; the browser version leaves out external players, downloads, the XMLTV guide and the phone remote.';
 
 const columns = ['Desktop app', 'Browser version'];
 
@@ -91,15 +91,15 @@ const jsonLd = buildComparisonPageSchema({ comparison, pageUrl, description, faq
 <BaseLayout
   title={title}
   description={description}
-  keywords={['IPTVnator docker', 'self-hosted IPTV player', 'IPTV player browser', 'IPTVnator PWA', 'IPTV player web version', 'IPTV player comparison']}
+  keywords={['Yestream docker', 'self-hosted IPTV player', 'IPTV player browser', 'Yestream PWA', 'IPTV player web version', 'IPTV player comparison']}
   jsonLd={jsonLd}
 >
   <CompareHero
     comparison={comparison}
     titleLead="Desktop app or"
     titleAccent="browser version?"
-    lede="Both are IPTVnator, built from the same code. One runs on your machine and can talk to the rest of it; the other runs in a container and can be opened from anywhere on your network."
-    verdict="Install the desktop app unless you need to reach IPTVnator from other devices or cannot install software. The browser version plays all three source types, but it cannot launch MPV or VLC, download files, store an XMLTV guide or serve the phone remote."
+    lede="Both are Yestream, built from the same code. One runs on your machine and can talk to the rest of it; the other runs in a container and can be opened from anywhere on your network."
+    verdict="Install the desktop app unless you need to reach Yestream from other devices or cannot install software. The browser version plays all three source types, but it cannot launch MPV or VLC, download files, store an XMLTV guide or serve the phone remote."
   />
 
   <DownloadSection id="matrix" eyebrow="Side by side" title="What the browser version" accent="leaves out" lead="Everything that needs to reach outside a browser tab is a desktop feature. Everything else is identical, because it is the same application.">

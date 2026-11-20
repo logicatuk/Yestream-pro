@@ -70,7 +70,7 @@ export function applicationMenuTemplate(
         ...(mac
             ? [
                   {
-                      label: 'IPTVnator',
+                      label: 'Yestream',
                       submenu: [
                           { role: 'about' },
                           { type: 'separator' },

@@ -15,9 +15,9 @@ import { absoluteUrl } from '../../lib/site';
 
 const feature = featureBySlug('epg');
 const pageUrl = absoluteUrl('/features/epg/');
-const title = 'TV Guide (EPG) for IPTV – XMLTV, Timeline and Catch-Up | IPTVnator';
+const title = 'TV Guide (EPG) for IPTV – XMLTV, Timeline and Catch-Up | Yestream';
 const description =
-  'IPTVnator turns XMLTV files and portal schedules into a program guide: what is on now in every channel list, a timeline under the player, a grid across all channels, catch-up for archived programs, and manual mapping when a channel does not match. Free and open source for Windows, macOS and Linux.';
+  'Yestream turns XMLTV files and portal schedules into a program guide: what is on now in every channel list, a timeline under the player, a grid across all channels, catch-up for archived programs, and manual mapping when a channel does not match. Free and open source for Windows, macOS and Linux.';
 
 const guide = [
   {
@@ -64,7 +64,7 @@ const sources = [
 const faq: FaqEntry[] = [
   {
     q: 'Where does the program guide come from?',
-    a: 'From XMLTV files you add or your playlist declares, and from the schedules Xtream and Stalker portals publish. IPTVnator merges them per channel: portal data first, your XMLTV sources as a fallback or, with one setting, as the preferred source.',
+    a: 'From XMLTV files you add or your playlist declares, and from the schedules Xtream and Stalker portals publish. Yestream merges them per channel: portal data first, your XMLTV sources as a fallback or, with one setting, as the preferred source.',
   },
   {
     q: 'Why does a channel show no program?',
@@ -115,7 +115,7 @@ const jsonLd = buildFeaturePageSchema({
     feature={feature}
     titleLead="A TV guide that"
     titleAccent="knows what is on"
-    lede="IPTVnator turns XMLTV files and portal schedules into a program guide: what is on now in every channel list, a timeline under the player, a grid across all channels, catch-up for archived programs, and manual mapping when a channel does not match."
+    lede="Yestream turns XMLTV files and portal schedules into a program guide: what is on now in every channel list, a timeline under the player, a grid across all channels, catch-up for archived programs, and manual mapping when a channel does not match."
     facts={['XMLTV .xml & .xml.gz', 'Timeline or list', 'Catch-up', 'Manual channel mapping']}
     screenshot={{
       src: '/iptvnator/blog/guides/screenshots/guide-xtream-live-dark.png',

@@ -18,7 +18,7 @@ const comparison = comparisonBySlug('computer-vs-tv-box');
 const pageUrl = absoluteUrl('/compare/computer-vs-tv-box/');
 const title = 'IPTV on a Computer vs on a TV Box – Which Room Does What';
 const description =
-  'Compare IPTV on a computer and a TV box for setup, programme guides and remote control. See where IPTVnator’s desktop app and experimental TV builds fit.';
+  'Compare IPTV on a computer and a TV box for setup, programme guides and remote control. See where Yestream’s desktop app and experimental TV builds fit.';
 
 const columns = ['TV box or smart TV', 'Computer'];
 
@@ -44,14 +44,14 @@ const practicalRows = [
   { label: 'Hardware', cells: ['A box, a stick or the TV itself', 'A machine you already own'] },
   { label: 'Decoding', cells: ['What the chip supports, in hardware', 'What the machine supports, plus MPV or VLC for the rest'] },
   { label: 'Updates', cells: ['When the app store offers one', 'When you install one'] },
-  { label: 'Runs IPTVnator', cells: ['Experimental builds for Fire TV, Android TV, LG webOS and Samsung Tizen', 'Desktop app for Windows, macOS and Linux'] },
+  { label: 'Runs Yestream', cells: ['Experimental builds for Fire TV, Android TV, LG webOS and Samsung Tizen', 'Desktop app for Windows, macOS and Linux'] },
 ];
 
 const apps = [
   {
     title: 'They read the same sources you already have',
     description:
-      'The Android TV players people name — TiviMate, Televizo, OTT Navigator and the rest — take M3U links, Xtream Codes logins and Stalker portals, the same three things IPTVnator takes. TiviMate’s own Google Play listing says it plainly: it is a media player and provides no content. That is why a subscription is never tied to one app.',
+      'The Android TV players people name — TiviMate, Televizo, OTT Navigator and the rest — take M3U links, Xtream Codes logins and Stalker portals, the same three things Yestream takes. TiviMate’s own Google Play listing says it plainly: it is a media player and provides no content. That is why a subscription is never tied to one app.',
   },
   {
     title: 'Android-only is common, but it is not a rule',
@@ -61,12 +61,12 @@ const apps = [
   {
     title: 'On a computer, the equivalent is a desktop player — not an emulator',
     description:
-      'Running an Android TV app in an emulator gets you a phone interface in a window, with the remote-control navigation still in the way. If the app you like is Android-only, what you actually want on a computer is a player built for one. IPTVnator reads the same three source types, so the provider details you already have are all it needs.',
+      'Running an Android TV app in an emulator gets you a phone interface in a window, with the remote-control navigation still in the way. If the app you like is Android-only, what you actually want on a computer is a player built for one. Yestream reads the same three source types, so the provider details you already have are all it needs.',
   },
   {
     title: 'Be careful what you search for',
     description:
-      'These names are heavily abused. The app stores carry near-identical copycat listings, and a large share of the search results for any of them are sites selling “subscriptions” under the app’s brand. The developers are player authors; they do not sell channels — exactly what IPTVnator says about itself.',
+      'These names are heavily abused. The app stores carry near-identical copycat listings, and a large share of the search results for any of them are sites selling “subscriptions” under the app’s brand. The developers are player authors; they do not sell channels — exactly what Yestream says about itself.',
   },
 ];
 
@@ -79,7 +79,7 @@ const guidance = [
   {
     title: 'The couch problem has an answer',
     description:
-      'A laptop on the TV is awkward only until you stop using its keyboard. IPTVnator serves a small web remote to any phone on the same Wi-Fi: channel up and down, a number pad, volume and what is on now, with nothing to install.',
+      'A laptop on the TV is awkward only until you stop using its keyboard. Yestream serves a small web remote to any phone on the same Wi-Fi: channel up and down, a number pad, volume and what is on now, with nothing to install.',
   },
   {
     title: 'Two rooms, one subscription',
@@ -95,12 +95,12 @@ const guidance = [
 
 const faq: FaqEntry[] = [
   {
-    q: 'Which TV platforms have an IPTVnator app?',
-    a: 'Experimental builds are available for Fire TV and Android TV, LG webOS and Samsung Tizen. The Fire TV and Android TV APK includes its backend. The LG and Samsung client needs a compatible IPTVnator web backend.',
+    q: 'Which TV platforms have an Yestream app?',
+    a: 'Experimental builds are available for Fire TV and Android TV, LG webOS and Samsung Tizen. The Fire TV and Android TV APK includes its backend. The LG and Samsung client needs a compatible Yestream web backend.',
   },
   {
     q: 'How do I watch the desktop app on my TV?',
-    a: 'Connect the computer to the TV with an HDMI cable, which is what most people do, and use the app full screen. A phone then works as the remote through the built-in web remote. Casting works too, though it depends on your operating system rather than on IPTVnator.',
+    a: 'Connect the computer to the TV with an HDMI cable, which is what most people do, and use the app full screen. A phone then works as the remote through the built-in web remote. Casting works too, though it depends on your operating system rather than on Yestream.',
   },
   {
     q: 'Why bother with a computer if the box already works?',
@@ -111,12 +111,12 @@ const faq: FaqEntry[] = [
     a: 'Yes. Enable the remote in Settings, scan the QR code with a phone on the same Wi-Fi, and the page gives you channel up and down, a number pad, volume for the built-in player, and the current programme. It is a web page, so nothing is installed.',
   },
   {
-    q: 'Does IPTVnator run on a Raspberry Pi?',
+    q: 'Does Yestream run on a Raspberry Pi?',
     a: 'Yes, on a Pi running a desktop Linux: arm64 and armv7l AppImage and .deb builds ship with every release. It is still the desktop app, with a desktop interface — a Pi behind the TV will want a keyboard, or the phone remote.',
   },
   {
     q: 'Is there a PC version of TiviMate?',
-    a: 'No. It is published for Android and Android TV, and there is no desktop build. Running it inside an Android emulator is not the same thing: you get a remote-driven interface in a window. On a computer the equivalent is a player built for a computer, and since TiviMate reads M3U links, Xtream Codes logins and Stalker portals, the same provider details work in IPTVnator without buying anything again.',
+    a: 'No. It is published for Android and Android TV, and there is no desktop build. Running it inside an Android emulator is not the same thing: you get a remote-driven interface in a window. On a computer the equivalent is a player built for a computer, and since TiviMate reads M3U links, Xtream Codes logins and Stalker portals, the same provider details work in Yestream without buying anything again.',
   },
   {
     q: 'Do all the TV apps lack a desktop version?',
@@ -128,7 +128,7 @@ const faq: FaqEntry[] = [
   },
   {
     q: 'Can I run the same subscription in both places?',
-    a: 'That is your provider’s decision, not the app’s. Accounts carry a maximum number of simultaneous connections, often one or two. The account dialog in IPTVnator shows the active and maximum connections for an Xtream account.',
+    a: 'That is your provider’s decision, not the app’s. Accounts carry a maximum number of simultaneous connections, often one or two. The account dialog in Yestream shows the active and maximum connections for an Xtream account.',
   },
   {
     q: 'Which one is better for the programme guide?',
@@ -150,7 +150,7 @@ const jsonLd = buildComparisonPageSchema({ comparison, pageUrl, description, faq
     titleLead="A box for the couch, a"
     titleAccent="keyboard for the setup"
     lede="These are not competing products, they are different rooms. A set-top box is unbeatable in front of the television and hopeless the moment you have to type a server URL. A computer is the opposite, and the gap between them is where most IPTV frustration lives."
-    verdict="Use the desktop app when you need a keyboard for setup or the full set of playback tools. To watch with a TV remote, try the experimental IPTVnator build for your device."
+    verdict="Use the desktop app when you need a keyboard for setup or the full set of playback tools. To watch with a TV remote, try the experimental Yestream build for your device."
   />
 
   <DownloadSection id="setup" eyebrow="Setting it up" title="Everything that needs" accent="a keyboard" lead="A d-pad and an on-screen keyboard are fine for choosing a channel and miserable for everything below.">

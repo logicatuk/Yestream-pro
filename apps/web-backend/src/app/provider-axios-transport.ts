@@ -20,6 +20,16 @@ import type {
 } from './validated-http-client';
 
 /**
+ * Many IPTV CDNs (Cloudflare and similar) reject Node/axios default agents
+ * with 403/520 while accepting a normal browser User-Agent. Electron already
+ * sends Chromium's UA, which is why the same source can work on desktop and
+ * fail on the TV/PWA backend. Match that behavior when the caller does not
+ * supply an override.
+ */
+export const DEFAULT_PROVIDER_USER_AGENT =
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+
+/**
  * Keep HTTP authority metadata separate from socket destination selection.
  * Only the hop's pinned agent can select an address; axios receives a fixed
  * logical hostname, never a user-selected connection authority. Host and TLS
@@ -73,7 +83,11 @@ export class ProviderAxiosTransport implements WebBackendHttpClient {
                     return request;
                 },
             },
-            headers: { ...options.headers, Host: target.host },
+            headers: {
+                'User-Agent': DEFAULT_PROVIDER_USER_AGENT,
+                ...options.headers,
+                Host: target.host,
+            },
         });
         return {
             ...response,

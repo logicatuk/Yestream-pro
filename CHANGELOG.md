@@ -2,7 +2,7 @@
 
 Releases **0.13.0 – 0.23.0** were published as
 [GitHub releases](https://github.com/4gray/iptvnator/releases) and
-[website posts](https://4gray.github.io/iptvnator/blog/) rather than collected
+[website posts](https://yestream.ai.studio/downloadsblog/) rather than collected
 here. This file resumes from the next release onwards; the entries below are
 kept as they were written.
 
@@ -23,7 +23,7 @@ IPTVnator 0.25 brings a shared library you can host from desktop, a redesigned b
 
 The changelog records **63 feature entries, 221 fixes and 32 performance improvements**. During the development period, **47 GitHub issues were closed as completed**.
 
-[Release blog and screenshots](https://4gray.github.io/iptvnator/blog/v0-25-release-notes/) · [Full changelog](https://github.com/4gray/iptvnator/blob/v0.25.0/CHANGELOG.md#0250-2026-11-08) · [Desktop server setup](https://github.com/4gray/iptvnator/blob/v0.25.0/docker/README.md#run-the-server-from-the-desktop-app)
+[Release blog and screenshots](https://yestream.ai.studio/downloadsblog/v0-25-release-notes/) · [Full changelog](https://github.com/4gray/iptvnator/blob/v0.25.0/CHANGELOG.md#0250-2026-11-08) · [Desktop server setup](https://github.com/4gray/iptvnator/blob/v0.25.0/docker/README.md#run-the-server-from-the-desktop-app)
 
 ![IPTVnator 0.25 release artwork](https://raw.githubusercontent.com/4gray/iptvnator/v0.25.0/apps/website/public/blog/v0-25/announce.png)
 
@@ -386,7 +386,7 @@ The stream-info overlay shows resolution, frame rates, bitrates, audio details, 
 
 **27 features · 54 fixes · 1 performance improvement** — including local XMLTV files, Xtream catch-up downloads, automatic reconnects for embedded MPV, season artwork and recovery for sources missing after an older upgrade.
 
-Read the 📝 [release story on the blog](https://4gray.github.io/iptvnator/blog/v0-24-release-notes/), the [full CHANGELOG](https://github.com/4gray/iptvnator/blob/v0.24.0/CHANGELOG.md), or the [changes since v0.23.0](https://github.com/4gray/iptvnator/compare/v0.23.0...v0.24.0).
+Read the 📝 [release story on the blog](https://yestream.ai.studio/downloadsblog/v0-24-release-notes/), the [full CHANGELOG](https://github.com/4gray/iptvnator/blob/v0.24.0/CHANGELOG.md), or the [changes since v0.23.0](https://github.com/4gray/iptvnator/compare/v0.23.0...v0.24.0).
 
 Before updating, back up your playlists and important data. Desktop startup applies database updates and clears outdated metadata matches; allow the preparation screen to finish and avoid downgrading an upgraded profile.
 

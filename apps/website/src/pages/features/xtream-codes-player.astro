@@ -15,9 +15,9 @@ import { absoluteUrl } from '../../lib/site';
 
 const feature = featureBySlug('xtream-codes-player');
 const pageUrl = absoluteUrl('/features/xtream-codes-player/');
-const title = 'Xtream Codes Player for Desktop – Live TV, Movies and Series | IPTVnator';
+const title = 'Xtream Codes Player for Desktop – Live TV, Movies and Series | Yestream';
 const description =
-  'IPTVnator is a free, open-source Xtream Codes player for Windows, macOS and Linux: live channels with the portal program guide and catch-up, movies and series with posters and details, offline downloads, a local catalog that opens instantly, and an account page with your expiry date.';
+  'Yestream is a free, open-source Xtream Codes player for Windows, macOS and Linux: live channels with the portal program guide and catch-up, movies and series with posters and details, offline downloads, a local catalog that opens instantly, and an account page with your expiry date.';
 
 const unlocked = [
   {
@@ -69,7 +69,7 @@ const unlocked = [
 
 const connection = [
   { term: 'What you enter', value: 'Server URL, username and password. A pasted get.php or player_api.php link fills the fields for you.' },
-  { term: 'Connection test', value: 'Before adding, IPTVnator asks the portal for the account status and reports active, expired, inactive or unreachable.' },
+  { term: 'Connection test', value: 'Before adding, Yestream asks the portal for the account status and reports active, expired, inactive or unreachable.' },
   { term: 'Stream formats', value: 'Live streams use HLS when the portal allows it and fall back to MPEG-TS; a manual format setting exists under Settings › Playback.' },
   { term: 'Program guide', value: 'The portal schedule is used first. On the desktop app, your own XMLTV sources fill missing channels or take precedence, as you prefer.' },
   { term: 'User-Agent', value: 'A provider-compatible IPTV player signature by default; a custom one per playlist on the desktop app.' },
@@ -79,10 +79,10 @@ const connection = [
 const faq: FaqEntry[] = [
   {
     q: 'What is an Xtream Codes player?',
-    a: 'A player that talks to the Xtream Codes API most IPTV panels expose: it signs in with a server URL, username and password and receives categories, channels, movies, series, the program guide and catch-up from the provider. IPTVnator is one, free and open source.',
+    a: 'A player that talks to the Xtream Codes API most IPTV panels expose: it signs in with a server URL, username and password and receives categories, channels, movies, series, the program guide and catch-up from the provider. Yestream is one, free and open source.',
   },
   {
-    q: 'Does IPTVnator work with any Xtream Codes provider?',
+    q: 'Does Yestream work with any Xtream Codes provider?',
     a: 'It works with panels that implement the Xtream Codes API, including the common variants in account-info actions, catch-up URL shapes and stream formats. The connection test in the Add playlist dialog tells you immediately whether the portal answers.',
   },
   {
@@ -98,8 +98,8 @@ const faq: FaqEntry[] = [
     a: 'Yes. Every account is its own source with separate favorites, history and cached catalog. The dashboard, global favorites, recent items and search combine them.',
   },
   {
-    q: 'Does IPTVnator sell Xtream Codes subscriptions?',
-    a: 'No. IPTVnator is a player. The server URL, username and password come from the provider you already have a contract with, and they are only sent to that server.',
+    q: 'Does Yestream sell Xtream Codes subscriptions?',
+    a: 'No. Yestream is a player. The server URL, username and password come from the provider you already have a contract with, and they are only sent to that server.',
   },
 ];
 
@@ -149,7 +149,7 @@ const jsonLd = buildFeaturePageSchema({
       <div class="space-y-4 text-base leading-relaxed text-surface-400">
         <p>
           A series opens with its seasons as tabs and the episodes of the selected season below, with stills and
-          descriptions from the provider or from TMDB when enrichment is on. IPTVnator remembers the position in every
+          descriptions from the provider or from TMDB when enrichment is on. Yestream remembers the position in every
           episode, offers Resume and Play next episode, and shows an Up Next rail beside the player while an episode is
           playing.
         </p>

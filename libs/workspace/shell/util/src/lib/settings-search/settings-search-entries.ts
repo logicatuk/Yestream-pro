@@ -309,25 +309,11 @@ export const SETTINGS_SEARCH_ENTRIES: readonly SettingsSearchEntry[] = [
         fallbackId: 'parental-lock-enable',
     },
     {
-        id: 'import-export-data',
-        section: 'backup',
-        labelKey: 'SETTINGS.IMPORT_EXPORT_DATA',
-        descriptionKey: 'SETTINGS.IMPORT_EXPORT_DATA_DESCRIPTION',
-        keywords: ['backup', 'restore', 'import', 'export', 'migrate'],
-    },
-    {
         id: 'source-server',
         section: 'server',
         labelKey: 'SOURCE_SYNC.TITLE',
         descriptionKey: 'SOURCE_SYNC.DESCRIPTION',
         keywords: [...SERVER_KEYWORDS, 'NAS', 'sync', 'sources'],
-    },
-    {
-        id: 'remove-all-playlists',
-        section: 'backup',
-        labelKey: 'SETTINGS.REMOVE_ALL',
-        descriptionKey: 'SETTINGS.REMOVE_ALL_DESCRIPTION',
-        keywords: ['reset', 'delete', 'remove', 'wipe', 'playlists'],
     },
     {
         id: 'version',

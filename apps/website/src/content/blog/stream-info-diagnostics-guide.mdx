@@ -1,6 +1,6 @@
 ---
 title: What Stream Info Can Tell You About Playback Problems
-description: Read resolution, frame rate, bitrate, buffer and dropped frames in IPTVnator's Stream info panel, then collect a useful playback report without guessing from a single number.
+description: Read resolution, frame rate, bitrate, buffer and dropped frames in Yestream's Stream info panel, then collect a useful playback report without guessing from a single number.
 pubDate: 2026-09-29
 author: 4gray
 heroImage: /iptvnator/blog/feature-guides/screenshots/guide-stream-info-dark.png
@@ -11,13 +11,13 @@ tags:
 draft: false
 faq:
     - q: Why are some Stream info values missing?
-      a: Different engines and streams expose different information. IPTVnator hides unavailable values rather than presenting them as zero. Let playback start before checking the panel.
+      a: Different engines and streams expose different information. Yestream hides unavailable values rather than presenting them as zero. Let playback start before checking the panel.
     - q: Why can Frame rate differ from Source frame rate?
       a: Source frame rate is information declared by the stream when available. Frame rate measures presented frames over time, so stalls and dropped frames can lower it.
     - q: Is stream bitrate an internet speed test?
       a: No. It describes the stream where that information is available. It does not measure the maximum speed of your connection or prove that a network problem is responsible for a stall.
     - q: Can I see Stream info in external VLC or MPV?
-      a: Those players have their own diagnostic tools. IPTVnator's overlay is available through its shared controls for built-in web players and experimental frame-copy Embedded MPV.
+      a: Those players have their own diagnostic tools. Yestream's overlay is available through its shared controls for built-in web players and experimental frame-copy Embedded MPV.
     - q: What should I attach to a playback issue?
       a: Include the exact app version, OS, selected player, source type and reproduction steps. If playback shows an error, use Copy diagnostics. The generated report omits stream URLs and credentials; review any extra screenshots or text you add yourself.
 ---
@@ -25,7 +25,7 @@ faq:
 import ContentDisclaimer from '../../components/blog/ContentDisclaimer.astro';
 
 A picture that freezes every few seconds and one that plays smoothly at a lower resolution
-are different problems. IPTVnator 0.24 adds **Stream info** so you can see what the player
+are different problems. Yestream 0.24 adds **Stream info** so you can see what the player
 knows while the video is running, instead of describing both as “bad quality.”
 
 The panel is useful for comparing behavior and reporting a problem. Its numbers are
@@ -107,4 +107,4 @@ the redaction of a copied report does not redact an unrelated screenshot.
 - [Why some streams need an external player](/iptvnator/blog/why-external-players-help/)
 - [Compare playback engines](/iptvnator/compare/playback-engines/)
 - [Stream info and diagnostics in 0.24](/iptvnator/blog/v0-24-release-notes/)
-- [Download IPTVnator](/iptvnator/download/)
+- [Download Yestream](/iptvnator/download/)

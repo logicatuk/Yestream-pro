@@ -97,7 +97,6 @@
                                 embeddedMpv.frameCopyAvailable()
                             "
                             [frameCopyActive]="embeddedMpv.frameCopyActive()"
-                            (selectRecordingFolder)="selectRecordingFolder()"
                         />
                     }
                     @case ('epg') {
@@ -157,35 +156,6 @@
                     @case ('server') {
                         <app-settings-server-section />
                     }
-                    @case ('backup') {
-                        <!-- Backup & data: the former Reset page is this
-                             page's last card, since it is one action. -->
-                        <app-settings-backup-section
-                            [isPwa]="isPwa"
-                            [unavailable]="!libraryReady()"
-                            [isRemovingAllPlaylists]="
-                                playlistReset.isRemovingAllPlaylists()
-                            "
-                            [isExportingData]="backup.isExportingData()"
-                            [supportsExport]="backup.supportsExport"
-                            [isImportingData]="backup.isImportingData()"
-                            [isBackupBusy]="backup.isBusy()"
-                            [importSummary]="backup.importSummary()"
-                            [importFailed]="backup.importFailed()"
-                            [canRemoveAllPlaylists]="
-                                libraryReady() && playlistReset.canRemoveAll()
-                            "
-                            [playlistDeleteSummary]="
-                                playlistReset.deleteSummary()
-                            "
-                            [removeAllProgressLabel]="
-                                playlistReset.removeAllProgressLabel()
-                            "
-                            (importData)="importData()"
-                            (exportData)="exportData()"
-                            (removeAll)="removeAll()"
-                        />
-                    }
                     @case ('about') {
                         <app-settings-about-section
                             [isDesktop]="isDesktop"
@@ -205,7 +175,6 @@
                             (openAppUpdateReleaseNotes)="
                                 appUpdate.openReleaseNotes()
                             "
-                            (openBackup)="openSection('backup')"
                         />
                     }
                     @default {

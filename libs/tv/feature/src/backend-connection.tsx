@@ -3,7 +3,7 @@ import { TvModel } from './use-tv';
 import { HomeServer } from './home-server';
 export function BackendConnection({
     tv,
-    label = 'IPTVnator backend URL',
+    label = 'Yestream backend URL',
 }: {
     tv: TvModel;
     label?: string;
@@ -13,7 +13,7 @@ export function BackendConnection({
         <section class="backend-connection" aria-label="Backend connection">
             <h2>Connect your home server</h2>
             <p class="muted">
-                Find IPTVnator on your home network, or enter your server
+                Find Yestream on your home network, or enter your server
                 address below.
             </p>
             <div
@@ -91,7 +91,7 @@ export function BackendConnection({
             ) : null}
             <p class="muted">
                 Use a backend you trust: source login details go to this
-                address. Local search checks standard IPTVnator ports; you can
+                address. Local search checks standard Yestream ports; you can
                 always enter another address.
             </p>
             <HomeServer tv={tv} />

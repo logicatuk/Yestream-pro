@@ -53,7 +53,7 @@ describe('path-utils', () => {
         expect(getIptvnatorDataRoot()).toBe(dataDir);
         expect(existsSync(dataDir)).toBe(true);
         expect(getIptvnatorDatabasePath()).toBe(
-            join(dataDir, 'databases', 'iptvnator.db')
+            join(dataDir, 'databases', 'yestream.db')
         );
     });
 
@@ -63,10 +63,10 @@ describe('path-utils', () => {
         process.env['IPTVNATOR_SOURCE_PROFILE'] = profile;
         process.env[IPTVNATOR_DATA_DIR_ENV] = tempRoot;
         try {
-            expect(getIptvnatorDatabasePath()).toBe(join(tempRoot, 'server-profiles', profile, 'databases', 'iptvnator.db'));
+            expect(getIptvnatorDatabasePath()).toBe(join(tempRoot, 'server-profiles', profile, 'databases', 'yestream.db'));
             expect(getIptvnatorDataRoot()).toBe(tempRoot);
             process.env['IPTVNATOR_SOURCE_PROFILE'] = '../outside';
-            expect(getIptvnatorDatabasePath()).toBe(join(tempRoot, 'databases', 'iptvnator.db'));
+            expect(getIptvnatorDatabasePath()).toBe(join(tempRoot, 'databases', 'yestream.db'));
         } finally {
             if (previous === undefined) delete process.env['IPTVNATOR_SOURCE_PROFILE'];
             else process.env['IPTVNATOR_SOURCE_PROFILE'] = previous;
@@ -85,7 +85,7 @@ describe('path-utils', () => {
         process.env[IPTVNATOR_DATA_DIR_ENV] = '   ';
 
         expect(getIptvnatorDataRoot()).toBe(
-            join(tempRoot, 'home', '.iptvnator')
+            join(tempRoot, 'home', '.yestream')
         );
     });
 
@@ -97,10 +97,10 @@ describe('path-utils', () => {
         expect(existsSync(e2eDataDir)).toBe(true);
     });
 
-    it('falls back to ~/.iptvnator when the env override is blank', () => {
+    it('falls back to ~/.yestream when the env override is blank', () => {
         process.env[IPTVNATOR_E2E_DATA_DIR_ENV] = '   ';
 
-        const expectedRoot = join(tempRoot, 'home', '.iptvnator');
+        const expectedRoot = join(tempRoot, 'home', '.yestream');
 
         expect(getIptvnatorDataRoot()).toBe(expectedRoot);
         expect(existsSync(expectedRoot)).toBe(true);
@@ -115,7 +115,7 @@ describe('path-utils', () => {
         expect(databaseDirectory).toBe(join(e2eDataDir, 'databases'));
         expect(existsSync(databaseDirectory)).toBe(true);
         expect(getIptvnatorDatabasePath()).toBe(
-            join(e2eDataDir, 'databases', 'iptvnator.db')
+            join(e2eDataDir, 'databases', 'yestream.db')
         );
     });
 

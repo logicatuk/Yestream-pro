@@ -30,7 +30,7 @@ export function buildDownloadPageSchema(input: DownloadPageSchemaInput): Array<R
     {
       '@context': 'https://schema.org',
       '@type': 'SoftwareApplication',
-      name: 'IPTVnator',
+      name: 'Yestream',
       applicationCategory: 'MultimediaApplication',
       applicationSubCategory: 'IPTV player',
       operatingSystem,
@@ -59,7 +59,7 @@ export function buildDownloadPageSchema(input: DownloadPageSchemaInput): Array<R
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'IPTVnator', item: absoluteUrl('/') },
+        { '@type': 'ListItem', position: 1, name: 'Yestream', item: absoluteUrl('/') },
         { '@type': 'ListItem', position: 2, name: 'Download', item: absoluteUrl('/download/') },
         { '@type': 'ListItem', position: 3, name: PLATFORM_LABELS[platform], item: pageUrl },
       ],

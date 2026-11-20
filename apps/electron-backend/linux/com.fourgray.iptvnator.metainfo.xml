@@ -30,9 +30,9 @@
     <keyword>Stalker</keyword>
   </keywords>
 
-  <url type="homepage">https://4gray.github.io/iptvnator/</url>
+  <url type="homepage">https://yestream.ai.studio/downloads</url>
   <url type="bugtracker">https://github.com/4gray/iptvnator/issues</url>
-  <url type="help">https://4gray.github.io/iptvnator/blog/</url>
+  <url type="help">https://yestream.ai.studio/downloadsblog/</url>
   <url type="donation">https://github.com/sponsors/4gray</url>
 
   <content_rating type="oars-1.0"/>
@@ -45,19 +45,19 @@
   <screenshots>
     <screenshot type="default">
       <caption>Browse channels and watch live IPTV streams</caption>
-      <image type="source">https://4gray.github.io/iptvnator/appstream/player.png</image>
+      <image type="source">https://yestream.ai.studio/downloadsappstream/player.png</image>
     </screenshot>
     <screenshot>
       <caption>Manage playlists and switch between sources</caption>
-      <image type="source">https://4gray.github.io/iptvnator/appstream/playlists.png</image>
+      <image type="source">https://yestream.ai.studio/downloadsappstream/playlists.png</image>
     </screenshot>
     <screenshot>
       <caption>View programme schedules in the integrated EPG</caption>
-      <image type="source">https://4gray.github.io/iptvnator/appstream/epg.png</image>
+      <image type="source">https://yestream.ai.studio/downloadsappstream/epg.png</image>
     </screenshot>
     <screenshot>
       <caption>Adjust playback, interface, and provider settings</caption>
-      <image type="source">https://4gray.github.io/iptvnator/appstream/settings.png</image>
+      <image type="source">https://yestream.ai.studio/downloadsappstream/settings.png</image>
     </screenshot>
   </screenshots>
 

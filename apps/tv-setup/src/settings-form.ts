@@ -16,7 +16,7 @@ export function settingsForm(
     form: HTMLFormElement,
     defaults: PhoneSettingsDefaults
 ) {
-    document.title = 'TV settings · IPTVnator';
+    document.title = 'TV settings · Yestream';
     document.querySelector('h1')!.textContent = 'Your TV. Your preferences.';
     document.querySelector('.intro')!.textContent =
         'Adjust settings here, then confirm on your television.';

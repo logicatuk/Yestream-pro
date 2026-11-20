@@ -1,6 +1,6 @@
 {
-    "appId": "com.fourgray.iptvnator",
-    "productName": "IPTVnator",
+    "appId": "com.yestream.app",
+    "productName": "Yestream",
     "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
     "fileAssociations": [
         {
@@ -62,9 +62,9 @@
         "**/embedded-mpv-runtime.json"
     ],
     "extraMetadata": {
-        "name": "iptvnator",
-        "productName": "IPTVnator",
-        "desktopName": "iptvnator",
+        "name": "yestream",
+        "productName": "Yestream",
+        "desktopName": "yestream",
         "main": "electron-backend/main.js"
     },
     "extraResources": ["dist/apps/electron-backend/workers"],
@@ -90,7 +90,7 @@
     },
     "linux": {
         "category": "Video",
-        "executableName": "iptvnator",
+        "executableName": "yestream",
         "executableArgs": ["--ozone-platform=x11"],
         "target": [
             {
@@ -124,7 +124,7 @@
     "appImage": {
         "desktop": {
             "entry": {
-                "X-AppImage-Name": "IPTVnator",
+                "X-AppImage-Name": "Yestream",
                 "X-AppImage-Homepage": "https://github.com/4gray/iptvnator",
                 "X-AppImage-UpdateURL": "https://github.com/4gray/iptvnator"
             }

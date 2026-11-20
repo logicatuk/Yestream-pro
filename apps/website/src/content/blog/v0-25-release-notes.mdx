@@ -17,7 +17,7 @@ import ReleaseMeta from '../../components/blog/ReleaseMeta.astro';
 import Spoiler from '../../components/blog/Spoiler.astro';
 import StatusPill from '../../components/blog/StatusPill.astro';
 
-IPTVnator **v0.25** makes it easier to use the same library on another screen. Start a server from the desktop app, open the library in a browser on your home network, and choose what viewing activity to share. Back in the player, a redesigned dashboard and movie and series pages put the next thing to watch within reach. A new PIN lets you hide selected categories on a shared screen.
+Yestream **v0.25** makes it easier to use the same library on another screen. Start a server from the desktop app, open the library in a browser on your home network, and choose what viewing activity to share. Back in the player, a redesigned dashboard and movie and series pages put the next thing to watch within reach. A new PIN lets you hide selected categories on a shared screen.
 
 The changelog records **63 feature entries, 221 fixes and 32 performance improvements**. Over the same development period, [47 GitHub issues were closed as completed](https://github.com/4gray/iptvnator/issues?q=is%3Aissue+is%3Aclosed+reason%3Acompleted+closed%3A2026-09-24..2026-11-08).
 
@@ -31,21 +31,21 @@ The changelog records **63 feature entries, 221 fixes and 32 performance improve
 
 <ChangeTable
     rows={[
-        { area: 'Shared library', change: 'Host an IPTVnator server from desktop Settings, or connect clients to an existing self-hosted server.', impact: 'Open the same sources on another device without adding them again' },
+        { area: 'Shared library', change: 'Host an Yestream server from desktop Settings, or connect clients to an existing self-hosted server.', impact: 'Open the same sources on another device without adding them again' },
         { area: 'Browsing', change: 'A cinematic dashboard, redesigned movie and series pages, and a clearer episode list.', impact: 'See what is on and pick up the right episode' },
         { area: 'Parental lock', change: 'Protect selected Xtream categories, Stalker genres and M3U groups with a PIN.', impact: 'Keep those categories out of view on a shared screen' },
     ]}
 />
 
 <Alert type="info" title="About the screenshots">
-The screenshots show the real application with fictional catalog data and original artwork from the release mock server. IPTVnator is a player for sources you supply. The release cover is a generated illustration.
+The screenshots show the real application with fictional catalog data and original artwork from the release mock server. Yestream is a player for sources you supply. The release cover is a generated illustration.
 </Alert>
 
 ## Host a shared library from desktop
 
 <StatusPill type="new" />
 
-Open **Settings → Server** to start the built-in server. By default it stays on this device. If you turn on home-network access, open the address shown in Settings on another device and enter the access code there. If you already run a self-hosted IPTVnator server, you can connect desktop and browser clients to it instead.
+Open **Settings → Server** to start the built-in server. By default it stays on this device. If you turn on home-network access, open the address shown in Settings on another device and enter the access code there. If you already run a self-hosted Yestream server, you can connect desktop and browser clients to it instead.
 
 Share your source definitions, including uploaded M3U playlists, and preview which local sources to import. **Favorites, Recently Viewed, and movie and series watch progress** have separate sync choices. Watch progress and watched marks sync for Xtream and Stalker. The dedicated TV client can use the server’s source library while keeping its viewing activity on the TV.
 
@@ -106,7 +106,7 @@ Set a PIN in **Settings → Parental lock**, then choose which Xtream categories
 
 <StatusPill type="new" />
 
-There are two ways to try IPTVnator with a TV remote. The dedicated **LG webOS and Samsung Tizen** client can browse M3U, Xtream and Stalker sources and accepts phone setup by QR code. The **Fire TV and Android TV** shell packages the browser app and a local backend in an APK and can hand an incompatible stream off to an installed player. Both paths are experimental and have separate installation steps. Selected flows were verified on LG BX; Samsung device playback is still awaiting validation. See the [TV client](https://github.com/4gray/iptvnator/blob/v0.25.0/apps/tv/README.md) and [Fire TV and Android TV](https://github.com/4gray/iptvnator/blob/v0.25.0/tv-shell/README.md) guides.
+There are two ways to try Yestream with a TV remote. The dedicated **LG webOS and Samsung Tizen** client can browse M3U, Xtream and Stalker sources and accepts phone setup by QR code. The **Fire TV and Android TV** shell packages the browser app and a local backend in an APK and can hand an incompatible stream off to an installed player. Both paths are experimental and have separate installation steps. Selected flows were verified on LG BX; Samsung device playback is still awaiting validation. See the [TV client](https://github.com/4gray/iptvnator/blob/v0.25.0/apps/tv/README.md) and [Fire TV and Android TV](https://github.com/4gray/iptvnator/blob/v0.25.0/tv-shell/README.md) guides.
 
 <Spoiler title="See the full list of changes">
 The [full changelog](https://github.com/4gray/iptvnator/blob/v0.25.0/CHANGELOG.md#0250-2026-11-08) lists every feature, fix and performance entry, with links to the relevant changes and issues.

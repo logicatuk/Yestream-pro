@@ -25,8 +25,8 @@ export function buildComparisonPageSchema(input: ComparisonPageSchemaInput): Arr
       description,
       url: pageUrl,
       inLanguage: 'en',
-      isPartOf: { '@type': 'WebSite', name: 'IPTVnator', url: absoluteUrl('/') },
-      about: { '@type': 'SoftwareApplication', name: 'IPTVnator', applicationCategory: 'MultimediaApplication' },
+      isPartOf: { '@type': 'WebSite', name: 'Yestream', url: absoluteUrl('/') },
+      about: { '@type': 'SoftwareApplication', name: 'Yestream', applicationCategory: 'MultimediaApplication' },
     },
     {
       '@context': 'https://schema.org',
@@ -41,7 +41,7 @@ export function buildComparisonPageSchema(input: ComparisonPageSchemaInput): Arr
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'IPTVnator', item: absoluteUrl('/') },
+        { '@type': 'ListItem', position: 1, name: 'Yestream', item: absoluteUrl('/') },
         { '@type': 'ListItem', position: 2, name: 'Compare', item: absoluteUrl('/compare/') },
         { '@type': 'ListItem', position: 3, name: comparison.label, item: pageUrl },
       ],

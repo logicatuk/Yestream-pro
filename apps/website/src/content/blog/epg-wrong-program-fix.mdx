@@ -1,6 +1,6 @@
 ---
-title: EPG Shows the Wrong Program or Nothing? Fix Channel Mapping and Time Offset in IPTVnator
-description: When the program guide is empty for a channel, shows another channel's schedule, or is off by a few hours, the fix is one of three things. How IPTVnator matches guide data to channels, how to map a channel by hand, and how to correct the time offset without touching the guide.
+title: EPG Shows the Wrong Program or Nothing? Fix Channel Mapping and Time Offset in Yestream
+description: When the program guide is empty for a channel, shows another channel's schedule, or is off by a few hours, the fix is one of three things. How Yestream matches guide data to channels, how to map a channel by hand, and how to correct the time offset without touching the guide.
 pubDate: 2026-09-06
 author: 4gray
 heroImage: /iptvnator/blog/guides/screenshots/guide-epg-map-dialog-dark.png
@@ -10,7 +10,7 @@ tags:
 draft: false
 faq:
 - q: Why does one channel have no program information while the others do?
-  a: The guide has no entry the app can attach to that channel. IPTVnator matches an XMLTV channel by the playlist's tvg-id, then by tvg-name, then by the channel name; when none of them matches an id or display name in the guide, the row stays empty. Map the channel by hand with a right-click and "Map EPG channel".
+  a: The guide has no entry the app can attach to that channel. Yestream matches an XMLTV channel by the playlist's tvg-id, then by tvg-name, then by the channel name; when none of them matches an id or display name in the guide, the row stays empty. Map the channel by hand with a right-click and "Map EPG channel".
 - q: Where is the mapping stored, and does it survive a playlist refresh?
   a: On your device, in the local database of the desktop app, keyed by the channel, not by the playlist file. Refreshing the playlist or the guide keeps it. "Remove mapping" in the same dialog deletes it.
 - q: Every program is shown a few hours early or late. Is the guide broken?
@@ -36,7 +36,7 @@ information available*, another shows the schedule of a different station, and t
 news appears at two in the afternoon. All three are common, all three have one specific
 cause, and none of them needs a new playlist.
 
-This post explains how IPTVnator decides which guide entry belongs to which channel, how to
+This post explains how Yestream decides which guide entry belongs to which channel, how to
 map a channel by hand when that decision goes wrong, and how to correct times that are off by
 a fixed amount. It applies to the desktop app on Windows, macOS and Linux, where XMLTV guides
 are downloaded and stored.
@@ -142,4 +142,4 @@ import those automatically.
   ]}
 />
 
-<PostButton href="/iptvnator/download/" label="Get IPTVnator for your platform" external={false} />
+<PostButton href="/iptvnator/download/" label="Get Yestream for your platform" external={false} />

@@ -1,5 +1,5 @@
 ---
-title: How to Control IPTVnator from Your Phone
+title: How to Control Yestream from Your Phone
 description: Turn the desktop app into a TV you can zap from the couch. Enable the remote in the settings, scan the QR code with any phone on the same Wi-Fi, and switch channels, jump to a number and see what is playing, without installing anything.
 pubDate: 2026-09-06
 author: 4gray
@@ -9,7 +9,7 @@ tags:
 draft: false
 faq:
 - q: Do I need to install an app on my phone?
-  a: No. The remote is a web page that the IPTVnator desktop app serves on your local network. Open the address from the settings, or scan its QR code, in any phone or tablet browser. Adding the page to the home screen gives it an icon like an app.
+  a: No. The remote is a web page that the Yestream desktop app serves on your local network. Open the address from the settings, or scan its QR code, in any phone or tablet browser. Adding the page to the home screen gives it an icon like an app.
 - q: Does the remote work away from home?
   a: No, and it should not. The page is meant for the Wi-Fi your computer is on and has no login or encryption. Do not forward the port through your router; anyone who could reach it could change channels on your player.
 - q: The page does not load on my phone. What should I check?
@@ -20,7 +20,7 @@ faq:
   a: The remote can change the volume only for the built-in players in the M3U player. Xtream and Stalker views and the favorites and recent collections currently pass channel commands only, and MPV, VLC and Embedded MPV keep their own volume.
 - q: Can several phones use the remote at once?
   a: Yes. Every page that is open polls the same status and sends the same commands; the last command wins.
-- q: Does it work with the browser version of IPTVnator?
+- q: Does it work with the browser version of Yestream?
   a: No. Only the desktop app on Windows, macOS or Linux can host the small web server behind the remote.
 - q: Which sources can I control?
   a: Live TV from M3U playlists, Xtream Codes and Stalker portals, Stalker radio, and the favorites, recent and global collections. Movies and series are not part of the remote.
@@ -103,7 +103,7 @@ Work down this list; one of these covers almost every case.
    that isolates its clients from each other.
 2. **Firewall.** Windows asks whether to allow the app through the firewall the first time the
    remote starts; if that prompt was dismissed, allow the port in the firewall settings. macOS
-   users with the firewall on need to allow incoming connections for IPTVnator.
+   users with the firewall on need to allow incoming connections for Yestream.
 3. **VPN.** A VPN on the computer or the phone usually routes traffic away from the local
    network. Pause it while you use the remote.
 4. **Several addresses.** If the settings list more than one, try the others. Docker, VPN and
@@ -123,8 +123,8 @@ remote off in the settings when you use the computer on a network you do not con
   links={[
     { label: 'Phone remote control', href: '/iptvnator/features/remote-control/', hint: 'The feature page with the full list of controls and answers.', icon: 'docs' },
     { label: 'Load an M3U playlist and add an EPG', href: '/iptvnator/blog/m3u-playlist-epg-setup-guide/', hint: 'The source whose built-in player also takes volume from the remote.', icon: 'docs' },
-    { label: 'Download IPTVnator', href: '/iptvnator/download/', hint: 'The desktop app for Windows, macOS and Linux.', icon: 'download' },
+    { label: 'Download Yestream', href: '/iptvnator/download/', hint: 'The desktop app for Windows, macOS and Linux.', icon: 'download' },
   ]}
 />
 
-<PostButton href="/iptvnator/download/" label="Get IPTVnator for your platform" external={false} />
+<PostButton href="/iptvnator/download/" label="Get Yestream for your platform" external={false} />

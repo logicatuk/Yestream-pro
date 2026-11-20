@@ -128,7 +128,7 @@ async function start(lanAddress: string): Promise<void> {
                 PORT: String(PORT),
             },
             stdio: 'ignore',
-            serviceName: 'IPTVnator Hosted Server',
+            serviceName: 'Yestream Hosted Server',
         });
         child = process;
         const instanceId = await new Promise<string>((resolve, reject) => {

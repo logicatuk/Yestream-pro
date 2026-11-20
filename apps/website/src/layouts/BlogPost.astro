@@ -53,11 +53,11 @@ const blogPostSchema = {
   },
   publisher: {
     '@type': 'Organization',
-    name: 'IPTVnator',
-    url: 'https://4gray.github.io/iptvnator/',
+    name: 'Yestream',
+    url: 'https://yestream.ai.studio/downloads',
     logo: {
       '@type': 'ImageObject',
-      url: 'https://4gray.github.io/iptvnator/favicon-256x256.png',
+      url: 'https://yestream.ai.studio/downloadsfavicon-256x256.png',
     },
   },
   mainEntityOfPage: canonicalURL,
@@ -79,7 +79,7 @@ const jsonLd = faqSchema ? [blogPostSchema, faqSchema] : blogPostSchema;
 ---
 
 <BaseLayout
-  title={`${title} | IPTVnator Blog`}
+  title={`${title} | Yestream Blog`}
   description={description}
   image={heroImage}
   type="article"

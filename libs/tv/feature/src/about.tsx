@@ -29,7 +29,7 @@ export function About({ build }: { build: TvBuildInfo }) {
     const platform = tvPlatformLabels[currentTvPlatform()];
     const application = [
         ['TV app version', build.version],
-        ['IPTVnator release', build.releaseVersion],
+        ['Yestream release', build.releaseVersion],
         [
             'Revision',
             build.revision
@@ -50,7 +50,7 @@ export function About({ build }: { build: TvBuildInfo }) {
         ['This device', runtime],
     ];
     return (
-        <section class="about-page" aria-label="About IPTVnator TV">
+        <section class="about-page" aria-label="About Yestream TV">
             <h2>About {build.title}</h2>
             <p class="muted">
                 An open-source IPTV player for your playlists and portals.
