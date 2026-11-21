@@ -132,12 +132,12 @@ export const DEFAULT_SETTINGS = {
     preferUploadedEpgOverXtream: false,
     epgViewMode: 'timeline',
     epgOffsetMinutes: 0,
-    tmdb: { enabled: false, apiKey: '' },
+    tmdb: { enabled: true, apiKey: '' },
 };
 
 export const DEFAULT_APP_UPDATE_STATUS: ElectronBridgeAppUpdateStatus = {
     currentVersion: '0.22.0',
-    manualDownloadUrl: 'https://github.com/4gray/iptvnator/releases/latest',
+    manualDownloadUrl: 'https://github.com/logicatuk/Yestream-pro/releases/latest',
     status: ELECTRON_BRIDGE_APP_UPDATE_STATUSES.Idle,
     supportedSelfUpdate: true,
     channel: 'stable',

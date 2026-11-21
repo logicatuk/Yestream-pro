@@ -81,18 +81,49 @@ for (const upgradeFails of [false, true]) {
                 }
                 return route.fulfill({ json: {} });
             });
-            await openSettings(page);
-            await openSettingsSection(page, 'tmdb');
-            await setSwitch(
-                page.getByTestId('tmdb-enabled').getByRole('switch'),
-                true
-            );
-            await page.getByTestId('tmdb-api-key').fill('fictional-e2e-key');
-            await page.getByTestId('age-rating-country').click();
-            await page
-                .getByRole('option', { name: 'Germany (DE)', exact: true })
-                .click();
-            await saveSettings(page);
+            await page.evaluate(async () => {
+                await new Promise<void>((resolve, reject) => {
+                    const open = indexedDB.open('ngStorage');
+                    open.onerror = () =>
+                        reject(open.error ?? new Error('idb open'));
+                    open.onsuccess = () => {
+                        const db = open.result;
+                        const storeName = db.objectStoreNames.contains(
+                            'localStorage'
+                        )
+                            ? 'localStorage'
+                            : db.objectStoreNames[0];
+                        const tx = db.transaction(storeName, 'readwrite');
+                        const store = tx.objectStore(storeName);
+                        const read = store.get('settings');
+                        read.onsuccess = () => {
+                            const current =
+                                read.result && typeof read.result === 'object'
+                                    ? (read.result as Record<string, unknown>)
+                                    : {};
+                            store.put(
+                                {
+                                    ...current,
+                                    ageRatingCountry: 'DE',
+                                    tmdb: {
+                                        enabled: true,
+                                        apiKey: '',
+                                        ...((current['tmdb'] as object) ?? {}),
+                                    },
+                                },
+                                'settings'
+                            );
+                        };
+                        tx.oncomplete = () => {
+                            db.close();
+                            resolve();
+                        };
+                        tx.onerror = () =>
+                            reject(tx.error ?? new Error('idb tx'));
+                    };
+                });
+            });
+            await page.reload();
             await page.evaluate(
                 async ({ lookupKey, tmdbId, legacy }) => {
                     await window.electron.dbSetTmdbMetadata({

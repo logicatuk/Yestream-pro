@@ -26,7 +26,7 @@ const nightlyReleases = [
         body: '## Nightly\n\nNewest master build\n\n<!-- iptvnator-commit: abc -->',
         draft: false,
         html_url:
-            'https://github.com/4gray/iptvnator-nightly/releases/tag/v0.23.1-nightly.20260915.7',
+            'https://github.com/logicatuk/Yestream-pro-nightly/releases/tag/v0.23.1-nightly.20260915.7',
         name: 'Nightly 0.23.1-nightly.20260915.7',
         prerelease: true,
         published_at: '2026-09-15T00:00:00.000Z',
@@ -36,7 +36,7 @@ const nightlyReleases = [
         body: 'not a nightly',
         draft: false,
         html_url:
-            'https://github.com/4gray/iptvnator-nightly/releases/tag/v9.9.9',
+            'https://github.com/logicatuk/Yestream-pro-nightly/releases/tag/v9.9.9',
         name: 'stray tag',
         prerelease: false,
         published_at: '2026-09-14T12:00:00.000Z',
@@ -46,7 +46,7 @@ const nightlyReleases = [
         body: '## Nightly\n\nOlder master build',
         draft: false,
         html_url:
-            'https://github.com/4gray/iptvnator-nightly/releases/tag/v0.23.1-nightly.20260914.5',
+            'https://github.com/logicatuk/Yestream-pro-nightly/releases/tag/v0.23.1-nightly.20260914.5',
         name: 'Nightly 0.23.1-nightly.20260914.5',
         prerelease: true,
         published_at: '2026-09-14T00:00:00.000Z',
@@ -74,7 +74,7 @@ const githubReleases = [
     {
         body: '## New\n\nFresh build',
         draft: false,
-        html_url: 'https://github.com/4gray/iptvnator/releases/tag/v0.24.0',
+        html_url: 'https://github.com/logicatuk/Yestream-pro/releases/tag/v0.24.0',
         name: 'v0.24.0',
         prerelease: false,
         published_at: '2026-06-29T00:00:00.000Z',
@@ -83,7 +83,7 @@ const githubReleases = [
     {
         body: '## Current\n\nUpdate details',
         draft: false,
-        html_url: 'https://github.com/4gray/iptvnator/releases/tag/v0.23.0',
+        html_url: 'https://github.com/logicatuk/Yestream-pro/releases/tag/v0.23.0',
         name: 'v0.23.0',
         prerelease: false,
         published_at: '2026-06-28T00:00:00.000Z',
@@ -93,7 +93,7 @@ const githubReleases = [
         body: 'beta notes',
         draft: false,
         html_url:
-            'https://github.com/4gray/iptvnator/releases/tag/v0.22.5-beta',
+            'https://github.com/logicatuk/Yestream-pro/releases/tag/v0.22.5-beta',
         name: 'v0.22.5-beta',
         prerelease: true,
         published_at: '2026-06-27T00:00:00.000Z',
@@ -102,7 +102,7 @@ const githubReleases = [
     {
         body: '## Older\n\nBug fixes',
         draft: false,
-        html_url: 'https://github.com/4gray/iptvnator/releases/tag/v0.22.0',
+        html_url: 'https://github.com/logicatuk/Yestream-pro/releases/tag/v0.22.0',
         name: 'v0.22.0',
         prerelease: false,
         published_at: '2026-06-20T00:00:00.000Z',
@@ -173,7 +173,7 @@ describe('AppUpdateService', () => {
         await expect(service.checkForUpdates()).resolves.toEqual({
             currentVersion: '0.22.0',
             manualDownloadUrl:
-                'https://github.com/4gray/iptvnator/releases/latest',
+                'https://github.com/logicatuk/Yestream-pro/releases/latest',
             status: ELECTRON_BRIDGE_APP_UPDATE_STATUSES.Unsupported,
             supportedSelfUpdate: false,
             channel: 'stable',
@@ -197,7 +197,7 @@ describe('AppUpdateService', () => {
         expect(service.getStatus()).toEqual({
             currentVersion: '0.0',
             manualDownloadUrl:
-                'https://github.com/4gray/iptvnator/releases/latest',
+                'https://github.com/logicatuk/Yestream-pro/releases/latest',
             status: ELECTRON_BRIDGE_APP_UPDATE_STATUSES.Unsupported,
             supportedSelfUpdate: false,
             channel: 'stable',
@@ -223,7 +223,7 @@ describe('AppUpdateService', () => {
         expect(service.getStatus()).toEqual({
             currentVersion: '0.22.0',
             manualDownloadUrl:
-                'https://github.com/4gray/iptvnator/releases/latest',
+                'https://github.com/logicatuk/Yestream-pro/releases/latest',
             status: ELECTRON_BRIDGE_APP_UPDATE_STATUSES.Unsupported,
             supportedSelfUpdate: false,
             channel: 'stable',
@@ -714,7 +714,7 @@ describe('AppUpdateService', () => {
             channel: 'nightly',
             installedChannel: 'stable',
             manualDownloadUrl:
-                'https://github.com/4gray/iptvnator-nightly/releases',
+                'https://github.com/logicatuk/Yestream-pro-nightly/releases',
         });
 
         await service.checkForUpdates();
@@ -791,7 +791,7 @@ describe('AppUpdateService', () => {
             channel: 'nightly',
             latestVersion: '0.23.0',
             manualDownloadUrl:
-                'https://github.com/4gray/iptvnator-nightly/releases',
+                'https://github.com/logicatuk/Yestream-pro-nightly/releases',
             status: ELECTRON_BRIDGE_APP_UPDATE_STATUSES.Downloading,
             // The retained download still belongs to the channel it was found on.
             verdictChannel: 'stable',
@@ -980,7 +980,7 @@ describe('AppUpdateService', () => {
         const pageOne = Array.from({ length: 10 }, (_, offset) => ({
             body: `release ${34 - offset}`,
             draft: false,
-            html_url: `https://github.com/4gray/iptvnator/releases/tag/v0.${34 - offset}.0`,
+            html_url: `https://github.com/logicatuk/Yestream-pro/releases/tag/v0.${34 - offset}.0`,
             name: `v0.${34 - offset}.0`,
             prerelease: false,
             published_at: '2026-07-01T00:00:00.000Z',

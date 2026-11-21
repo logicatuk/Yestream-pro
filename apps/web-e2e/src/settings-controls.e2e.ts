@@ -111,14 +111,9 @@ for (const theme of ['Light', 'Dark'] as const) {
         await expect(
             page.getByRole('button', { name: 'Export', exact: true })
         ).toBeFocused();
-        await page.locator('[data-test-id="settings-section-tmdb"]').click();
-        const clear = page.getByRole('button', {
-            name: 'Clear cache',
-            exact: true,
-        });
-        await expect(clear).toBeDisabled();
-        await expect(clear).toHaveCSS('border-top-left-radius', '10px');
-        await expect(clear).toHaveCSS('opacity', '0.4');
+        await expect(
+            page.locator('[data-test-id="settings-section-tmdb"]')
+        ).toHaveCount(0);
     });
 }
 

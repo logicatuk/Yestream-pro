@@ -26,7 +26,7 @@ subscriptions; you still bring your own sources.
 
 This guide covers the current source synchronization feature. **Favorites,
 recently viewed items and watch progress remain on each device.** The
-[Docker README](https://github.com/4gray/iptvnator/blob/master/docker/README.md#connect-your-clients)
+[Docker README](https://github.com/logicatuk/Yestream-pro/blob/master/docker/README.md#connect-your-clients)
 is the canonical connection and troubleshooting reference.
 
 ## 1. Start Yestream on your server
@@ -59,7 +59,7 @@ docker compose up -d
 
 The first start initializes the database. The persistent `data` folder holds
 the shared sources; keep it when updating or recreating the container. The
-repository also includes a [Compose file with a health check](https://github.com/4gray/iptvnator/blob/master/docker/docker-compose.yml).
+repository also includes a [Compose file with a health check](https://github.com/logicatuk/Yestream-pro/blob/master/docker/docker-compose.yml).
 
 ## 2. Find the two values for the Server page
 
@@ -96,7 +96,7 @@ A standalone PWA can also connect manually through that page.
 For browser installation and access over HTTPS, use a reverse proxy with a
 trusted certificate. An HTTPS PWA cannot connect to a plain HTTP backend.
 Set `CLIENT_URL` to the actual browser origin; multiple allowed origins may be
-comma-separated. The [Docker configuration reference](https://github.com/4gray/iptvnator/blob/master/docker/README.md#runtime-configuration)
+comma-separated. The [Docker configuration reference](https://github.com/logicatuk/Yestream-pro/blob/master/docker/README.md#runtime-configuration)
 covers reverse proxies, certificates and advanced deployments.
 
 ## 4. Import existing sources
@@ -140,7 +140,7 @@ not work.
 
 The form keeps your address and token after a failed attempt so you can correct
 them and retry. Further diagnostics are in the
-[client troubleshooting guide](https://github.com/4gray/iptvnator/blob/master/docker/README.md#if-connecting-fails).
+[client troubleshooting guide](https://github.com/logicatuk/Yestream-pro/blob/master/docker/README.md#if-connecting-fails).
 
 ## Backups and updates
 

@@ -108,19 +108,8 @@ async function selectPlayer(
     }
 }
 
-async function enableTmdb(page: Page): Promise<void> {
-    await page.goto('/workspace/settings/tmdb');
-    await setSwitch(
-        page.locator('[data-test-id="tmdb-enabled"] [role="switch"]'),
-        true
-    );
-    await page.locator('[data-test-id="tmdb-api-key"]').fill('e2e-key');
-    // The M3U recognition toggle only appears once TMDB itself is on, and it
-    // ships enabled — assert rather than click, so a changed default fails.
-    await expect(
-        page.locator('[data-test-id="tmdb-m3u-vod-details"] [role="switch"]')
-    ).toBeChecked();
-    await saveSettings(page);
+async function enableTmdb(_page: Page): Promise<void> {
+    // TMDB is always-on with a bundled key; no settings UI to configure.
 }
 
 async function importPlaylist(

@@ -27,18 +27,37 @@ test.beforeEach(async ({ page }) => {
     await configureMockProviderBackend(page);
 });
 
-test('@web @metadata age-rating country saves independently of TMDB', async ({
+test('@web @metadata age-rating country persists without Metadata settings UI', async ({
     page,
 }) => {
     await setAgeRatingCountry(page, 'DE');
-    await page.reload();
+    await page.goto('/workspace/settings/about');
     await expect(
-        page.locator('[data-test-id="age-rating-country"]')
-    ).toContainText('Germany');
-    await expect(
-        page.locator('[data-test-id="tmdb-enabled"] [role="switch"]')
-    ).not.toBeChecked();
-    await expect(page.locator('[data-test-id="tmdb-api-key"]')).toHaveCount(0);
+        page.locator('[data-test-id="settings-section-tmdb"]')
+    ).toHaveCount(0);
+    const stored = await page.evaluate(async () => {
+        return await new Promise<string>((resolve, reject) => {
+            const open = indexedDB.open('ngStorage');
+            open.onerror = () => reject(open.error ?? new Error('idb open'));
+            open.onsuccess = () => {
+                const db = open.result;
+                const storeName = db.objectStoreNames.contains('localStorage')
+                    ? 'localStorage'
+                    : db.objectStoreNames[0];
+                const tx = db.transaction(storeName, 'readonly');
+                const read = tx.objectStore(storeName).get('settings');
+                read.onsuccess = () => {
+                    const value = read.result as
+                        | { ageRatingCountry?: string }
+                        | undefined;
+                    db.close();
+                    resolve(value?.ageRatingCountry ?? '');
+                };
+                read.onerror = () => reject(read.error ?? new Error('idb get'));
+            };
+        });
+    });
+    expect(stored).toBe('DE');
 });
 
 for (const type of ['vod', 'series'] as const) {

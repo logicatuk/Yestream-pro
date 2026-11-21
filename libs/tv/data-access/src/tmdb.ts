@@ -17,6 +17,7 @@ import {
     type TmdbTvDetails,
     type TmdbMovieDetails,
     extractYear,
+    DEFAULT_TMDB_API_KEY,
     toTmdbLanguage,
     tmdbBackdropUrl,
     tmdbPosterUrl,
@@ -58,17 +59,20 @@ export function checkTmdbKey(key: string, signal: AbortSignal) {
     );
 }
 
-/** One settings snapshot owns its cache: replacing/disabling the key retires it. */
+/** One settings snapshot owns its cache; key changes retire the cache. */
 export class TvMetadata {
     private readonly cache = new TmdbMemoryCache();
     constructor(private readonly settings: UserData['tmdb']) {}
+    private apiKey() {
+        return this.settings.apiKey.trim() || DEFAULT_TMDB_API_KEY;
+    }
     private enabled() {
-        return this.settings.enabled && !!this.settings.apiKey.trim();
+        return Boolean(this.apiKey());
     }
     private runtime() {
         return {
             isEnabled: () => this.enabled(),
-            apiKey: () => this.settings.apiKey.trim(),
+            apiKey: () => this.apiKey(),
             appLanguage: () => this.settings.language,
             language: () => toTmdbLanguage(this.settings.language),
         };

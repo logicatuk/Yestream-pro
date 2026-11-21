@@ -53,7 +53,7 @@ describe('SettingsAboutSectionComponent app updates', () => {
             currentVersion: '0.22.0',
             latestVersion: '0.23.0',
             manualDownloadUrl:
-                'https://github.com/4gray/iptvnator/releases/latest',
+                'https://github.com/logicatuk/Yestream-pro/releases/latest',
             status: ELECTRON_BRIDGE_APP_UPDATE_STATUSES.Available,
             supportedSelfUpdate: true,
             channel: 'stable',
@@ -78,7 +78,7 @@ describe('SettingsAboutSectionComponent app updates', () => {
             currentVersion: '0.22.0',
             latestVersion: '0.23.0',
             manualDownloadUrl:
-                'https://github.com/4gray/iptvnator/releases/latest',
+                'https://github.com/logicatuk/Yestream-pro/releases/latest',
             status: ELECTRON_BRIDGE_APP_UPDATE_STATUSES.Downloaded,
             supportedSelfUpdate: true,
             channel: 'stable',
@@ -100,7 +100,7 @@ describe('SettingsAboutSectionComponent app updates', () => {
             currentVersion: '0.22.0',
             latestVersion: '0.22.0',
             manualDownloadUrl:
-                'https://github.com/4gray/iptvnator/releases/latest',
+                'https://github.com/logicatuk/Yestream-pro/releases/latest',
             status: ELECTRON_BRIDGE_APP_UPDATE_STATUSES.NotAvailable,
             supportedSelfUpdate: true,
             channel: 'stable',
@@ -120,7 +120,7 @@ describe('SettingsAboutSectionComponent app updates', () => {
             currentVersion: '0.22.0',
             latestVersion: '0.23.0',
             manualDownloadUrl:
-                'https://github.com/4gray/iptvnator/releases/latest',
+                'https://github.com/logicatuk/Yestream-pro/releases/latest',
             status: ELECTRON_BRIDGE_APP_UPDATE_STATUSES.Unsupported,
             supportedSelfUpdate: false,
             channel: 'stable',
@@ -137,7 +137,7 @@ describe('SettingsAboutSectionComponent app updates', () => {
         configureComponent(fixture, {
             currentVersion: '0.22.0',
             manualDownloadUrl:
-                'https://github.com/4gray/iptvnator/releases/latest',
+                'https://github.com/logicatuk/Yestream-pro/releases/latest',
             status: ELECTRON_BRIDGE_APP_UPDATE_STATUSES.Unsupported,
             supportedSelfUpdate: false,
             channel: 'stable',
@@ -268,7 +268,7 @@ describe('SettingsAboutSectionComponent update channel', () => {
         fixture.componentRef.setInput('appUpdateStatus', {
             currentVersion: '0.23.0',
             manualDownloadUrl:
-                'https://github.com/4gray/iptvnator/releases/latest',
+                'https://github.com/logicatuk/Yestream-pro/releases/latest',
             status: ELECTRON_BRIDGE_APP_UPDATE_STATUSES.Idle,
             supportedSelfUpdate: true,
             channel: 'stable',

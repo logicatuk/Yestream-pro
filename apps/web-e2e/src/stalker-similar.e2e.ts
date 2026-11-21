@@ -1,5 +1,4 @@
 import { expect, test } from './fixtures';
-import { setSwitch } from './e2e-helpers';
 import { configureMockProviderBackend } from './provider-target-route';
 import {
     addStalkerPortal,
@@ -187,18 +186,6 @@ for (const { media, title, similar, from, sameCategory } of scenarios) {
             })
         );
 
-        await page.goto('/workspace/settings/tmdb');
-        await setSwitch(
-            page.locator('[data-test-id="tmdb-enabled"] [role="switch"]'),
-            true
-        );
-        await page
-            .locator('[data-test-id="tmdb-api-key"]')
-            .fill('fictional-fixture-key');
-        await page.getByRole('button', { name: 'Save changes' }).click();
-        await expect(
-            page.getByRole('button', { name: 'Save changes' })
-        ).toBeHidden();
         await page.goto('/');
         await addStalkerPortal(page, {
             name: 'Fictional Portal',

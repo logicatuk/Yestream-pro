@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { DialogShellComponent } from '@iptvnator/ui/components';
 
-const guide = 'https://github.com/4gray/iptvnator/blob/master/docker/README.md';
+const guide = 'https://github.com/logicatuk/Yestream-pro/blob/master/docker/README.md';
 
 export const SERVER_GUIDES = {
     desktop: guide + '#run-the-server-from-the-desktop-app',

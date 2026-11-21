@@ -146,11 +146,6 @@ export function phoneClient() {
                               layout: data.layout,
                               epg: values.has('epg'),
                               ...playbackValues(form, values),
-                              tmdb: {
-                                  enabled: values.has('enabled'),
-                                  language: data.language,
-                                  apiKey: data.apiKey,
-                              },
                           }
                         : data
                 )

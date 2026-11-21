@@ -75,7 +75,6 @@ import { SettingsRemoteControlSectionComponent } from './settings-remote-control
 import { SettingsServerSectionComponent } from './settings-server-section.component';
 import { SettingsSearchFacade } from './settings-search.facade';
 import { SettingsSearchResultsComponent } from './settings-search-results.component';
-import { SettingsTmdbSectionComponent } from './settings-tmdb-section.component';
 import {
     SettingsUnsavedChangesChoice,
     SettingsUnsavedChangesDialogComponent,
@@ -117,7 +116,6 @@ import { SettingsSnackbarService } from './settings-snackbar.service';
         SettingsRemoteControlSectionComponent,
         SettingsSearchResultsComponent,
         SettingsServerSectionComponent,
-        SettingsTmdbSectionComponent,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [

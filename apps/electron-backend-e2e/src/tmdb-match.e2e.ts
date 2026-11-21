@@ -6,11 +6,7 @@ import {
     expect,
     goToDashboard,
     launchElectronApp,
-    openSettings,
-    openSettingsSection,
     resetMockServers,
-    saveSettings,
-    setSwitch,
     test,
     waitForXtreamWorkspaceReady,
     xtreamMockServer,
@@ -67,14 +63,6 @@ test('@tmdb-match @electron @persistence manual correction preserves an existing
                       },
             });
         });
-        await openSettings(page);
-        await openSettingsSection(page, 'tmdb');
-        await setSwitch(
-            page.getByTestId('tmdb-enabled').getByRole('switch'),
-            true
-        );
-        await page.getByTestId('tmdb-api-key').fill('fictional-e2e-key');
-        await saveSettings(page);
         await goToDashboard(page);
         await addXtreamPortal(page, credentials);
         await waitForXtreamWorkspaceReady(page);

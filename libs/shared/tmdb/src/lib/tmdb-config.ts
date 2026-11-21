@@ -10,14 +10,11 @@ export const TMDB_STILL_SIZE = 'w300';
 export const TMDB_SEASON_POSTER_SIZE = 'w342';
 
 /**
- * Embedded application API key used when the user has not configured their
- * own key in settings. Empty by design: distributed builds ship without a
- * key (each user brings their own — that matches TMDB's personal-use
- * terms). CI can optionally inject a key via the TMDB_API_KEY secret and
- * tools/tmdb/inject-tmdb-key.mjs. With no key available, enrichment stays
- * inactive even when enabled in settings.
+ * Bundled TMDB API key used for always-on metadata enrichment. Product
+ * builds ship with this key so users never enter one in settings. CI can
+ * still override via TMDB_API_KEY + tools/tmdb/inject-tmdb-key.mjs.
  */
-export const DEFAULT_TMDB_API_KEY = '';
+export const DEFAULT_TMDB_API_KEY = '23829a23ce35d4698331b31d4c662bd9';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 

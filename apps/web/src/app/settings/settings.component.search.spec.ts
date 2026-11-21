@@ -183,15 +183,16 @@ describe('SettingsComponent search', () => {
     });
 
     it('falls back to the controlling row when the searched row is hidden', () => {
-        // The API key row only renders while TMDB is enabled.
-        setSettingsSection('tmdb');
+        // Offset only renders while the TV guide is enabled.
+        setSettingsSection('epg');
+        component.settingsForm.controls.epgEnabled.setValue(false);
         fixture.detectChanges();
-        expect(query('[data-setting-id="tmdb-api-key"]')).toBeNull();
+        expect(query('[data-setting-id="epg-offset"]')).toBeNull();
 
-        settingsSearch.reveal(entry('tmdb-api-key'));
+        settingsSearch.reveal(entry('epg-offset'));
         fixture.detectChanges();
 
-        expect(query('[data-setting-id="tmdb-enable"]')?.classList).toContain(
+        expect(query('[data-setting-id="epg-enabled"]')?.classList).toContain(
             SETTINGS_REVEALED_CLASS
         );
     });

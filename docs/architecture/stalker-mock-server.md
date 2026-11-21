@@ -585,12 +585,12 @@ open, merged and closed-unmerged PRs. Relevant existing changes:
 
 | PR | Merge commit | What it covers; why it is not this fix |
 | --- | --- | --- |
-| [#1218](https://github.com/4gray/iptvnator/pull/1218) | `d308749e2` | Inline/external season/episode metadata, labels and saved progress; does not resolve episode media files. |
-| [#1253](https://github.com/4gray/iptvnator/pull/1253) | `9885178f3` | Refreshes embedded VOD `series[]` and parent commands from collection snapshots; explicitly excludes lazy Ministra. |
-| [#1364](https://github.com/4gray/iptvnator/pull/1364) | `e197409b1` | Static vs temporary-link decisions and authentication; episode requests still use create_link with the supplied command. |
-| [#1545](https://github.com/4gray/iptvnator/pull/1545) | `249cd38a6` | Title-derived season display, stable tracking/provider coordinates and rejection of stale episode replies across series modes; does not traverse episode files. |
-| [#1825](https://github.com/4gray/iptvnator/pull/1825) | `93c5f1a05` | Playlist ownership and stale handoffs; the reproduction uses one portal and sequential clicks. |
-| [#1984](https://github.com/4gray/iptvnator/pull/1984) | `2e80a0153` | Xtream hidden-category filtering; no Stalker resolver change. |
+| [#1218](https://github.com/logicatuk/Yestream-pro/pull/1218) | `d308749e2` | Inline/external season/episode metadata, labels and saved progress; does not resolve episode media files. |
+| [#1253](https://github.com/logicatuk/Yestream-pro/pull/1253) | `9885178f3` | Refreshes embedded VOD `series[]` and parent commands from collection snapshots; explicitly excludes lazy Ministra. |
+| [#1364](https://github.com/logicatuk/Yestream-pro/pull/1364) | `e197409b1` | Static vs temporary-link decisions and authentication; episode requests still use create_link with the supplied command. |
+| [#1545](https://github.com/logicatuk/Yestream-pro/pull/1545) | `249cd38a6` | Title-derived season display, stable tracking/provider coordinates and rejection of stale episode replies across series modes; does not traverse episode files. |
+| [#1825](https://github.com/logicatuk/Yestream-pro/pull/1825) | `93c5f1a05` | Playlist ownership and stale handoffs; the reproduction uses one portal and sequential clicks. |
+| [#1984](https://github.com/logicatuk/Yestream-pro/pull/1984) | `2e80a0153` | Xtream hidden-category filtering; no Stalker resolver change. |
 
 All these merge commits are ancestors of the audited master. No unfinished
 fix candidate was found that warrants a duplicate PR or a separate branch

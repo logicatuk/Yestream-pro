@@ -3,7 +3,6 @@ import { LibrarySettings } from './library-settings';
 import { PhoneSetup } from './phone-setup';
 import { BackendConnection } from './backend-connection';
 import { DirectAccessProbe } from './direct-probe';
-import { TmdbSettings } from './tmdb-settings';
 import { SettingsPreferences } from './settings-preferences';
 import {
     settingsCategories,
@@ -106,11 +105,6 @@ export function Settings({
                                 key={`playback:${phoneRevision}`}
                                 tv={tv}
                                 category="playback"
-                            />
-                        ) : id === 'metadata' ? (
-                            <TmdbSettings
-                                key={`tmdb:${phoneRevision}`}
-                                tv={tv}
                             />
                         ) : id === 'about' ? (
                             <About build={buildInfo} />

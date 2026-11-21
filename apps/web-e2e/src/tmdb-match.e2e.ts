@@ -6,7 +6,6 @@ import {
     addStalkerPortal,
     interceptStalkerRequests,
 } from './stalker-portal.fixture';
-import { setSwitch } from './e2e-helpers';
 
 const selectedPlot = 'Синтетическое описание выбранного сериала.';
 const providerPlot = 'Синтетическое описание из портала.';
@@ -170,15 +169,6 @@ test('@tmdb-match persists a manual series match, restores provider metadata and
             },
         });
     });
-    await page.goto('/workspace/settings/tmdb');
-    await setSwitch(
-        page.locator('[data-test-id="tmdb-enabled"] [role="switch"]'),
-        true
-    );
-    await page.locator('[data-test-id="tmdb-api-key"]').fill('fixture-key');
-    const saveSettings = page.getByRole('button', { name: 'Save changes' });
-    await saveSettings.click();
-    await expect(saveSettings).toBeHidden();
     await page.goto('/');
     await addStalkerPortal(page, {
         name: 'Synthetic Portal',

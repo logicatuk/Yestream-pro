@@ -22,7 +22,6 @@ import {
 import { UpdateChannelOption } from './settings.models';
 import { markSectionForCheckOnFormEvents } from './settings-section-form-render';
 import { provideFormFieldDefaults } from '@iptvnator/ui/components/form-field-defaults';
-import { APP_ICONS } from '@iptvnator/ui/components/app-icons';
 import { PwaUpdateService } from '../services/pwa-update.service';
 
 interface SettingsUpdateStatusChip {
@@ -47,7 +46,6 @@ interface SettingsUpdateStatusChip {
     styleUrls: ['./settings-about-section.component.scss'],
 })
 export class SettingsAboutSectionComponent {
-    protected readonly appIcons = APP_ICONS;
     readonly isDesktop = input(false);
     readonly version = input<string | undefined>();
     readonly buildCommit = input<string | undefined>();

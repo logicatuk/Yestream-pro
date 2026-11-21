@@ -13,19 +13,19 @@ const item: Media = {
     description: 'Provider plot',
     raw: { stream_id: 42, container_extension: 'mkv', tmdb_id: 603 },
 };
-test('TMDB defaults remain opt-in for existing TV data, without touching user history', () => {
+test('TMDB defaults stay always-on for existing TV data, without touching user history', () => {
     const data = initialData();
     const { tmdb: _omitted, ...historical } = data;
     historical.favorites = [item];
     const restored = hydrateUserData(historical);
     assert.deepEqual(restored.tmdb, {
-        enabled: false,
+        enabled: true,
         apiKey: '',
         language: 'en',
     });
     assert.equal(restored.favorites[0], item);
 });
-test('TV enrichment patches editorial fields only and skips live or disabled requests', async (t) => {
+test('TV enrichment patches editorial fields only and skips live requests', async (t) => {
     const fetch = t.mock.method(globalThis, 'fetch', async () =>
         Response.json({
             id: 603,
@@ -49,10 +49,6 @@ test('TV enrichment patches editorial fields only and skips live or disabled req
         })
     );
     const signal = new AbortController().signal;
-    assert.equal(
-        (await new TvMetadata(initialData().tmdb).enrich(item, signal)).item,
-        item
-    );
     const metadata = new TvMetadata({
         enabled: true,
         apiKey: 'fake-key',

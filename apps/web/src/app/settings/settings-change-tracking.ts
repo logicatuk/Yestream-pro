@@ -46,9 +46,6 @@ export const SETTINGS_CONTROL_SECTIONS: Readonly<Record<string, string>> = {
     dashboardRails: 'dashboard',
     remoteControl: 'remote-control',
     remoteControlPort: 'remote-control',
-    tmdb: 'tmdb',
-    ageRatingCountry: 'tmdb',
-    m3uVodDetails: 'tmdb',
     updateChannel: 'about',
 };
 

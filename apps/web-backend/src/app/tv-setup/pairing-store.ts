@@ -52,11 +52,6 @@ export class PairingStore {
                     layout: parsed.layout,
                     epg: parsed.epg,
                     ...playbackDraft(parsed),
-                    tmdb: {
-                        enabled: parsed.tmdb.enabled,
-                        language: parsed.tmdb.language,
-                        hasKey: defaults?.tmdb.hasKey === true,
-                    },
                 };
             } catch {
                 throw new PairingError(400, 'Invalid settings defaults.');

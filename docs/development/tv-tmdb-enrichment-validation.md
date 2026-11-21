@@ -3,7 +3,7 @@
 Product scope: optional TMDB metadata, people/filmographies, series presentation,
 episode cards and navigation in the framework-free TV application. Work is on
 `codex/tv-tmdb-enrichment`; the final tested/reviewed SHA is recorded in
-[PR #2009](https://github.com/4gray/iptvnator/pull/2009).
+[PR #2009](https://github.com/logicatuk/Yestream-pro/pull/2009).
 
 The [TV contract](../architecture/tv-application.md#artwork-and-optional-tmdb-metadata)
 and [TMDB contract](../architecture/tmdb-metadata-enrichment.md) remain canonical.

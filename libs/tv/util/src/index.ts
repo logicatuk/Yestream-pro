@@ -168,7 +168,7 @@ export const initialData = (): UserData => ({
     catalogSort: { movie: 'recent', series: 'recent' },
     layout: 'cinema',
     epg: true,
-    tmdb: { enabled: false, apiKey: '', language: 'en' },
+    tmdb: { enabled: true, apiKey: '', language: 'en' },
     seriesAutoplay: true,
     playerUpNextCard: true,
 });

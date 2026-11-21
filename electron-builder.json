@@ -125,8 +125,8 @@
         "desktop": {
             "entry": {
                 "X-AppImage-Name": "Yestream",
-                "X-AppImage-Homepage": "https://github.com/4gray/iptvnator",
-                "X-AppImage-UpdateURL": "https://github.com/4gray/iptvnator"
+                "X-AppImage-Homepage": "https://github.com/logicatuk/Yestream-pro",
+                "X-AppImage-UpdateURL": "https://github.com/logicatuk/Yestream-pro"
             }
         }
     },

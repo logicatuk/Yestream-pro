@@ -1,7 +1,7 @@
-# IPTVnator
+# Yestream
 
 <p align="center">
-  <img src="./apps/web/src/assets/icons/favicon.256x256.png" width="96" height="96" alt="IPTVnator icon" />
+  <img src="./apps/web/src/assets/icons/favicon.256x256.png" width="96" height="96" alt="Yestream icon" />
 </p>
 
 **A free, open-source IPTV player for macOS, Windows, Linux and the browser.**
@@ -13,24 +13,24 @@ TV, browse movies and series, and pick up where you left off.
 [Getting started](https://yestream.ai.studio/downloadsguides/) ·
 [Gallery](docs/screenshots.md)
 
-[![Release](https://img.shields.io/github/v/release/4gray/iptvnator)](https://github.com/4gray/iptvnator/releases)
-[![CI](https://img.shields.io/github/actions/workflow/status/4gray/iptvnator/ci.yml?branch=master&label=CI)](https://github.com/4gray/iptvnator/actions/workflows/ci.yml)
-[![Downloads](https://img.shields.io/github/downloads/4gray/iptvnator/total)](https://github.com/4gray/iptvnator/releases)
+[![Release](https://img.shields.io/github/v/release/4gray/Yestream)](https://github.com/4gray/Yestream/releases)
+[![CI](https://img.shields.io/github/actions/workflow/status/4gray/Yestream/ci.yml?branch=master&label=CI)](https://github.com/4gray/Yestream/actions/workflows/ci.yml)
+[![Downloads](https://img.shields.io/github/downloads/4gray/Yestream/total)](https://github.com/4gray/Yestream/releases)
 
-![IPTVnator dashboard with continue watching and live favorites in light and dark themes](./apps/website/public/screenshots/dashboard-themes.webp)
+![Yestream dashboard with continue watching and live favorites in light and dark themes](./apps/website/public/screenshots/dashboard-themes.webp)
 
 > [!IMPORTANT]
-> IPTVnator is a **player**: it does not provide or sell subscriptions, channels,
+> Yestream is a **player**: it does not provide or sell subscriptions, channels,
 > playlists or other media. Screenshots show demonstration content. Download
 > only from the [official website](https://yestream.ai.studio/downloads) or
-> [GitHub Releases](https://github.com/4gray/iptvnator/releases).
-> [Learn about unofficial websites](https://yestream.ai.studio/downloadsblog/beware-unofficial-iptvnator-websites/).
+> [GitHub Releases](https://github.com/4gray/Yestream/releases).
+> [Learn about unofficial websites](https://yestream.ai.studio/downloadsblog/beware-unofficial-Yestream-websites/).
 
 ## Download
 
 Get the latest stable desktop release from the
 [download page](https://yestream.ai.studio/downloadsdownload/) or
-[GitHub Releases](https://github.com/4gray/iptvnator/releases).
+[GitHub Releases](https://github.com/4gray/Yestream/releases).
 
 | macOS | Windows | Linux |
 | --- | --- | --- |
@@ -83,14 +83,14 @@ reverse proxies, playback troubleshooting and platform limits.
 ### LG webOS and Samsung Tizen
 
 LG webOS and Samsung Tizen share a dedicated, experimental TV client for M3U,
-Xtream Codes and Stalker / Ministra sources. It requires a compatible IPTVnator
+Xtream Codes and Stalker / Ministra sources. It requires a compatible Yestream
 web backend. Build and install the package for your TV in Developer Mode.
 
 - [LG webOS installation](apps/tv/README.md#installation)
 - [Samsung Tizen installation and signing](apps/tv/tizen/README.md)
 
 Add sources from your phone by scanning a QR code, or connect the TV to your
-self-hosted IPTVnator source library. Favorites, history and resume positions
+self-hosted Yestream source library. Favorites, history and resume positions
 currently stay on the TV.
 
 See the [TV README](apps/tv/README.md) for compatibility, phone setup, source
@@ -114,7 +114,7 @@ Enigma2 receivers. Organize channels in a browser and watch with the receiver's
 remote. Tested on the Dreambox DM520 and Vu+ Uno 4K SE.
 
 [Dreaminator on GitHub](https://github.com/4gray/dreaminator) ·
-[Dreaminator on the IPTVnator blog](https://yestream.ai.studio/downloadsblog/dreaminator-enigma2/)
+[Dreaminator on the Yestream blog](https://yestream.ai.studio/downloadsblog/dreaminator-enigma2/)
 
 ## Help and development
 
@@ -126,8 +126,8 @@ remote. Tested on the Dreambox DM520 and Vu+ Uno 4K SE.
 - [Developer and agent documentation](docs/maintenance/agent-context-map.md) —
   subsystem contracts; [AGENTS.md](AGENTS.md) and the
   [agent workflow](docs/development/agent-workflow.md) cover contribution rules.
-- [Report a bug](https://github.com/4gray/iptvnator/issues) or join
-  [Telegram](https://t.me/iptvnator) / [Bluesky](https://bsky.app/profile/iptvnator.bsky.social).
+- [Report a bug](https://github.com/4gray/Yestream/issues) or join
+  [Telegram](https://t.me/Yestream) / [Bluesky](https://bsky.app/profile/Yestream.bsky.social).
 
 ## Support the project
 
@@ -136,18 +136,18 @@ Support development through [GitHub Sponsors](https://github.com/sponsors/4gray)
 
 ## Contributors
 
-[![GitHub commit contributors](https://img.shields.io/github/contributors/4gray/iptvnator)](https://github.com/4gray/iptvnator/graphs/contributors)
+[![GitHub commit contributors](https://img.shields.io/github/contributors/4gray/Yestream)](https://github.com/4gray/Yestream/graphs/contributors)
 
 <details>
 <summary>Show contributors</summary>
 
-[![Contributor avatars](https://contrib.rocks/image?repo=4gray/iptvnator)](https://github.com/4gray/iptvnator/graphs/contributors)
+[![Contributor avatars](https://contrib.rocks/image?repo=4gray/Yestream)](https://github.com/4gray/Yestream/graphs/contributors)
 
 </details>
 
 ## License and trademark
 
-The source code is [MIT licensed](LICENSE.md). The IPTVnator name and logo are
+The source code is [MIT licensed](LICENSE.md). The Yestream name and logo are
 unregistered trademarks of the project owner and are not covered by that
 license. Forks and redistributions, including app-store submissions, must use
 a different name and their own icon. See [TRADEMARK.md](TRADEMARK.md).

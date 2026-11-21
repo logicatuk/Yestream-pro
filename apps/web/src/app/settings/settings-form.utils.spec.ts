@@ -316,7 +316,7 @@ describe('settings form utils — age rating country', () => {
         form.patchValue({ ageRatingCountry: 'de' });
         const saved = createSettingsFromFormValue(form, {} as Settings);
         expect(saved.ageRatingCountry).toBe('DE');
-        expect(saved.tmdb?.enabled).toBe(false);
+        expect(saved.tmdb?.enabled).toBe(true);
     });
 
     it('normalizes invalid imported countries to automatic', () => {

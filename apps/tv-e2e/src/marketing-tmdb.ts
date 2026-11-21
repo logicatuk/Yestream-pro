@@ -1,7 +1,7 @@
-import { expect, type Page } from '@playwright/test';
-import { fillTvField, nav, xtream } from './helpers';
+import type { Page } from '@playwright/test';
+import { xtream } from './helpers';
 
-/** Exercise the real metadata client against the local fictional API and artwork. */
+/** Route TMDB traffic to the local fictional API and artwork. */
 export async function enableMarketingTmdb(page: Page): Promise<void> {
     for (const origin of [
         'https://api.themoviedb.org/3/**',
@@ -15,17 +15,4 @@ export async function enableMarketingTmdb(page: Page): Promise<void> {
             await route.fulfill({ response });
         });
     }
-    await nav(page, 'Settings');
-    await page
-        .getByRole('tab', { name: 'Metadata · TMDB', exact: false })
-        .click();
-    await page.getByLabel('Use TMDB metadata').check();
-    await fillTvField(
-        page.getByLabel('TMDB API key or read access token'),
-        'synthetic-demo-key'
-    );
-    await page.getByRole('button', { name: 'Save TMDB settings' }).click();
-    await expect(page.locator('.tmdb-settings [role=status]')).toContainText(
-        'saved'
-    );
 }

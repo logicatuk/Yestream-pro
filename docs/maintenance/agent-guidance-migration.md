@@ -1,8 +1,8 @@
 # Agent guidance migration ledger
 
 Issue #1643, 2026-09-20. Immutable source commit: `d4df0fd81a71f0bf196ceac2b45efe3697feb973`.
-Original files: [AGENTS.md](https://github.com/4gray/iptvnator/blob/d4df0fd81a71f0bf196ceac2b45efe3697feb973/AGENTS.md)
-(1,217 lines, 88,565 bytes) and [CLAUDE.md](https://github.com/4gray/iptvnator/blob/d4df0fd81a71f0bf196ceac2b45efe3697feb973/CLAUDE.md)
+Original files: [AGENTS.md](https://github.com/logicatuk/Yestream-pro/blob/d4df0fd81a71f0bf196ceac2b45efe3697feb973/AGENTS.md)
+(1,217 lines, 88,565 bytes) and [CLAUDE.md](https://github.com/logicatuk/Yestream-pro/blob/d4df0fd81a71f0bf196ceac2b45efe3697feb973/CLAUDE.md)
 (2,022 lines, 231,858 bytes). Table coordinates refer to these immutable files,
 not the shortened roots. This is audit evidence; it is not a required startup document.
 

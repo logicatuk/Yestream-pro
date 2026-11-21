@@ -35,43 +35,34 @@ test('Stalker artwork resolves root paths and falls through blank or unsupported
         'https://cdn.example/a.jpg?size=300'
     );
 });
-test('phone settings defaults never export a key; blank replacement preserves it and unrelated TV data', () => {
+test('phone settings leave TMDB always-on and preserve unrelated TV data', () => {
     const data = initialData();
     data.tmdb.apiKey = 'existing-secret';
     const defaults = phoneSettingsDefaults(data);
     assert.equal(JSON.stringify(defaults).includes('existing-secret'), false);
-    assert.equal(defaults.tmdb.hasKey, true);
+    assert.equal('tmdb' in defaults, false);
     const next = applySettingsDraft(data, {
         ...defaults,
         layout: 'shelf',
-        tmdb: { enabled: true, language: 'ru', apiKey: '  ' },
     });
     assert.equal(next.tmdb.apiKey, 'existing-secret');
+    assert.equal(next.tmdb.enabled, true);
     assert.equal(next.layout, 'shelf');
     assert.equal(next.sources, data.sources);
     assert.equal(next.positions, data.positions);
 });
-test('phone settings reject missing required key at commit, malformed values and oversized keys', () => {
+test('phone settings reject malformed values and ignore attacker-controlled fields', () => {
     const value = {
         layout: 'cinema',
         epg: true,
-        tmdb: { enabled: true, language: 'en' },
     };
-    assert.throws(() => applySettingsDraft(initialData(), value));
     assert.throws(() => parseSettingsDraft({ ...value, epg: 'true' }));
-    assert.throws(() =>
-        parseSettingsDraft({
-            ...value,
-            tmdb: { ...value.tmdb, apiKey: 'x'.repeat(4097) },
-        })
-    );
     const next = applySettingsDraft(initialData(), {
         ...value,
-        tmdb: { ...value.tmdb, apiKey: 'new-key' },
         backend: 'https://attacker.invalid',
-    });
-    assert.equal(next.tmdb.apiKey, 'new-key');
+    } as never);
     assert.equal(next.backend, '');
+    assert.equal(next.tmdb.enabled, true);
 });
 test('phone settings carry the playback switches and keep the TV values when absent', () => {
     const data = initialData();
@@ -82,7 +73,6 @@ test('phone settings carry the playback switches and keep the TV values when abs
     const value = {
         layout: 'cinema',
         epg: true,
-        tmdb: { enabled: false, language: 'en' },
     };
     const kept = applySettingsDraft(data, value);
     assert.equal(kept.seriesAutoplay, false);

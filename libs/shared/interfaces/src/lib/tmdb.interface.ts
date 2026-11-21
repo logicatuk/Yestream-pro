@@ -15,17 +15,18 @@ export type TmdbMediaType = 'movie' | 'tv';
 export type TmdbCacheMediaType = TmdbMediaType | 'person';
 
 /**
- * Opt-in TMDB enrichment settings. Enrichment sends movie/series titles to
- * TMDB, so it is disabled by default for privacy.
+ * TMDB enrichment settings. Metadata is always on when a key resolves
+ * (bundled default or optional stored override). `enabled` is retained for
+ * backward-compatible persisted settings but ignored at runtime.
  */
 export interface TmdbSettings {
     enabled: boolean;
-    /** Optional user-provided API key overriding the embedded default */
+    /** Optional stored API key overriding the embedded default */
     apiKey?: string;
 }
 
 export const DEFAULT_TMDB_SETTINGS: TmdbSettings = {
-    enabled: false,
+    enabled: true,
     apiKey: '',
 };
 

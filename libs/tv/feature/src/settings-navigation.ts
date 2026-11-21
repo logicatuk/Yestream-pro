@@ -9,7 +9,6 @@ export const settingsCategories = [
     ['appearance', 'Appearance', 'Home composition'],
     ['epg', 'Programme guide', 'Provider schedules'],
     ['playback', 'Playback', 'Autoplay next episode'],
-    ['metadata', 'Metadata · TMDB', 'Artwork & descriptions'],
     ['remote', 'Your remote', 'Buttons & navigation'],
     ['about', 'About', 'Version & device information'],
 ] as const;
@@ -42,6 +41,9 @@ function available(element: HTMLElement): boolean {
 }
 
 export function useSettingsNavigation(memory: SettingsMemory) {
+    if (!settingsCategories.some(([id]) => id === memory.category)) {
+        memory.category = 'connection';
+    }
     const [category, setCategory] = useState(memory.category);
     const root = useRef<HTMLDivElement>(null);
     const categoryButton = () =>

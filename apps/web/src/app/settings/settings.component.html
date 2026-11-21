@@ -130,12 +130,6 @@
                             (toggleQrCode)="remoteControl.toggleQrCode($event)"
                         />
                     }
-                    @case ('tmdb') {
-                        <app-settings-tmdb-section
-                            [form]="settingsForm"
-                            (transferSaved)="form.applyTransferredTmdbKey()"
-                        />
-                    }
                     @case ('parental') {
                         <app-settings-parental-lock-section
                             [enabled]="parentalLock.enabled()"

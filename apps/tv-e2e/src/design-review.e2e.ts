@@ -62,10 +62,11 @@ test.describe('TV design review capture', () => {
             password: 'marketing',
         });
         await enableMarketingTmdb(page);
-        await shot(page, '02-settings-tmdb');
+        await nav(page, 'Settings');
         await page
             .getByRole('tab', { name: 'Connection', exact: false })
             .click();
+        await shot(page, '02-settings-connection');
         await shot(page, '03-settings-connection');
         await page
             .getByRole('tab', { name: 'Appearance', exact: false })

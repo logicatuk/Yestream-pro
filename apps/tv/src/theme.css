@@ -770,20 +770,6 @@ summary {
     padding: 4px 16px;
     margin: 0 8px 8px 0;
 }
-.tmdb-settings {
-    max-width: 900px;
-    margin-top: 48px;
-}
-.tmdb-attribution {
-    margin-top: 26px;
-    color: var(--tv-muted);
-    font-size: var(--tv-type-eyebrow);
-}
-.tmdb-attribution img {
-    width: 110px;
-    height: auto;
-    margin-bottom: 14px;
-}
 .actions {
     display: flex;
     align-items: center;

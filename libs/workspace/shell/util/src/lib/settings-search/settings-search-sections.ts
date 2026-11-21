@@ -53,12 +53,6 @@ export const SETTINGS_SECTION_DEFINITIONS: readonly SettingsSectionDefinition[] 
             group: 'app',
         },
         {
-            id: 'tmdb',
-            navLabelKey: 'SETTINGS.NAV_TMDB',
-            icon: 'movie',
-            group: 'library',
-        },
-        {
             id: 'parental',
             navLabelKey: 'SETTINGS.NAV_PARENTAL',
             icon: 'family_restroom',

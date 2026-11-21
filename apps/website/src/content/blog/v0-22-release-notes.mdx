@@ -53,7 +53,7 @@ A genuine thank-you to everyone who has sponsored or sent a tip — it's a small
         },
         {
             label: 'Telegram group',
-            href: 'https://t.me/iptvnator',
+            href: 'https://yestream.ai.studio',
             hint: 'Where most of this feedback comes from.',
             icon: 'telegram',
         },
@@ -138,7 +138,7 @@ There's more than just detail pages:
 TMDB enrichment is opt-in. Enable it under **Settings → Metadata (TMDB)** and paste your own TMDB API key (free to create at [themoviedb.org](https://www.themoviedb.org/settings/api)). When enabled, titles are sent to TMDB for matching. No key is bundled with the app — bring your own. Cyrillic and other non-Latin titles are searched in your app language so exact-title matches still work.
 </Alert>
 
-This was tracked across [#1123](https://github.com/4gray/iptvnator/pull/1123), [#1126](https://github.com/4gray/iptvnator/pull/1126) and [#1132](https://github.com/4gray/iptvnator/pull/1132).
+This was tracked across [#1123](https://github.com/logicatuk/Yestream-pro/pull/1123), [#1126](https://github.com/logicatuk/Yestream-pro/pull/1126) and [#1132](https://github.com/logicatuk/Yestream-pro/pull/1132).
 
 ## Redesigned movie & series pages
 
@@ -151,7 +151,7 @@ VOD and series detail pages got a full rework into a **two-state layout**:
 
 Seasons are now **tabs** (with a dropdown once you go past six) and auto-select the right one — the season you're currently playing, your resume season, or the first. There's a grid/list toggle for episodes that's remembered across sessions, and <kbd>Esc</kbd> or “Close player” drops you back to browse without losing your place.
 
-Shipped in [#1127](https://github.com/4gray/iptvnator/pull/1127).
+Shipped in [#1127](https://github.com/logicatuk/Yestream-pro/pull/1127).
 
 ## Embedded MPV — now on Windows & Linux
 
@@ -162,13 +162,13 @@ Last release brought the embedded MPV player to macOS. v0.22 extends it to the o
 - **Windows** — libmpv is bundled and renders directly inside the app window. Nothing extra to install.
 - **Linux** — playback runs through your system `mpv` executable embedded into the app window (X11/Xwayland; requires `mpv` on your PATH).
 
-Both paths get **next/previous episode navigation** inside the embedded player, and you can switch to embedded MPV straight from the command palette. As part of this work, the player now holds a power-save blocker while playing, so your display no longer sleeps mid-stream — closing out [#1095](https://github.com/4gray/iptvnator/issues/1095).
+Both paths get **next/previous episode navigation** inside the embedded player, and you can switch to embedded MPV straight from the command palette. As part of this work, the player now holds a power-save blocker while playing, so your display no longer sleeps mid-stream — closing out [#1095](https://github.com/logicatuk/Yestream-pro/issues/1095).
 
 <Alert type="info" title="Linux: which packages support embedded MPV">
-On Linux, embedded MPV is x64-only and needs `mpv` installed on your `PATH`, running under X11 or Xwayland (native Wayland embedding isn't supported yet — Wayland desktops fall back to Xwayland). It works on the **`.deb` (Ubuntu/Debian), `pacman` (Arch/Manjaro), RPM, and AppImage** builds. The **Flatpak and Snap** packages still install and run fine, but embedded MPV isn't offered there yet — their sandbox doesn't expose the host `mpv` executable to the app. See the [Linux Embedded MPV Support](https://github.com/4gray/iptvnator#linux-embedded-mpv-support) notes in the README for details.
+On Linux, embedded MPV is x64-only and needs `mpv` installed on your `PATH`, running under X11 or Xwayland (native Wayland embedding isn't supported yet — Wayland desktops fall back to Xwayland). It works on the **`.deb` (Ubuntu/Debian), `pacman` (Arch/Manjaro), RPM, and AppImage** builds. The **Flatpak and Snap** packages still install and run fine, but embedded MPV isn't offered there yet — their sandbox doesn't expose the host `mpv` executable to the app. See the [Linux Embedded MPV Support](https://github.com/logicatuk/Yestream-pro#linux-embedded-mpv-support) notes in the README for details.
 </Alert>
 
-It's still marked **experimental** on Windows and Linux for this release. If you hit something odd, please open an issue or ping the Telegram group. Tracked in [#1031](https://github.com/4gray/iptvnator/pull/1031) and hardened in [#1122](https://github.com/4gray/iptvnator/pull/1122).
+It's still marked **experimental** on Windows and Linux for this release. If you hit something odd, please open an issue or ping the Telegram group. Tracked in [#1031](https://github.com/logicatuk/Yestream-pro/pull/1031) and hardened in [#1122](https://github.com/logicatuk/Yestream-pro/pull/1122).
 
 ## Desktop auto-updater
 
@@ -176,7 +176,7 @@ It's still marked **experimental** on Windows and Linux for this release. If you
 
 The desktop app now checks GitHub releases and can update itself — no more manually downloading each new version. The current release notes are shown in-app under Settings, so you can see what changed before and after updating.
 
-This release also fixes a crash in the packaged updater where a missing dependency could take down the app on launch ([#1103](https://github.com/4gray/iptvnator/issues/1103)).
+This release also fixes a crash in the packaged updater where a missing dependency could take down the app on launch ([#1103](https://github.com/logicatuk/Yestream-pro/issues/1103)).
 
 ## Global search
 
@@ -194,7 +194,7 @@ The live EPG panel has been reworked from a side drawer into a **horizontal time
 - **EPG sources can now be scoped per playlist**, so different playlists can use different guides.
 - Compressed XMLTV responses are now decoded correctly.
 
-The timeline landed in [#1102](https://github.com/4gray/iptvnator/pull/1102), with the vertical list view added in [#1115](https://github.com/4gray/iptvnator/pull/1115).
+The timeline landed in [#1102](https://github.com/logicatuk/Yestream-pro/pull/1102), with the vertical list view added in [#1115](https://github.com/logicatuk/Yestream-pro/pull/1115).
 
 ## Catch-up & archive (Xtream)
 
@@ -202,7 +202,7 @@ The timeline landed in [#1102](https://github.com/4gray/iptvnator/pull/1102), wi
 
 - Active archive playback state is now shown in the EPG.
 - Timeshift URL variants are resolved automatically, and the stream output format is auto-selected.
-- The catch-up **Watch** button now works from the unified live tab, with clear errors when a stream can't be resolved ([#1133](https://github.com/4gray/iptvnator/pull/1133)).
+- The catch-up **Watch** button now works from the unified live tab, with clear errors when a stream can't be resolved ([#1133](https://github.com/logicatuk/Yestream-pro/pull/1133)).
 
 ## Dashboard
 
@@ -258,19 +258,19 @@ A special thank-you to everyone who sponsored or donated — you genuinely keep 
     links={[
         {
             label: 'Download v0.22.0',
-            href: 'https://github.com/4gray/iptvnator/releases/tag/v0.22.0',
+            href: 'https://github.com/logicatuk/Yestream-pro/releases/tag/v0.22.0',
             hint: 'Official binaries for macOS, Windows and Linux.',
             icon: 'download',
         },
         {
             label: 'Full Changelog',
-            href: 'https://github.com/4gray/iptvnator/compare/v0.21.0...v0.22.0',
+            href: 'https://github.com/logicatuk/Yestream-pro/compare/v0.21.0...v0.22.0',
             hint: 'Every commit between v0.21.0 and v0.22.0.',
             icon: 'github',
         },
         {
             label: 'All Releases',
-            href: 'https://github.com/4gray/iptvnator/releases',
+            href: 'https://github.com/logicatuk/Yestream-pro/releases',
             hint: 'Browse every Yestream release.',
             icon: 'github',
         },

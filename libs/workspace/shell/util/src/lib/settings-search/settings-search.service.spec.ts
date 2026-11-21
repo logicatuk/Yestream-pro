@@ -415,23 +415,22 @@ describe('SettingsSearchService', () => {
     it('navigates to the section and records a reveal request', () => {
         const { service, router } = setup();
         const entry = SETTINGS_SEARCH_ENTRIES.find(
-            ({ id }) => id === 'tmdb-api-key'
+            ({ id }) => id === 'parental-lock-enable'
         );
         if (!entry) {
-            throw new Error('missing tmdb-api-key entry');
+            throw new Error('missing parental-lock-enable entry');
         }
 
         service.reveal(entry);
 
         expect(router.navigate).toHaveBeenCalledWith([
             '/workspace/settings',
-            'tmdb',
+            'parental',
         ]);
         expect(service.pendingReveal()).toEqual(
             expect.objectContaining({
-                id: 'tmdb-api-key',
-                section: 'tmdb',
-                fallbackId: 'tmdb-enable',
+                id: 'parental-lock-enable',
+                section: 'parental',
             })
         );
     });

@@ -7,7 +7,7 @@ and [architecture](../architecture/tv-application.md#samsung-tizen-package) for 
 
 ## Community device test
 
-The [PR #2126 device report](https://github.com/4gray/iptvnator/pull/2126#issuecomment-6703818846)
+The [PR #2126 device report](https://github.com/logicatuk/Yestream-pro/pull/2126#issuecomment-6703818846)
 covers a Samsung Q60C (2023) running Tizen 9.0 and Chromium 120, with WGT 0.1.25
 from commit `725e83e366a1894849a263c6cb4f83a167b49a76`. The contributor verified
 signing and installation, cold launch, Xtream phone setup, HLS picture and audio,

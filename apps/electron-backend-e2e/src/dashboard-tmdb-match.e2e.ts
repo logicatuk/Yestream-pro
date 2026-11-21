@@ -6,11 +6,7 @@ import {
     expect,
     goToDashboard,
     launchElectronApp,
-    openSettings,
-    openSettingsSection,
     resetMockServers,
-    saveSettings,
-    setSwitch,
     test,
     waitForXtreamWorkspaceReady,
     xtreamMockServer,
@@ -67,14 +63,7 @@ test('@tmdb-match @electron @dashboard the hero shows the TMDB match chosen in t
                       },
             });
         });
-        await openSettings(page);
-        await openSettingsSection(page, 'tmdb');
-        await setSwitch(
-            page.getByTestId('tmdb-enabled').getByRole('switch'),
-            true
-        );
-        await page.getByTestId('tmdb-api-key').fill('fictional-e2e-key');
-        await saveSettings(page);
+        // TMDB always-on with bundled key
         await goToDashboard(page);
         await addXtreamPortal(page, credentials);
         await waitForXtreamWorkspaceReady(page);

@@ -39,13 +39,16 @@ describe('settings change tracking', () => {
 
     it('maps a changed path to the page it is edited on', () => {
         expect(sectionOfSettingsPath('dashboardRails.hero')).toBe('dashboard');
-        expect(sectionOfSettingsPath('tmdb.apiKey')).toBe('tmdb');
         expect(sectionOfSettingsPath('showCaptions')).toBe('playback');
         for (const control of ['theme', 'coverSize', 'showCoverTitles']) {
             expect(sectionOfSettingsPath(control)).toBe('appearance');
         }
         expect(sectionOfSettingsPath('language')).toBe('general');
         expect(sectionOfSettingsPath('unknownControl')).toBeNull();
+        // Always-on TMDB: no settings page; legacy form fields stay unmapped.
+        expect(sectionOfSettingsPath('tmdb.apiKey')).toBeNull();
+        expect(sectionOfSettingsPath('m3uVodDetails')).toBeNull();
+        expect(sectionOfSettingsPath('ageRatingCountry')).toBeNull();
     });
 
     it('maps every control of the settings form to a page', () => {
@@ -54,7 +57,9 @@ describe('settings change tracking', () => {
             (control) => !(control in SETTINGS_CONTROL_SECTIONS)
         );
 
-        expect(unmapped).toEqual([]);
+        expect(unmapped.sort()).toEqual(
+            ['ageRatingCountry', 'm3uVodDetails', 'tmdb'].sort()
+        );
     });
 
     it('names the row label for every restart control', () => {

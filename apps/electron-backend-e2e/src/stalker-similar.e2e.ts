@@ -7,10 +7,6 @@ import {
     expect,
     goToDashboard,
     launchElectronApp,
-    openSettings,
-    openSettingsSection,
-    saveSettings,
-    setSwitch,
     test,
     waitForXtreamWorkspaceReady,
 } from './electron-test-fixtures';
@@ -65,14 +61,7 @@ test('@stalker @electron shows current-portal and Xtream recommendations togethe
         });
         await addXtreamPortal(page, credentials);
         await waitForXtreamWorkspaceReady(page);
-        await openSettings(page);
-        await openSettingsSection(page, 'tmdb');
-        await setSwitch(
-            page.getByTestId('tmdb-enabled').getByRole('switch'),
-            true
-        );
-        await page.getByTestId('tmdb-api-key').fill('fictional-e2e-key');
-        await saveSettings(page);
+        // TMDB always-on with bundled key
         await goToDashboard(page);
         await addStalkerPortal(page, { name: 'Fictional Stalker Portal' });
         await page.waitForURL(/\/stalker\/.*\/vod/);

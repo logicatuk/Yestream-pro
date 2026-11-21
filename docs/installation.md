@@ -2,12 +2,12 @@
 
 [Back to README](../README.md)
 
-Download the latest version of the application for macOS, Windows, and Linux from the [release page](https://github.com/4gray/iptvnator/releases).
+Download the latest version of the application for macOS, Windows, and Linux from the [release page](https://github.com/logicatuk/Yestream-pro/releases).
 
 ## Nightly builds
 
 Every merge into `master` is published as a prerelease in
-[4gray/iptvnator-nightly](https://github.com/4gray/iptvnator-nightly). The
+[4gray/iptvnator-nightly](https://github.com/logicatuk/Yestream-pro-nightly). The
 desktop app can follow them: **Settings → About → Update channel → Nightly**
 offers each new build through the built-in updater (macOS, Windows, and the
 Linux AppImage). Nightly builds are untested snapshots — they may break, and

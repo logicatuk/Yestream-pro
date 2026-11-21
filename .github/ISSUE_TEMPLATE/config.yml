@@ -1,10 +1,10 @@
 blank_issues_enabled: false
 contact_links:
     - name: 💬 Questions and help
-      url: https://github.com/4gray/iptvnator/discussions
+      url: https://github.com/logicatuk/Yestream-pro/discussions
       about: Ask how to set something up, or share ideas with other users.
     - name: 🐳 Self-hosting with Docker
-      url: https://github.com/4gray/iptvnator/blob/master/docker/README.md
+      url: https://github.com/logicatuk/Yestream-pro/blob/master/docker/README.md
       about: Setup, environment variables and reverse-proxy notes for the self-hosted web app.
     - name: 🌐 Website and downloads
       url: https://yestream.ai.studio/downloads

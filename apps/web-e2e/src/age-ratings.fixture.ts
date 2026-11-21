@@ -1,6 +1,5 @@
 import type { Page } from '@playwright/test';
 import { expect } from './fixtures';
-import { setSwitch } from './e2e-helpers';
 
 /** Deterministic fictional metadata; never contacts a real metadata service. */
 export async function interceptAgeRatingTmdb(page: Page) {
@@ -91,36 +90,66 @@ export async function interceptAgeRatingTmdb(page: Page) {
     };
 }
 
+/**
+ * Persist age-rating country without the removed Metadata settings UI.
+ * Writes the ngx-pwa IndexedDB settings record, then reloads.
+ */
 export async function setAgeRatingCountry(
     page: Page,
     country: string,
-    enableTmdb = false
+    _enableTmdb = false
 ) {
     if (page.url() === 'about:blank') {
-        await page.goto('/workspace/settings/tmdb');
-    } else {
-        await page.getByRole('link', { name: 'Open settings' }).click();
-        await page.locator('[data-test-id="settings-section-tmdb"]').click();
+        await page.goto('/');
     }
-    const selector = page.locator('[data-test-id="age-rating-country"]');
-    // Cold dev-server settings chunks can arrive after the default 5s assertion.
-    await expect(selector).toBeVisible({ timeout: 15_000 });
-    await selector.click();
-    await page
-        .getByRole('option', { name: new RegExp(`\\(${country}\\)$`) })
-        .click();
-    if (enableTmdb) {
-        await setSwitch(
-            page.locator('[data-test-id="tmdb-enabled"] [role="switch"]'),
-            true
-        );
-        await page
-            .locator('[data-test-id="tmdb-api-key"]')
-            .fill('fictional-e2e-key');
-    }
-    const save = page.locator('[data-test-id="save-settings"]');
-    await save.click();
-    await expect(save).toBeHidden();
+    await page.evaluate(async (nextCountry) => {
+        await new Promise<void>((resolve, reject) => {
+            const open = indexedDB.open('ngStorage');
+            open.onerror = () => reject(open.error ?? new Error('idb open'));
+            open.onsuccess = () => {
+                const db = open.result;
+                const storeName = db.objectStoreNames.contains('localStorage')
+                    ? 'localStorage'
+                    : db.objectStoreNames[0];
+                const tx = db.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                const read = store.get('settings');
+                read.onerror = () => reject(read.error ?? new Error('idb get'));
+                read.onsuccess = () => {
+                    const current =
+                        read.result && typeof read.result === 'object'
+                            ? (read.result as Record<string, unknown>)
+                            : {};
+                    const previousTmdb =
+                        current['tmdb'] && typeof current['tmdb'] === 'object'
+                            ? (current['tmdb'] as Record<string, unknown>)
+                            : {};
+                    store.put(
+                        {
+                            ...current,
+                            ageRatingCountry: nextCountry,
+                            tmdb: {
+                                ...previousTmdb,
+                                enabled: true,
+                                apiKey:
+                                    typeof previousTmdb['apiKey'] === 'string'
+                                        ? previousTmdb['apiKey']
+                                        : '',
+                            },
+                        },
+                        'settings'
+                    );
+                };
+                tx.oncomplete = () => {
+                    db.close();
+                    resolve();
+                };
+                tx.onerror = () => reject(tx.error ?? new Error('idb tx'));
+            };
+        });
+    }, country);
+    await page.reload();
+    await page.waitForLoadState('domcontentloaded');
 }
 
 export function ageRating(page: Page) {

@@ -7,7 +7,7 @@
 - Website: https://yestream.ai.studio/downloads
 - Blog: https://yestream.ai.studio/downloadsblog/
 - Guides by task: https://yestream.ai.studio/downloadsguides/
-- Latest Release: https://github.com/4gray/iptvnator/releases/latest
+- Latest Release: https://github.com/logicatuk/Yestream-pro/releases/latest
 - Downloads overview: https://yestream.ai.studio/downloadsdownload/
 - Download for Windows: https://yestream.ai.studio/downloadsdownload/windows/
 - Download for macOS: https://yestream.ai.studio/downloadsdownload/macos/
@@ -39,8 +39,8 @@
 - Compare, IPTV on a computer vs on a TV box (which room does what): https://yestream.ai.studio/downloadscompare/computer-vs-tv-box/
 - Release Notes (v0.18): https://yestream.ai.studio/downloadsblog/v0-18-release-notes/
 - Troubleshooting (macOS app damaged fix): https://yestream.ai.studio/downloadsblog/macos-arm-app-damaged-fix/
-- Source Code: https://github.com/4gray/iptvnator
-- Telegram: https://t.me/iptvnator
+- Source Code: https://github.com/logicatuk/Yestream-pro
+- Telegram: https://yestream.ai.studio
 - GitHub Sponsors: https://github.com/sponsors/4gray
 - Ko-fi: https://ko-fi.com/4gray
 

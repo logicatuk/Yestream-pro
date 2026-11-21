@@ -19,7 +19,7 @@ import StatusPill from '../../components/blog/StatusPill.astro';
 
 Yestream **v0.25** makes it easier to use the same library on another screen. Start a server from the desktop app, open the library in a browser on your home network, and choose what viewing activity to share. Back in the player, a redesigned dashboard and movie and series pages put the next thing to watch within reach. A new PIN lets you hide selected categories on a shared screen.
 
-The changelog records **63 feature entries, 221 fixes and 32 performance improvements**. Over the same development period, [47 GitHub issues were closed as completed](https://github.com/4gray/iptvnator/issues?q=is%3Aissue+is%3Aclosed+reason%3Acompleted+closed%3A2026-09-24..2026-11-08).
+The changelog records **63 feature entries, 221 fixes and 32 performance improvements**. Over the same development period, [47 GitHub issues were closed as completed](https://github.com/logicatuk/Yestream-pro/issues?q=is%3Aissue+is%3Aclosed+reason%3Acompleted+closed%3A2026-09-24..2026-11-08).
 
 <ReleaseMeta
     version="v0.25.0"
@@ -49,7 +49,7 @@ Open **Settings → Server** to start the built-in server. By default it stays o
 
 Share your source definitions, including uploaded M3U playlists, and preview which local sources to import. **Favorites, Recently Viewed, and movie and series watch progress** have separate sync choices. Watch progress and watched marks sync for Xtream and Stalker. The dedicated TV client can use the server’s source library while keeping its viewing activity on the TV.
 
-See the [self-hosted server guide](https://github.com/4gray/iptvnator/blob/v0.25.0/docker/README.md#run-the-server-from-the-desktop-app) for setup and the differences between desktop hosting and Docker. [Desktop hosting PR](https://github.com/4gray/iptvnator/pull/2146).
+See the [self-hosted server guide](https://github.com/logicatuk/Yestream-pro/blob/v0.25.0/docker/README.md#run-the-server-from-the-desktop-app) for setup and the differences between desktop hosting and Docker. [Desktop hosting PR](https://github.com/logicatuk/Yestream-pro/pull/2146).
 
 ![Desktop Server settings showing the local server controls before startup](/iptvnator/blog/v0-25/screenshots/settings-hosted-server-dark.png)
 
@@ -106,10 +106,10 @@ Set a PIN in **Settings → Parental lock**, then choose which Xtream categories
 
 <StatusPill type="new" />
 
-There are two ways to try Yestream with a TV remote. The dedicated **LG webOS and Samsung Tizen** client can browse M3U, Xtream and Stalker sources and accepts phone setup by QR code. The **Fire TV and Android TV** shell packages the browser app and a local backend in an APK and can hand an incompatible stream off to an installed player. Both paths are experimental and have separate installation steps. Selected flows were verified on LG BX; Samsung device playback is still awaiting validation. See the [TV client](https://github.com/4gray/iptvnator/blob/v0.25.0/apps/tv/README.md) and [Fire TV and Android TV](https://github.com/4gray/iptvnator/blob/v0.25.0/tv-shell/README.md) guides.
+There are two ways to try Yestream with a TV remote. The dedicated **LG webOS and Samsung Tizen** client can browse M3U, Xtream and Stalker sources and accepts phone setup by QR code. The **Fire TV and Android TV** shell packages the browser app and a local backend in an APK and can hand an incompatible stream off to an installed player. Both paths are experimental and have separate installation steps. Selected flows were verified on LG BX; Samsung device playback is still awaiting validation. See the [TV client](https://github.com/logicatuk/Yestream-pro/blob/v0.25.0/apps/tv/README.md) and [Fire TV and Android TV](https://github.com/logicatuk/Yestream-pro/blob/v0.25.0/tv-shell/README.md) guides.
 
 <Spoiler title="See the full list of changes">
-The [full changelog](https://github.com/4gray/iptvnator/blob/v0.25.0/CHANGELOG.md#0250-2026-11-08) lists every feature, fix and performance entry, with links to the relevant changes and issues.
+The [full changelog](https://github.com/logicatuk/Yestream-pro/blob/v0.25.0/CHANGELOG.md#0250-2026-11-08) lists every feature, fix and performance entry, with links to the relevant changes and issues.
 </Spoiler>
 
 <Alert type="warning" title="Before updating">
@@ -118,14 +118,14 @@ Export a backup of your playlists and viewing data before upgrading. If this is 
 
 ## Thanks
 
-Thanks to everyone who tested nightly builds, reported playback and upgrade problems, translated the app and helped others in the [Telegram community](https://t.me/iptvnator). Thanks also to the people supporting the project through [GitHub Sponsors](https://github.com/sponsors/4gray) and [Ko-fi](https://ko-fi.com/4gray).
+Thanks to everyone who tested nightly builds, reported playback and upgrade problems, translated the app and helped others in the [Telegram community](https://yestream.ai.studio). Thanks also to the people supporting the project through [GitHub Sponsors](https://github.com/sponsors/4gray) and [Ko-fi](https://ko-fi.com/4gray).
 
 ## Download
 
 <LinkCards
     links={[
-        { label: 'Download v0.25.0', href: 'https://github.com/4gray/iptvnator/releases/tag/v0.25.0', hint: 'Official desktop installers and full release notes.', icon: 'download' },
-        { label: 'Compare v0.24.0 and v0.25.0', href: 'https://github.com/4gray/iptvnator/compare/v0.24.0...v0.25.0', hint: 'Review the changes between the two releases.', icon: 'github' },
-        { label: 'All releases', href: 'https://github.com/4gray/iptvnator/releases', hint: 'Browse earlier releases.', icon: 'github' },
+        { label: 'Download v0.25.0', href: 'https://github.com/logicatuk/Yestream-pro/releases/tag/v0.25.0', hint: 'Official desktop installers and full release notes.', icon: 'download' },
+        { label: 'Compare v0.24.0 and v0.25.0', href: 'https://github.com/logicatuk/Yestream-pro/compare/v0.24.0...v0.25.0', hint: 'Review the changes between the two releases.', icon: 'github' },
+        { label: 'All releases', href: 'https://github.com/logicatuk/Yestream-pro/releases', hint: 'Browse earlier releases.', icon: 'github' },
     ]}
 />

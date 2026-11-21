@@ -1,6 +1,5 @@
 import { expect, test } from './fixtures';
 import { configureMockProviderBackend } from './provider-target-route';
-import { setSwitch } from './e2e-helpers';
 import {
     addXtreamPortal,
     interceptXtreamRequests,
@@ -73,15 +72,6 @@ test('@tmdb-match corrects an Xtream movie through its route menu', async ({
                   },
         });
     });
-    await page.goto('/workspace/settings/tmdb');
-    await setSwitch(
-        page.locator('[data-test-id="tmdb-enabled"] [role="switch"]'),
-        true
-    );
-    await page.locator('[data-test-id="tmdb-api-key"]').fill('fixture-key');
-    const settingsSave = page.getByRole('button', { name: 'Save changes' });
-    await settingsSave.click();
-    await expect(settingsSave).toBeHidden();
     await page.goto('/');
     await addXtreamPortal(page);
     await page

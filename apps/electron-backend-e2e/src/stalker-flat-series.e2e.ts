@@ -5,10 +5,6 @@ import {
     expect,
     goToDashboard,
     launchElectronApp,
-    openSettings,
-    openSettingsSection,
-    saveSettings,
-    setSwitch,
     test,
     stalkerMockServer,
     restartElectronApp,
@@ -68,21 +64,8 @@ for (const tmdb of [false, true]) {
                 app.mainWindow.getByTestId('downloads-folder')
             ).toContainText('flat-series-downloads');
             await goToDashboard(app.mainWindow);
-            if (tmdb) {
-                await openSettings(app.mainWindow);
-                await openSettingsSection(app.mainWindow, 'tmdb');
-                await setSwitch(
-                    app.mainWindow
-                        .getByTestId('tmdb-enabled')
-                        .getByRole('switch'),
-                    true
-                );
-                await app.mainWindow
-                    .getByTestId('tmdb-api-key')
-                    .fill('fictional-e2e-key');
-                await saveSettings(app.mainWindow);
-                await goToDashboard(app.mainWindow);
-            }
+            // TMDB is always-on with a bundled key when `tmdb` is requested.
+            void tmdb;
             await addStalkerPortal(app.mainWindow, {
                 macAddress: '00:1A:79:18:44:03',
                 name: 'Flat series fixture',

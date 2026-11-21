@@ -330,34 +330,21 @@ async function waitForRemoteControlServer(): Promise<void> {
 }
 
 /**
- * Settings › Metadata (TMDB) with the switch staged ON, which is what reveals
- * the API-key field, the cache panel and the required TMDB attribution. The
- * value is never saved: enrichment must stay off for the whole capture (G5),
- * and `discardUnsavedSettings` drops the form before the next action.
+ * Settings › About shows the required TMDB attribution footer. Metadata
+ * settings UI was removed (always-on bundled key).
  */
 async function openSettingsTmdb(page: Page): Promise<void> {
     await openSettings(page);
     const sectionLink = page
-        .locator('[data-test-id="settings-section-tmdb"]')
+        .locator('[data-test-id="settings-section-about"]')
         .first();
 
     await sectionLink.waitFor({ state: 'visible', timeout: 15_000 });
     await sectionLink.click({ timeout: 10_000 });
-    await page.waitForURL(/\/workspace\/settings\/tmdb/, { timeout: 15_000 });
+    await page.waitForURL(/\/workspace\/settings\/about/, { timeout: 15_000 });
 
-    const section = page.locator('#tmdb');
-    await section.waitFor({ state: 'visible', timeout: 15_000 });
-
-    const toggle = section.locator(
-        '[data-test-id="tmdb-enabled"] [role="switch"]'
-    );
-
-    if (!(await toggle.isChecked())) {
-        await section.locator('[data-test-id="tmdb-enabled"]').click();
-    }
-
-    await section
-        .locator('[data-test-id="tmdb-api-key"]')
+    await page
+        .locator('[data-setting-id="tmdb-credits"]')
         .waitFor({ state: 'visible', timeout: 10_000 });
     await page.waitForTimeout(500);
 }

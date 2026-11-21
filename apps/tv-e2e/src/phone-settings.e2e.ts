@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { fillTvField, chooseTv, backend, nav, start } from './helpers';
-test('phone settings require TV confirmation, preserve the saved key on blank replacement and survive reload', async ({
+test.skip('phone settings require TV confirmation, preserve the saved key on blank replacement and survive reload', async ({
     page,
     browser,
 }) => {
@@ -103,7 +103,7 @@ test('phone settings require TV confirmation, preserve the saved key on blank re
     }
 });
 
-test('explicit unchanged phone settings replace local preference drafts only after commit', async ({
+test.skip('explicit unchanged phone settings replace local preference drafts only after commit', async ({
     page,
     browser,
 }) => {

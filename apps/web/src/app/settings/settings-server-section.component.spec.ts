@@ -362,7 +362,7 @@ describe('source server settings', () => {
                 '[data-test-id="source-server-help"]'
             ).href
         ).toBe(
-            'https://github.com/4gray/iptvnator/blob/master/docker/README.md#connect-your-clients'
+            'https://github.com/logicatuk/Yestream-pro/blob/master/docker/README.md#connect-your-clients'
         );
     });
 

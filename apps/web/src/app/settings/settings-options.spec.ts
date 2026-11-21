@@ -97,7 +97,6 @@ describe('buildSettingsSectionNavItems', () => {
             'playback',
             'epg',
             'dashboard',
-            'tmdb',
             'parental',
             'remote-control',
             'server',
@@ -116,7 +115,7 @@ describe('buildSettingsSectionNavItems', () => {
 
         expect(groupOf('general')).toBe('app');
         expect(groupOf('appearance')).toBe('app');
-        expect(groupOf('tmdb')).toBe('library');
+        expect(groupOf('parental')).toBe('library');
         expect(groupOf('remote-control')).toBe('devices');
         expect(groupOf('server')).toBe('data');
         expect(groupOf('backup')).toBeUndefined();

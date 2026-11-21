@@ -105,12 +105,11 @@ it('retains full Stalker identity and passwords while canonicalizing a newly ent
     });
 });
 
-it('binds settings to a separate purpose and reveals replacement keys only to the TV', () => {
+it('binds settings to a separate purpose without TMDB key fields', () => {
     const store = new PairingStore();
     const defaults = {
         layout: 'cinema' as const,
         epg: true,
-        tmdb: { enabled: false, language: 'en', hasKey: true },
     };
     const session = store.create('settings', 'settings', defaults);
     expect(store.read(session.id, session.phoneToken, 'phone')).toMatchObject({
@@ -127,13 +126,9 @@ it('binds settings to a separate purpose and reveals replacement keys only to th
     store.submit(session.id, session.phoneToken, {
         layout: 'shelf',
         epg: false,
-        tmdb: { enabled: true, language: 'ru', apiKey: 'replacement-secret' },
     });
-    expect(
-        JSON.stringify(store.read(session.id, session.phoneToken, 'phone'))
-    ).not.toContain('replacement-secret');
     expect(store.read(session.id, session.tvToken, 'tv')).toMatchObject({
-        settings: { tmdb: { apiKey: 'replacement-secret' } },
+        settings: { layout: 'shelf', epg: false },
     });
     store.finish(session.id, session.tvToken, 'saved');
     expect(store.read(session.id, session.tvToken, 'tv')).not.toHaveProperty(
@@ -149,7 +144,6 @@ it('passes the playback switches through settings defaults and drafts', () => {
         epg: true,
         seriesAutoplay: false,
         playerUpNextCard: true,
-        tmdb: { enabled: false, language: 'en', hasKey: false },
     };
     const session = store.create('playback', 'settings', defaults);
     expect(store.read(session.id, session.phoneToken, 'phone')).toMatchObject({
@@ -160,7 +154,6 @@ it('passes the playback switches through settings defaults and drafts', () => {
         epg: true,
         seriesAutoplay: true,
         playerUpNextCard: false,
-        tmdb: { enabled: false, language: 'en' },
     });
     expect(store.read(session.id, session.tvToken, 'tv')).toMatchObject({
         settings: { seriesAutoplay: true, playerUpNextCard: false },

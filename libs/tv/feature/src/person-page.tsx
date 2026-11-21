@@ -44,12 +44,6 @@ export function PersonPage({
         if (!resource.loading) tv.finishFocus();
     }, [resource.loading, person]);
     if (!selected || selected.sourceId !== tv.data.activeId) return null;
-    if (!tv.data.tmdb.enabled)
-        return (
-            <Empty>
-                Enable TMDB metadata in Settings to view filmographies.
-            </Empty>
-        );
     return (
         <section class="person-page" aria-label="Person filmography">
             <div class="person-profile">

@@ -43,7 +43,7 @@ export function buildDownloadPageSchema(input: DownloadPageSchemaInput): Array<R
       license: `${REPO_URL}/blob/master/LICENSE`,
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
       author: { '@type': 'Person', name: '4gray', url: 'https://github.com/4gray' },
-      sameAs: [REPO_URL, 'https://t.me/iptvnator'],
+      sameAs: [REPO_URL, 'https://yestream.ai.studio'],
       description,
     },
     {
