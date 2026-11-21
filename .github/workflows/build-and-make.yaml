@@ -484,7 +484,7 @@ jobs:
                 include:
                     # macOS builds - separate runners to avoid native module conflicts
                     - os: macos
-                      runner: macos-15-intel
+                      runner: macos-13
                       arch: x64
                       embedded_mpv_platform: darwin
                       embedded_mpv_arch: x64
@@ -863,8 +863,21 @@ jobs:
                     fs.writeFileSync('electron-builder.json', JSON.stringify(pkg, null, 4) + '\n');
                   "
 
+            - name: Check macOS signing credentials
+              id: mac-signing
+              if: matrix.os == 'macos'
+              shell: bash
+              env:
+                  CSC_LINK: ${{ secrets.CSC_LINK }}
+              run: |
+                  if [ -n "${CSC_LINK:-}" ]; then
+                      echo "enabled=true" >> "$GITHUB_OUTPUT"
+                  else
+                      echo "enabled=false" >> "$GITHUB_OUTPUT"
+                  fi
+
             - name: Validate macOS signing configuration
-              if: matrix.os == 'macos' && github.event_name != 'pull_request' && secrets.CSC_LINK != ''
+              if: matrix.os == 'macos' && github.event_name != 'pull_request' && steps.mac-signing.outputs.enabled == 'true'
               shell: bash
               env:
                   CSC_NAME: ${{ vars.CSC_NAME }}
@@ -911,7 +924,7 @@ jobs:
                   fi
 
             - name: Prepare macOS notarization credentials
-              if: matrix.os == 'macos' && github.event_name != 'pull_request' && secrets.CSC_LINK != ''
+              if: matrix.os == 'macos' && github.event_name != 'pull_request' && steps.mac-signing.outputs.enabled == 'true'
               shell: bash
               env:
                   APPLE_API_KEY_CONTENT: ${{ secrets.APPLE_API_KEY }}
@@ -970,7 +983,7 @@ jobs:
                   NODE
 
             - name: Make Electron app (macOS)
-              if: matrix.os == 'macos' && github.event_name != 'pull_request' && secrets.CSC_LINK != ''
+              if: matrix.os == 'macos' && github.event_name != 'pull_request' && steps.mac-signing.outputs.enabled == 'true'
               env:
                   GH_TOKEN: ${{ github.token }}
                   CSC_NAME: ${{ vars.CSC_NAME }}
@@ -985,7 +998,7 @@ jobs:
               run: pnpm run make:app -- --publishPolicy=never
 
             - name: Verify signed macOS app
-              if: matrix.os == 'macos' && github.event_name != 'pull_request' && secrets.CSC_LINK != ''
+              if: matrix.os == 'macos' && github.event_name != 'pull_request' && steps.mac-signing.outputs.enabled == 'true'
               shell: bash
               run: |
                   set -euo pipefail
@@ -1055,7 +1068,7 @@ jobs:
                   validate_stapled_ticket
 
             - name: Make Electron app
-              if: matrix.os != 'macos' || github.event_name == 'pull_request' || secrets.CSC_LINK == ''
+              if: matrix.os != 'macos' || github.event_name == 'pull_request' || steps.mac-signing.outputs.enabled == 'false'
               env:
                   GH_TOKEN: ${{ github.token }}
                   IPTVNATOR_EMBEDDED_MPV_PLATFORM: ${{ matrix.embedded_mpv_platform || '' }}
