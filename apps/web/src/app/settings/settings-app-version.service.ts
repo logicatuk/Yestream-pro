@@ -63,7 +63,7 @@ export class SettingsAppVersionService {
     getAppVersion() {
         return this.http
             .get<{ created_at: string; name: string }[]>(
-                'https://api.github.com/repos/4gray/iptvnator/releases'
+                'https://api.github.com/repos/logicatuk/Yestream-pro/releases'
             )
             .pipe(
                 map((response) => {

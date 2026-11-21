@@ -29,6 +29,8 @@ on:
       - "pnpm-lock.yaml"
   push:
     branches: [master]
+    tags:
+      - 'v*.*.*'
     paths:
       - "tv-shell/**"
       - ".github/workflows/build-tv-shell-apk.yml"
@@ -226,7 +228,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.create_release }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.create_release) || startsWith(github.ref, 'refs/tags/v') }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -246,7 +248,7 @@ jobs:
           GH_REPO: ${{ github.repository }}
           APK_NAME: ${{ needs.build.outputs.apk_name }}
           APK_VERSION: ${{ needs.build.outputs.apk_version }}
-          PRERELEASE: ${{ inputs.prerelease }}
+          PRERELEASE: ${{ github.event_name == 'workflow_dispatch' && inputs.prerelease || 'false' }}
         run: |
           set -euo pipefail
           TAG="tv-shell-v${APK_VERSION}-${GITHUB_RUN_NUMBER}"
@@ -258,6 +260,6 @@ jobs:
           gh release create "$TAG" "dist/${APK_NAME}" dist/ffmpeg-*.tar.xz \
             --target "$GITHUB_SHA" \
             "${FLAGS[@]}" \
-            --title "IPTVnator Android TV ${APK_VERSION} (build ${GITHUB_RUN_NUMBER})" \
-            --notes "IPTVnator for Fire TV / Android TV (experimental). Install with the Downloader app (APK link below) or with \`adb install -r\`. Unless the repository provides a release key, the APK is signed with the versioned debug key (tv-shell/android/app/debug.keystore), so newer builds install over older ones. See tv-shell/README.md."
+            --title "Yestream TV ${APK_VERSION} (build ${GITHUB_RUN_NUMBER})" \
+            --notes "Yestream for Fire TV / Android TV. Install with the Downloader app (APK link below) or with \`adb install -r\`. Unless the repository provides a release key, the APK is signed with the versioned debug key (tv-shell/android/app/debug.keystore), so newer builds install over older ones. See tv-shell/README.md."
           echo "Release: https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"

@@ -22,12 +22,12 @@ describe('app update channel util', () => {
 
     it('maps each channel to its repository and pages', () => {
         expect(appUpdateRepository('stable')).toEqual({
-            owner: '4gray',
-            repo: 'iptvnator',
+            owner: 'logicatuk',
+            repo: 'Yestream-pro',
         });
         expect(appUpdateRepository('nightly')).toEqual({
-            owner: '4gray',
-            repo: 'iptvnator-nightly',
+            owner: 'logicatuk',
+            repo: 'Yestream-pro-nightly',
         });
         // /releases/latest never resolves to a prerelease.
         expect(appUpdateReleasesPageUrl('stable')).toBe(
@@ -37,7 +37,7 @@ describe('app update channel util', () => {
             'https://github.com/logicatuk/Yestream-pro-nightly/releases'
         );
         expect(appUpdateReleasesApiUrl('nightly')).toBe(
-            'https://api.github.com/repos/4gray/iptvnator-nightly/releases'
+            'https://api.github.com/repos/logicatuk/Yestream-pro-nightly/releases'
         );
         expect(appUpdateReleasesListUrl('stable')).toBe(
             'https://github.com/logicatuk/Yestream-pro/releases'

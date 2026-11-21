@@ -250,7 +250,7 @@ describe('AppUpdateService', () => {
 
         expect(updaterFactory).not.toHaveBeenCalled();
         expect(fetcher).toHaveBeenCalledWith(
-            'https://api.github.com/repos/4gray/iptvnator/releases?per_page=10&page=1',
+            'https://api.github.com/repos/logicatuk/Yestream-pro/releases?per_page=10&page=1',
             expect.any(Object)
         );
         expect(service.getStatus()).toEqual(
@@ -398,7 +398,7 @@ describe('AppUpdateService', () => {
 
         expect(updater.checkForUpdates).not.toHaveBeenCalled();
         expect(fetcher).toHaveBeenCalledWith(
-            'https://api.github.com/repos/4gray/iptvnator/releases?per_page=10&page=1',
+            'https://api.github.com/repos/logicatuk/Yestream-pro/releases?per_page=10&page=1',
             expect.objectContaining({
                 headers: expect.objectContaining({
                     Accept: 'application/vnd.github+json',
@@ -696,8 +696,8 @@ describe('AppUpdateService', () => {
 
         expect(updater.setFeedURL).toHaveBeenCalledWith({
             provider: 'github',
-            owner: '4gray',
-            repo: 'iptvnator',
+            owner: 'logicatuk',
+            repo: 'Yestream-pro',
         });
         expect(updater.allowPrerelease).toBe(false);
         expect(updater.channel).toBe('latest');
@@ -721,8 +721,8 @@ describe('AppUpdateService', () => {
 
         expect(updater.setFeedURL).toHaveBeenCalledWith({
             provider: 'github',
-            owner: '4gray',
-            repo: 'iptvnator-nightly',
+            owner: 'logicatuk',
+            repo: 'Yestream-pro-nightly',
         });
         expect(updater.allowPrerelease).toBe(true);
         expect(updater.channel).toBe('nightly');
@@ -873,7 +873,7 @@ describe('AppUpdateService', () => {
 
         expect(updater.checkForUpdates).not.toHaveBeenCalled();
         expect(fetcher).toHaveBeenCalledWith(
-            'https://api.github.com/repos/4gray/iptvnator-nightly/releases?per_page=10&page=1',
+            'https://api.github.com/repos/logicatuk/Yestream-pro-nightly/releases?per_page=10&page=1',
             expect.any(Object)
         );
         // v9.9.9 is not a nightly and must not win the list.
@@ -1106,8 +1106,8 @@ describe('AppUpdateService', () => {
         expect(
             fetcher.mock.calls.map(([url]) => new URL(url).pathname)
         ).toEqual([
-            '/repos/4gray/iptvnator-nightly/releases',
-            '/repos/4gray/iptvnator/releases',
+            '/repos/logicatuk/Yestream-pro-nightly/releases',
+            '/repos/logicatuk/Yestream-pro/releases',
         ]);
     });
 });

@@ -21,8 +21,8 @@
     "publish": [
         {
             "provider": "github",
-            "owner": "4gray",
-            "repo": "iptvnator"
+            "owner": "logicatuk",
+            "repo": "Yestream-pro"
         }
     ],
     "directories": {
@@ -80,12 +80,12 @@
             }
         ],
         "category": "public.app-category.video",
-        "forceCodeSigning": true,
+        "forceCodeSigning": false,
         "gatekeeperAssess": false,
-        "hardenedRuntime": true,
+        "hardenedRuntime": false,
         "entitlements": "apps/electron-backend/macos/entitlements.mac.plist",
         "entitlementsInherit": "apps/electron-backend/macos/entitlements.mac.inherit.plist",
-        "notarize": true,
+        "notarize": false,
         "icon": "apps/web/src/assets/icons/favicon.icns"
     },
     "linux": {
