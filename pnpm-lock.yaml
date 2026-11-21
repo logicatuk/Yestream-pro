@@ -451,8 +451,8 @@ importers:
         specifier: 2.0.0
         version: 2.0.0
       globals:
-        specifier: 15.9.0
-        version: 15.9.0
+        specifier: 17.14.0
+        version: 17.14.0
       html-escaper:
         specifier: 3.0.3
         version: 3.0.3
@@ -6670,10 +6670,6 @@ packages:
 
   globals@14.0.0:
     resolution: {integrity: sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ==}
-    engines: {node: '>=18'}
-
-  globals@15.9.0:
-    resolution: {integrity: sha512-SmSKyLLKFbSr6rptvP8izbyxJL4ILwqO9Jg23UA0sDlGlu58V59D1//I3vlc0KJphVdUR7vMjHIplYnzBxorQA==}
     engines: {node: '>=18'}
 
   globals@17.14.0:
@@ -16902,8 +16898,6 @@ snapshots:
       type-fest: 0.20.2
 
   globals@14.0.0: {}
-
-  globals@15.9.0: {}
 
   globals@17.14.0: {}
 
