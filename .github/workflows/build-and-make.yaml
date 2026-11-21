@@ -1583,15 +1583,55 @@ jobs:
 
         steps: *electron-build-steps
 
+    build-smart-tv:
+        name: Build Smart TV packages (LG webOS & Samsung Tizen)
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v7
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v6.1.0
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v7
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'pnpm'
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile --ignore-scripts
+
+            - name: Build LG webOS package (.ipk)
+              run: pnpm nx run tv:package
+
+            - name: Build Samsung Tizen package (.wgt)
+              run: |
+                  node -e 'import("./apps/tv/tizen-package.mjs").then(m => m.stageTizenPackage(process.cwd()))'
+                  mkdir -p dist/tv-tizen-package
+                  cd dist/tv-tizen-input && zip -r -q ../tv-tizen-package/yestream-tv-tizen-0.1.25.wgt . && cd ../..
+
+            - name: Upload Smart TV artifacts
+              uses: actions/upload-artifact@v7
+              with:
+                  name: smart-tv-artifacts
+                  path: |
+                      dist/tv-package/*.ipk
+                      dist/tv-tizen-package/*.wgt
+                  retention-days: 7
+
     create-release:
         name: Create Draft Release
         needs:
             - nightly-version
             - build-cross-platform
             - build-linux
+            - build-smart-tv
         if: >-
             ${{ !cancelled() && needs.build-cross-platform.result == 'success' &&
                 needs.build-linux.result == 'success' &&
+                needs.build-smart-tv.result == 'success' &&
                 ((github.event_name == 'pull_request' &&
                   github.event.pull_request.head.repo.full_name == github.repository) ||
                  (github.event_name != 'pull_request' && needs.nightly-version.result == 'success')) }}
@@ -1895,6 +1935,8 @@ jobs:
                       artifacts/windows-artifacts/*.zip
                       artifacts/windows-artifacts/latest.yml
                       artifacts/windows-artifacts/*.blockmap
+                      artifacts/smart-tv-artifacts/*.ipk
+                      artifacts/smart-tv-artifacts/*.wgt
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
