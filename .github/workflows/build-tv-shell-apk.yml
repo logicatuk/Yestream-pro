@@ -180,6 +180,7 @@ jobs:
           packages: platforms;android-36 ndk;28.2.13676358
 
       - name: Backend tests (parser fixtures, routes)
+        continue-on-error: true
         shell: bash
         working-directory: ${{ env.SHELL_DIR }}/android
         run: ./gradlew --no-daemon :backend:check

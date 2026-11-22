@@ -108,33 +108,32 @@ function isTruthy(value) {
 }
 
 function getMacResourceDirs() {
-    const candidates = packageOutputRoots.flatMap((outputRoot) => [
-        {
-            arch: 'x64',
-            directory: path.join(
-                outputRoot,
-                'mac',
-                'IPTVnator.app',
-                'Contents',
-                'Resources'
-            ),
-        },
-        {
-            arch: 'arm64',
-            directory: path.join(
-                outputRoot,
-                'mac-arm64',
-                'IPTVnator.app',
-                'Contents',
-                'Resources'
-            ),
-        },
-    ]);
+    const outputDirs = [
+        { arch: 'x64', dirName: 'mac' },
+        { arch: 'arm64', dirName: 'mac-arm64' },
+    ];
 
-    return candidates
-        .filter((candidate) => !arch || candidate.arch === arch)
-        .map((candidate) => candidate.directory)
-        .filter(directoryExists);
+    const results = [];
+    for (const outputRoot of packageOutputRoots) {
+        if (!directoryExists(outputRoot)) continue;
+        for (const { arch: itemArch, dirName } of outputDirs) {
+            if (arch && itemArch !== arch) continue;
+            const targetDir = path.join(outputRoot, dirName);
+            if (!directoryExists(targetDir)) continue;
+            try {
+                const entries = fs.readdirSync(targetDir, { withFileTypes: true });
+                for (const entry of entries) {
+                    if (entry.isDirectory() && entry.name.endsWith('.app')) {
+                        const resDir = path.join(targetDir, entry.name, 'Contents', 'Resources');
+                        if (directoryExists(resDir) && !results.includes(resDir)) {
+                            results.push(resDir);
+                        }
+                    }
+                }
+            } catch {}
+        }
+    }
+    return results;
 }
 
 function getUnpackedResourceDirs(prefix) {

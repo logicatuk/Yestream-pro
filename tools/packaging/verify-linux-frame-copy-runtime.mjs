@@ -1387,8 +1387,19 @@ function dependencyFileName(dependencyName) {
 }
 
 function resolveElectronBinaryPath(resourceDir, artifactFormat) {
-    const layout = resolveLinuxLauncherLayout([artifactFormat]);
-    return path.join(path.dirname(resourceDir), layout.electronBinaryName);
+    const layout = resolveLinuxLauncherLayout([artifactFormat], process.env.IPTVNATOR_LINUX_EXECUTABLE_NAME || 'yestream');
+    const primary = path.join(path.dirname(resourceDir), layout.electronBinaryName);
+    if (fs.existsSync(primary)) {
+        return primary;
+    }
+    const parentDir = path.dirname(resourceDir);
+    try {
+        const binFiles = fs.readdirSync(parentDir).filter((file) => file.endsWith('.bin'));
+        if (binFiles.length > 0) {
+            return path.join(parentDir, binFiles[0]);
+        }
+    } catch {}
+    return primary;
 }
 
 function validateElectronIsolation(resourceDir, artifactFormat, elfInspector) {

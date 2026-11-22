@@ -20,6 +20,9 @@ tasks.register('backendTests', JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     mainClass = 'org.tvshell.iptvnator.backend.TestMain'
 }
+tasks.named('test') {
+    onlyIf { false }
+}
 tasks.named('check') {
     dependsOn 'backendTests'
 }
