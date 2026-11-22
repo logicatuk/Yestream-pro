@@ -424,6 +424,7 @@
         "RESET": "Reset",
         "RESET_DESCRIPTION": "Permanently delete content stored in this app.",
         "ABOUT": "About",
+        "NAV_ACCOUNT": "Account & Device",
         "NAV_GENERAL": "General",
         "NAV_PLAYBACK": "Playback",
         "NAV_EPG": "EPG",

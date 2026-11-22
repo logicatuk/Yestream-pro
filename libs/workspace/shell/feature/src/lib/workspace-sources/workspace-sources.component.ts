@@ -32,6 +32,7 @@ import {
     RecentPlaylistsComponent,
     SourceCleanupDialogComponent,
     SourceRemovalService,
+    YestreamQuickConnectComponent,
 } from '@iptvnator/playlist/shared/ui';
 import {
     filterSources,
@@ -83,6 +84,7 @@ const TYPE_TITLE_KEYS: Record<string, string> = {
         MenuItemRadioCheckDirective,
         MenuItemRadioDirective,
         RecentPlaylistsComponent,
+        YestreamQuickConnectComponent,
         TranslatePipe,
     ],
     templateUrl: './workspace-sources.component.html',

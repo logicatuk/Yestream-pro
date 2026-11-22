@@ -54,6 +54,7 @@ import {
     SettingsFormFacade,
     SettingsRuntimeUpdateError,
 } from './settings-form.facade';
+import { SettingsAccountSectionComponent } from './settings-account-section.component';
 import { SettingsAppearanceSectionComponent } from './settings-appearance-section.component';
 import { SettingsGeneralSectionComponent } from './settings-general-section.component';
 import { SETTINGS_DEFAULT_SECTION, SettingsSection } from './settings.models';
@@ -103,6 +104,7 @@ import { SettingsSnackbarService } from './settings-snackbar.service';
         MatIconModule,
         ReactiveFormsModule,
         TranslateModule,
+        SettingsAccountSectionComponent,
         SettingsAboutSectionComponent,
         SettingsDashboardSectionComponent,
         SettingsEpgSectionComponent,

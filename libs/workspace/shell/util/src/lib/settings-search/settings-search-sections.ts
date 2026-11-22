@@ -20,6 +20,12 @@ export const SETTINGS_NAV_GROUPS: readonly {
 export const SETTINGS_SECTION_DEFINITIONS: readonly SettingsSectionDefinition[] =
     [
         {
+            id: 'account',
+            navLabelKey: 'SETTINGS.NAV_ACCOUNT',
+            icon: 'badge',
+            group: 'app',
+        },
+        {
             id: 'general',
             navLabelKey: 'SETTINGS.NAV_GENERAL',
             icon: 'tune',

@@ -17,6 +17,50 @@
     overflow: hidden;
 }
 
+.sources-layout {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.sources-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.sources-connect-sidebar {
+    width: 380px;
+    flex-shrink: 0;
+    padding: 24px 28px;
+    overflow-y: auto;
+    border-left: 1px solid rgba(148, 163, 184, 0.08);
+
+    app-yestream-quick-connect {
+        display: block;
+        position: sticky;
+        top: 0;
+    }
+}
+
+@media (max-width: 1280px) {
+    .sources-layout {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+    .sources-connect-sidebar {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid rgba(148, 163, 184, 0.08);
+        padding: 16px 20px;
+    }
+}
+
 .sources-header {
     flex: none;
     display: flex;

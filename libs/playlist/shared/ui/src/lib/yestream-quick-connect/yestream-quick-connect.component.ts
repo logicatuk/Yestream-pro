@@ -72,6 +72,16 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                             </div>
                         </div>
 
+                        <div class="yqc-row">
+                            <span class="yqc-label">Web Portal</span>
+                            <div class="yqc-value-pill">
+                                <a [href]="cloud.portalLoginUrl ? cloud.portalLoginUrl() : 'https://yestream.ai.studio'" target="_blank" rel="noopener noreferrer" class="yqc-link">
+                                    <span>yestream.ai.studio</span>
+                                    <mat-icon>open_in_new</mat-icon>
+                                </a>
+                            </div>
+                        </div>
+
                         <div class="yqc-actions">
                             <button
                                 mat-flat-button
@@ -218,6 +228,24 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                 font-size: 14px;
                 width: 14px;
                 height: 14px;
+            }
+        }
+        .yqc-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: #38bdf8;
+            text-decoration: none;
+            font-size: 0.84rem;
+            font-weight: 500;
+            mat-icon {
+                font-size: 13px;
+                width: 13px;
+                height: 13px;
+            }
+            &:hover {
+                text-decoration: underline;
+                color: #7dd3fc;
             }
         }
         .yqc-actions {
