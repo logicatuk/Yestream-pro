@@ -101,20 +101,11 @@ export class PlaylistStorageBackend {
     }
 
     kind(): PlaylistStorageKind {
-        if (
-            sourceConnection() ||
-            sourceConnectionReadFailed() ||
-            this.serverStore
-        )
-            return 'server';
         return this.runtime.supportsSqlite ? 'electron' : 'indexeddb';
     }
 
     /** The document store for `kind()`, or `null` for IndexedDB. */
     documentStore(): PlaylistDocumentStore | null {
-        if (sourceConnection() || sourceConnectionReadFailed())
-            return this.deferredStore;
-        if (this.serverStore) return this.serverStore;
         return this.localDocumentStore();
     }
 

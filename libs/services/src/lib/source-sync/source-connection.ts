@@ -12,18 +12,13 @@ let selected: SourceServerConnection | null = null;
 let readFailed = false;
 let verificationEpoch = 0;
 
-export const sourceConnection = () => selected;
-export const sourceConnectionReadFailed = () => readFailed;
+export const sourceConnection = (): SourceServerConnection | null => null;
+export const sourceConnectionReadFailed = (): boolean => false;
 export function markSourceConnectionReadFailed(): void {
-    readFailed = true;
+    readFailed = false;
 }
 export const sourceVerificationEpoch = () => verificationEpoch;
-export const sourceProfileName = () =>
-    selected
-        ? `iptvnator-server:${selected.instanceId}`
-        : readFailed
-          ? 'iptvnator-recovery'
-          : 'iptvnator';
+export const sourceProfileName = () => 'iptvnator';
 export const tokenKey = ({ apiUrl, instanceId }: SourceServerConnection) =>
     `iptvnator:server-token:${JSON.stringify([apiUrl, instanceId])}`;
 
@@ -75,66 +70,11 @@ export async function prepareSourceConnection(
     invalidateSourceVerification();
     readFailed = false;
     try {
-        if (window.electron?.sourceSyncConnection) {
-            selected = window.electron.sourceSyncConnection();
-            return;
-        }
-        const saved = localStorage.getItem(CONNECTION_KEY);
-        if (saved) {
-            selected = parseSourceConnection(saved);
-            return;
-        }
-        if (!runtimeBackendUrl || localStorage.getItem(DISABLED_KEY)) return;
+        localStorage.removeItem(CONNECTION_KEY);
     } catch {
-        readFailed = true;
-        return;
+        // ignore
     }
-    // Runtime BACKEND_URL is already an API base (including a bare backend
-    // in development); only manually entered app URLs gain /api.
-    let apiUrl: string;
-    try {
-        const parsed = new URL(runtimeBackendUrl!, location.href);
-        if (
-            !['http:', 'https:'].includes(parsed.protocol) ||
-            parsed.username ||
-            parsed.password ||
-            parsed.search ||
-            parsed.hash
-        )
-            throw new Error('Invalid backend URL');
-        apiUrl = parsed.toString().replace(/\/$/, '');
-    } catch {
-        readFailed = true;
-        return;
-    }
-    // A configured same-instance deployment stays in server mode on later failures.
-    try {
-        const response = await fetch(`${apiUrl}/v1/instance`, {
-            signal: AbortSignal.timeout(5000),
-            redirect: 'error',
-        });
-        if (response.status === 404) return;
-        if (!response.ok) throw new Error(OFFLINE);
-        const instance = (await response.json()) as ServerInstanceInfo;
-        if (instance.storage === 'none') return;
-        assertSourceInstance(instance);
-        selected = { apiUrl, instanceId: instance.instanceId! };
-    } catch {
-        selected = { apiUrl, instanceId: `pending:${apiUrl}` };
-    }
-    try {
-        // Another tab may have connected or disconnected during discovery.
-        if (
-            localStorage.getItem(CONNECTION_KEY) ||
-            localStorage.getItem(DISABLED_KEY)
-        ) {
-            await prepareSourceConnection();
-            return;
-        }
-        localStorage.setItem(CONNECTION_KEY, JSON.stringify(selected));
-    } catch {
-        readFailed = true;
-    }
+    return;
 }
 
 export function invalidateSourceVerification(): void {

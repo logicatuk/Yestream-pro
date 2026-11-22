@@ -308,13 +308,8 @@ const frameZoomPorts = {
 
 const electronApi: ElectronBridgeApi = {
     onAppMenuAction: createAppMenuListener(ipcRenderer),
-    sourceSyncConnection: () => {
-        const result = ipcRenderer.sendSync(SOURCE_SYNC_CONNECTION);
-        if (result?.error) throw new Error('SOURCE_SYNC.INCOMPATIBLE');
-        return result;
-    },
-    sourceSyncSavedConnection: () =>
-        ipcRenderer.sendSync(SOURCE_SYNC_SAVED_CONNECTION),
+    sourceSyncConnection: () => null,
+    sourceSyncSavedConnection: () => null,
     historyLocalRequest: (request) =>
         ipcRenderer.invoke('DB_HISTORY_LOCAL', request),
     favoritesLocalRequest: (request) =>
