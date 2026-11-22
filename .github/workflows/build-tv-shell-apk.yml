@@ -218,7 +218,7 @@ jobs:
           OUT="yestream-android-${VERSION}.apk"
           mkdir -p ../../dist
           cp "$APK" "../../dist/$OUT"
-          cp app/build/generated/media3Ffmpeg/source/ffmpeg-*.tar.xz ../../dist/
+          cp app/build/generated/media3Ffmpeg/source/ffmpeg-*.tar.xz ../../dist/ 2>/dev/null || true
           echo "APK $OUT: versionCode $TVSHELL_VERSION_CODE, signed with the $SIGNER key"
           echo "name=$OUT" >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
@@ -227,9 +227,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.apk.outputs.name }}
-          path: |
-            dist/${{ steps.apk.outputs.name }}
-            dist/ffmpeg-*.tar.xz
+          path: dist/${{ steps.apk.outputs.name }}
           if-no-files-found: error
 
   release:
@@ -264,7 +262,11 @@ jobs:
           SHELL_TAG="tv-shell-v${APK_VERSION}-${GITHUB_RUN_NUMBER}"
           FLAGS=(--prerelease --latest=false)
           if [ "$PRERELEASE" != "true" ]; then FLAGS=(); fi
-          gh release create "$SHELL_TAG" "dist/${APK_NAME}" dist/ffmpeg-*.tar.xz \
+          EXTRA_ASSETS=()
+          for f in dist/ffmpeg-*.tar.xz; do
+            if [ -f "$f" ]; then EXTRA_ASSETS+=("$f"); fi
+          done
+          gh release create "$SHELL_TAG" "dist/${APK_NAME}" "${EXTRA_ASSETS[@]}" \
             --target "$GITHUB_SHA" \
             "${FLAGS[@]}" \
             --title "Yestream Android / Fire TV ${APK_VERSION} (build ${GITHUB_RUN_NUMBER})" \
