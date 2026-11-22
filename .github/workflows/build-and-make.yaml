@@ -22,8 +22,6 @@ name: Build and Make Electron App
 # draft. Contract: docs/architecture/release-pipeline.md ("Nightly channel").
 on:
     push:
-        branches:
-            - master
         tags:
             - 'v*.*.*'
         paths-ignore:
