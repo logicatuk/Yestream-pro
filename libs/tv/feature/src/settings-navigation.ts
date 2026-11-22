@@ -4,8 +4,6 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { JSX } from 'preact';
 
 export const settingsCategories = [
-    ['connection', 'Connection', 'Home server & diagnostics'],
-    ['library', 'Library & sync', 'Shared sources'],
     ['appearance', 'Appearance', 'Home composition'],
     ['epg', 'Programme guide', 'Provider schedules'],
     ['playback', 'Playback', 'Autoplay next episode'],
@@ -42,7 +40,7 @@ function available(element: HTMLElement): boolean {
 
 export function useSettingsNavigation(memory: SettingsMemory) {
     if (!settingsCategories.some(([id]) => id === memory.category)) {
-        memory.category = 'connection';
+        memory.category = 'appearance';
     }
     const [category, setCategory] = useState(memory.category);
     const root = useRef<HTMLDivElement>(null);

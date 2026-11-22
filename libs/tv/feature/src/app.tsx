@@ -31,7 +31,7 @@ import type { FilmographyMemory } from './use-filmography-search';
 export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
     const personMemory = useRef<FilmographyMemory>(new WeakMap());
     const settingsMemory = useRef<SettingsMemory>({
-        category: 'connection',
+        category: 'appearance',
         controls: {},
         scroll: {},
     });

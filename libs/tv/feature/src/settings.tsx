@@ -1,8 +1,3 @@
-import { useState } from 'preact/hooks';
-import { LibrarySettings } from './library-settings';
-import { PhoneSetup } from './phone-setup';
-import { BackendConnection } from './backend-connection';
-import { DirectAccessProbe } from './direct-probe';
 import { SettingsPreferences } from './settings-preferences';
 import {
     settingsCategories,
@@ -22,7 +17,6 @@ export function Settings({
     buildInfo: TvBuildInfo;
 }) {
     const navigation = useSettingsNavigation(memory);
-    const [phoneRevision, setPhoneRevision] = useState(0);
     return (
         <div
             class="settings-screen"
@@ -32,14 +26,6 @@ export function Settings({
         >
             <div class="settings-toolbar">
                 <p class="muted">Choose a category to adjust settings.</p>
-                <PhoneSetup
-                    tv={tv}
-                    purpose="settings"
-                    compact
-                    onSettingsApplied={() =>
-                        setPhoneRevision((value) => value + 1)
-                    }
-                />
             </div>
             <div class="settings-workspace">
                 <div
@@ -78,31 +64,18 @@ export function Settings({
                             memory.scroll[id] = event.currentTarget.scrollTop;
                         }}
                     >
-                        {id === 'connection' ? (
-                            <>
-                                <BackendConnection
-                                    tv={tv}
-                                    label="Backend URL"
-                                />
-                                <DirectAccessProbe tv={tv} />
-                            </>
-                        ) : id === 'library' ? (
-                            <LibrarySettings tv={tv} />
-                        ) : id === 'appearance' ? (
+                        {id === 'appearance' ? (
                             <SettingsPreferences
-                                key={`layout:${phoneRevision}`}
                                 tv={tv}
                                 category="layout"
                             />
                         ) : id === 'epg' ? (
                             <SettingsPreferences
-                                key={`epg:${phoneRevision}`}
                                 tv={tv}
                                 category="epg"
                             />
                         ) : id === 'playback' ? (
                             <SettingsPreferences
-                                key={`playback:${phoneRevision}`}
                                 tv={tv}
                                 category="playback"
                             />
