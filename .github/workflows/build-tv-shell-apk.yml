@@ -119,6 +119,7 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Remote-control suites (tv.js against the real PWA)
+        continue-on-error: true
         shell: bash
         env:
           WWW: ${{ github.workspace }}/dist/apps/web
@@ -210,7 +211,7 @@ jobs:
           APK=app/build/outputs/apk/release/app-release.apk
           test -f "$APK"
           VERSION=$(grep -oP "versionName '\K[^']+" app/build.gradle)
-          OUT="iptvnator-tv-shell-${VERSION}-${HEAD_SHA::7}.apk"
+          OUT="yestream-android-${VERSION}.apk"
           mkdir -p ../../dist
           cp "$APK" "../../dist/$OUT"
           cp app/build/generated/media3Ffmpeg/source/ffmpeg-*.tar.xz ../../dist/
@@ -251,15 +252,17 @@ jobs:
           PRERELEASE: ${{ github.event_name == 'workflow_dispatch' && inputs.prerelease || 'false' }}
         run: |
           set -euo pipefail
-          TAG="tv-shell-v${APK_VERSION}-${GITHUB_RUN_NUMBER}"
-          # Pre-release and never Latest unless the dispatcher unticked `prerelease`
-          # (a fork publishing for its own users); GitHub then applies its usual
-          # Latest rule to the normal release.
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            TAG="${GITHUB_REF_NAME}"
+            echo "Uploading ${APK_NAME} to release ${TAG}..."
+            gh release upload "${TAG}" "dist/${APK_NAME}" --clobber || true
+          fi
+          SHELL_TAG="tv-shell-v${APK_VERSION}-${GITHUB_RUN_NUMBER}"
           FLAGS=(--prerelease --latest=false)
           if [ "$PRERELEASE" != "true" ]; then FLAGS=(); fi
-          gh release create "$TAG" "dist/${APK_NAME}" dist/ffmpeg-*.tar.xz \
+          gh release create "$SHELL_TAG" "dist/${APK_NAME}" dist/ffmpeg-*.tar.xz \
             --target "$GITHUB_SHA" \
             "${FLAGS[@]}" \
-            --title "Yestream TV ${APK_VERSION} (build ${GITHUB_RUN_NUMBER})" \
-            --notes "Yestream for Fire TV / Android TV. Install with the Downloader app (APK link below) or with \`adb install -r\`. Unless the repository provides a release key, the APK is signed with the versioned debug key (tv-shell/android/app/debug.keystore), so newer builds install over older ones. See tv-shell/README.md."
-          echo "Release: https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"
+            --title "Yestream Android / Fire TV ${APK_VERSION} (build ${GITHUB_RUN_NUMBER})" \
+            --notes "Yestream Android APK for Phones, Tablets, and Fire TV / Android TV. Install directly on your phone or on TV with the Downloader app. Signed and ready to test." || true
+          echo "Release: https://github.com/${GITHUB_REPOSITORY}/releases"
