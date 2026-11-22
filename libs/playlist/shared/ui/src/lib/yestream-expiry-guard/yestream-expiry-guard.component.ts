@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { QRCodeComponent } from 'angularx-qrcode';
+import { TranslateModule } from '@ngx-translate/core';
 import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
 
 @Component({
     selector: 'app-yestream-expiry-guard',
     standalone: true,
-    imports: [CommonModule, MatButtonModule, MatIconModule, QRCodeComponent],
+    imports: [CommonModule, MatButtonModule, MatIconModule, QRCodeComponent, TranslateModule],
     template: `
         @if (isExpired()) {
             <div class="expiry-overlay" role="alertdialog" aria-modal="true">
@@ -16,13 +17,12 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                     <!-- Glow header -->
                     <div class="expiry-badge">
                         <mat-icon>lock</mat-icon>
-                        <span>Subscription Expired</span>
+                        <span>{{ 'YESTREAM.SUBSCRIPTION_EXPIRED' | translate }}</span>
                     </div>
 
-                    <h1 class="expiry-title">Access Period Ended</h1>
+                    <h1 class="expiry-title">{{ 'YESTREAM.ACCESS_PERIOD_ENDED' | translate }}</h1>
                     <p class="expiry-desc">
-                        Your device access trial or subscription has expired. 
-                        Please contact your reseller or renew via the web portal to unlock Live TV, Movies, and Series.
+                        {{ 'YESTREAM.EXPIRY_MESSAGE' | translate }}
                     </p>
 
                     <!-- Credentials & QR Code Grid -->
@@ -44,19 +44,19 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                                     </div>
                                 }
                             </div>
-                            <span class="expiry-qr-hint">Scan with phone to renew</span>
+                            <span class="expiry-qr-hint">{{ 'YESTREAM.SCAN_TO_RENEW' | translate }}</span>
                         </div>
 
                         <div class="expiry-info-col">
                             <div class="expiry-field">
-                                <span class="expiry-field-label">MAC Address</span>
+                                <span class="expiry-field-label">{{ 'YESTREAM.MAC_ADDRESS' | translate }}</span>
                                 <div class="expiry-field-pill">
                                     <code>{{ mac() }}</code>
                                     <button
                                         type="button"
                                         class="copy-btn"
                                         (click)="copyText(mac(), 'mac')"
-                                        title="Copy MAC"
+                                        [title]="'YESTREAM.COPY_MAC' | translate"
                                     >
                                         <mat-icon>{{ copiedField === 'mac' ? 'check' : 'content_copy' }}</mat-icon>
                                     </button>
@@ -64,14 +64,14 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                             </div>
 
                             <div class="expiry-field">
-                                <span class="expiry-field-label">Device Key</span>
+                                <span class="expiry-field-label">{{ 'YESTREAM.DEVICE_KEY' | translate }}</span>
                                 <div class="expiry-field-pill">
                                     <code class="key-pill">{{ key() }}</code>
                                     <button
                                         type="button"
                                         class="copy-btn"
                                         (click)="copyText(key(), 'key')"
-                                        title="Copy Key"
+                                        [title]="'YESTREAM.COPY_KEY' | translate"
                                     >
                                         <mat-icon>{{ copiedField === 'key' ? 'check' : 'content_copy' }}</mat-icon>
                                     </button>
@@ -79,7 +79,7 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                             </div>
 
                             <div class="expiry-field">
-                                <span class="expiry-field-label">Web Portal</span>
+                                <span class="expiry-field-label">{{ 'YESTREAM.WEB_PORTAL' | translate }}</span>
                                 <a [href]="portalUrl()" target="_blank" rel="noopener noreferrer" class="portal-link">
                                     <span>yestream.ai.studio</span>
                                     <mat-icon>open_in_new</mat-icon>
@@ -106,7 +106,7 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                             (click)="checkAndUnlock()"
                         >
                             <mat-icon [class.spinning]="isLoading()">sync</mat-icon>
-                            <span>{{ isLoading() ? 'Checking Server...' : 'Check Status & Unlock' }}</span>
+                            <span>{{ (isLoading() ? 'YESTREAM.CHECKING_SERVER' : 'YESTREAM.CHECK_STATUS_UNLOCK') | translate }}</span>
                         </button>
                     </div>
                 </div>

@@ -9,6 +9,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslateModule } from '@ngx-translate/core';
 import { Store } from '@ngrx/store';
 import { selectActivePlaylist } from '@iptvnator/m3u-state';
 import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
@@ -17,24 +18,24 @@ import { XtreamApiService, XtreamStore, XtreamAccountInfo } from '@iptvnator/por
 @Component({
     selector: 'app-settings-account-section',
     standalone: true,
-    imports: [CommonModule, MatButtonModule, MatIconModule],
+    imports: [CommonModule, MatButtonModule, MatIconModule, TranslateModule],
     template: `
         <section class="settings-group" id="account">
             <header class="settings-group__header">
-                <h2>Account & Device</h2>
-                <p>Your hardware device identity, Yestream Pro subscription, and active IPTV provider information.</p>
+                <h2>{{ 'YESTREAM.ACCOUNT_DEVICE' | translate }}</h2>
+                <p>{{ 'YESTREAM.ACCOUNT_DEVICE_SUBTITLE' | translate }}</p>
             </header>
 
             <!-- License & Device Card -->
             <section class="settings-section">
                 <div class="settings-section__header">
-                    <h3>Subscription & License</h3>
+                    <h3>{{ 'YESTREAM.SUBSCRIPTION_LICENSE' | translate }}</h3>
                 </div>
                 <div class="settings-card account-card">
                     <div class="account-card__top">
                         <div class="account-status-badge" [class.is-active]="isActive()" [class.is-expired]="isExpired()">
                             <mat-icon>{{ isActive() ? 'verified' : 'warning' }}</mat-icon>
-                            <span>{{ statusLabel() }}</span>
+                            <span>{{ statusLabel() | translate }}</span>
                         </div>
 
                         <button
@@ -45,20 +46,20 @@ import { XtreamApiService, XtreamStore, XtreamAccountInfo } from '@iptvnator/por
                             (click)="checkStatus()"
                         >
                             <mat-icon [class.spinning]="cloud?.syncLoading && cloud.syncLoading()">sync</mat-icon>
-                            <span>Check Status</span>
+                            <span>{{ (cloud?.syncLoading && cloud.syncLoading() ? 'YESTREAM.CHECKING_STATUS' : 'YESTREAM.CHECK_STATUS') | translate }}</span>
                         </button>
                     </div>
 
                     <div class="account-grid">
                         <div class="account-prop">
-                            <span class="account-prop__label">MAC Address</span>
+                            <span class="account-prop__label">{{ 'YESTREAM.MAC_ADDRESS' | translate }}</span>
                             <div class="account-pill">
                                 <code>{{ macAddress() }}</code>
                                 <button
                                     type="button"
                                     class="account-copy-btn"
                                     (click)="copyText(macAddress(), 'mac')"
-                                    title="Copy MAC"
+                                    [title]="'YESTREAM.COPY_MAC' | translate"
                                 >
                                     <mat-icon>{{ copiedField === 'mac' ? 'check' : 'content_copy' }}</mat-icon>
                                 </button>
@@ -66,14 +67,14 @@ import { XtreamApiService, XtreamStore, XtreamAccountInfo } from '@iptvnator/por
                         </div>
 
                         <div class="account-prop">
-                            <span class="account-prop__label">Device Key</span>
+                            <span class="account-prop__label">{{ 'YESTREAM.DEVICE_KEY' | translate }}</span>
                             <div class="account-pill">
                                 <code class="key-highlight">{{ deviceKey() }}</code>
                                 <button
                                     type="button"
                                     class="account-copy-btn"
                                     (click)="copyText(deviceKey(), 'key')"
-                                    title="Copy Key"
+                                    [title]="'YESTREAM.COPY_KEY' | translate"
                                 >
                                     <mat-icon>{{ copiedField === 'key' ? 'check' : 'content_copy' }}</mat-icon>
                                 </button>
@@ -81,12 +82,12 @@ import { XtreamApiService, XtreamStore, XtreamAccountInfo } from '@iptvnator/por
                         </div>
 
                         <div class="account-prop">
-                            <span class="account-prop__label">Subscription Plan</span>
+                            <span class="account-prop__label">{{ 'YESTREAM.SUBSCRIPTION_PLAN' | translate }}</span>
                             <span class="account-prop__val plan-name">{{ planName() }}</span>
                         </div>
 
                         <div class="account-prop">
-                            <span class="account-prop__label">Expiration Date</span>
+                            <span class="account-prop__label">{{ 'YESTREAM.EXPIRATION_DATE' | translate }}</span>
                             <span class="account-prop__val">{{ expiresFormatted() }}</span>
                         </div>
                     </div>
@@ -96,8 +97,8 @@ import { XtreamApiService, XtreamStore, XtreamAccountInfo } from '@iptvnator/por
             <!-- Active IPTV Provider Details -->
             <section class="settings-section">
                 <div class="settings-section__header">
-                    <h3>Active IPTV Provider</h3>
-                    <p>Live stream statistics, user credentials, and server diagnostics from your current provider.</p>
+                    <h3>{{ 'YESTREAM.ACTIVE_IPTV_PROVIDER' | translate }}</h3>
+                    <p>{{ 'YESTREAM.PROVIDER_SUBTITLE' | translate }}</p>
                 </div>
 
                 @if (activePlaylist(); as p) {
@@ -128,7 +129,7 @@ import { XtreamApiService, XtreamStore, XtreamAccountInfo } from '@iptvnator/por
                                 <div class="hero-stat">
                                     <div class="hero-stat__icon"><mat-icon>bolt</mat-icon></div>
                                     <div class="hero-stat__body">
-                                        <span class="hero-stat__label">Active Connections</span>
+                                        <span class="hero-stat__label">{{ 'YESTREAM.ACTIVE_CONNECTIONS' | translate }}</span>
                                         <span class="hero-stat__value">{{ activeConnectionsLabel() }}</span>
                                         <div class="hero-stat__meter">
                                             <span [style.width.%]="connectionUsagePercent()"></span>
@@ -139,7 +140,7 @@ import { XtreamApiService, XtreamStore, XtreamAccountInfo } from '@iptvnator/por
                                 <div class="hero-stat">
                                     <div class="hero-stat__icon"><mat-icon>live_tv</mat-icon></div>
                                     <div class="hero-stat__body">
-                                        <span class="hero-stat__label">Live TV</span>
+                                        <span class="hero-stat__label">{{ 'YESTREAM.LIVE_TV' | translate }}</span>
                                         <span class="hero-stat__value">{{ liveCount() }}</span>
                                     </div>
                                 </div>
@@ -147,7 +148,7 @@ import { XtreamApiService, XtreamStore, XtreamAccountInfo } from '@iptvnator/por
                                 <div class="hero-stat">
                                     <div class="hero-stat__icon"><mat-icon>movie</mat-icon></div>
                                     <div class="hero-stat__body">
-                                        <span class="hero-stat__label">Movies</span>
+                                        <span class="hero-stat__label">{{ 'YESTREAM.MOVIES' | translate }}</span>
                                         <span class="hero-stat__value">{{ vodCount() }}</span>
                                     </div>
                                 </div>
@@ -155,7 +156,7 @@ import { XtreamApiService, XtreamStore, XtreamAccountInfo } from '@iptvnator/por
                                 <div class="hero-stat">
                                     <div class="hero-stat__icon"><mat-icon>tv</mat-icon></div>
                                     <div class="hero-stat__body">
-                                        <span class="hero-stat__label">TV Series</span>
+                                        <span class="hero-stat__label">{{ 'YESTREAM.TV_SERIES' | translate }}</span>
                                         <span class="hero-stat__value">{{ seriesCount() }}</span>
                                     </div>
                                 </div>
@@ -165,41 +166,41 @@ import { XtreamApiService, XtreamStore, XtreamAccountInfo } from '@iptvnator/por
                             <div class="provider-panels-grid">
                                 <!-- User Information Panel -->
                                 <div class="provider-panel">
-                                    <h4 class="provider-panel__title">User Information</h4>
+                                    <h4 class="provider-panel__title">{{ 'YESTREAM.USER_INFO' | translate }}</h4>
                                     <dl class="provider-dl">
                                         <div class="provider-row">
-                                            <dt>Status</dt>
+                                            <dt>{{ 'YESTREAM.STATUS' | translate }}</dt>
                                             <dd class="val-status" [class.is-active]="userStatus() === 'Active'">
                                                 {{ userStatus() }}
                                             </dd>
                                         </div>
                                         <div class="provider-row">
-                                            <dt>Username</dt>
+                                            <dt>{{ 'YESTREAM.USERNAME' | translate }}</dt>
                                             <dd><code>{{ p.username || '—' }}</code></dd>
                                         </div>
                                         <div class="provider-row">
-                                            <dt>Active Connections</dt>
+                                            <dt>{{ 'YESTREAM.ACTIVE_CONNECTIONS' | translate }}</dt>
                                             <dd class="val-accent">{{ activeConnectionsLabel() }}</dd>
                                         </div>
                                         <div class="provider-row">
-                                            <dt>Created</dt>
+                                            <dt>{{ 'YESTREAM.CREATED' | translate }}</dt>
                                             <dd>{{ userCreatedAt() }}</dd>
                                         </div>
                                         <div class="provider-row">
-                                            <dt>Expires</dt>
+                                            <dt>{{ 'YESTREAM.EXPIRES' | translate }}</dt>
                                             <dd>{{ userExpDate() }}</dd>
                                         </div>
                                         <div class="provider-row">
-                                            <dt>Trial Account</dt>
+                                            <dt>{{ 'YESTREAM.TRIAL_ACCOUNT' | translate }}</dt>
                                             <dd [class.val-warning]="isTrialUser()">
-                                                {{ isTrialUser() ? 'Yes' : 'No' }}
+                                                {{ isTrialUser() ? ('YESTREAM.YES' | translate) : ('YESTREAM.NO' | translate) }}
                                             </dd>
                                         </div>
                                     </dl>
 
                                     <!-- Allowed Formats Chips -->
                                     <div class="chips-section">
-                                        <span class="chips-label">ALLOWED FORMATS</span>
+                                        <span class="chips-label">{{ 'YESTREAM.ALLOWED_FORMATS' | translate }}</span>
                                         <div class="chips-wrap">
                                             @for (fmt of allowedFormats(); track fmt) {
                                                 <span class="info-chip">{{ fmt }}</span>
@@ -210,29 +211,29 @@ import { XtreamApiService, XtreamStore, XtreamAccountInfo } from '@iptvnator/por
 
                                 <!-- Server Information Panel -->
                                 <div class="provider-panel">
-                                    <h4 class="provider-panel__title">Server Information</h4>
+                                    <h4 class="provider-panel__title">{{ 'YESTREAM.SERVER_INFO' | translate }}</h4>
                                     <dl class="provider-dl">
                                         <div class="provider-row">
-                                            <dt>URL</dt>
+                                            <dt>{{ 'YESTREAM.URL' | translate }}</dt>
                                             <dd><code>{{ serverHost() }}</code></dd>
                                         </div>
                                         <div class="provider-row">
-                                            <dt>Protocol</dt>
+                                            <dt>{{ 'YESTREAM.PROTOCOL' | translate }}</dt>
                                             <dd>{{ serverProtocol() }}</dd>
                                         </div>
                                         <div class="provider-row">
-                                            <dt>Timezone</dt>
+                                            <dt>{{ 'YESTREAM.TIMEZONE' | translate }}</dt>
                                             <dd>{{ serverTimezone() }}</dd>
                                         </div>
                                         <div class="provider-row">
-                                            <dt>Server Time</dt>
+                                            <dt>{{ 'YESTREAM.SERVER_TIME' | translate }}</dt>
                                             <dd><code>{{ serverTimeNow() }}</code></dd>
                                         </div>
                                     </dl>
 
                                     <!-- Ports Chips -->
                                     <div class="chips-section">
-                                        <span class="chips-label">PORTS</span>
+                                        <span class="chips-label">{{ 'YESTREAM.PORTS' | translate }}</span>
                                         <div class="chips-wrap">
                                             @for (port of serverPorts(); track port.name) {
                                                 <span class="info-chip">{{ port.name }} {{ port.port }}</span>
@@ -257,17 +258,17 @@ import { XtreamApiService, XtreamStore, XtreamAccountInfo } from '@iptvnator/por
 
                             <div class="account-grid">
                                 <div class="account-prop full-width">
-                                    <span class="account-prop__label">Playlist URL / File</span>
+                                    <span class="account-prop__label">{{ 'YESTREAM.PLAYLIST_URL_FILE' | translate }}</span>
                                     <code class="endpoint-code">{{ p.url || p.filePath || 'Local Playlist' }}</code>
                                 </div>
 
                                 <div class="account-prop">
-                                    <span class="account-prop__label">Channels / Streams</span>
+                                    <span class="account-prop__label">{{ 'YESTREAM.CHANNELS_STREAMS' | translate }}</span>
                                     <span class="account-prop__val">{{ channelCount(p) }}</span>
                                 </div>
 
                                 <div class="account-prop">
-                                    <span class="account-prop__label">Last Updated</span>
+                                    <span class="account-prop__label">{{ 'YESTREAM.LAST_UPDATED' | translate }}</span>
                                     <span class="account-prop__val">{{ lastUpdated(p) }}</span>
                                 </div>
                             </div>
@@ -276,7 +277,7 @@ import { XtreamApiService, XtreamStore, XtreamAccountInfo } from '@iptvnator/por
                 } @else {
                     <div class="settings-card account-card no-provider-state">
                         <mat-icon>live_tv</mat-icon>
-                        <p>No active IPTV playlist selected. Open a playlist from the Sources tab to connect.</p>
+                        <p>{{ 'YESTREAM.NO_ACTIVE_PLAYLIST_HINT' | translate }}</p>
                     </div>
                 }
             </section>
@@ -284,13 +285,13 @@ import { XtreamApiService, XtreamStore, XtreamAccountInfo } from '@iptvnator/por
             <!-- Device Platform Info -->
             <section class="settings-section">
                 <div class="settings-section__header">
-                    <h3>System & Client Details</h3>
+                    <h3>{{ 'YESTREAM.SYSTEM_CLIENT_DETAILS' | translate }}</h3>
                 </div>
                 <div class="settings-card account-card">
                     <div class="account-grid">
                         <div class="account-prop">
-                            <span class="account-prop__label">Platform</span>
-                            <span class="account-prop__val">Web Client (PWA)</span>
+                            <span class="account-prop__label">{{ 'YESTREAM.PLATFORM' | translate }}</span>
+                            <span class="account-prop__val">{{ 'YESTREAM.WEB_CLIENT_PWA' | translate }}</span>
                         </div>
                         <div class="account-prop">
                             <span class="account-prop__label">Operating System</span>
@@ -781,10 +782,10 @@ export class SettingsAccountSectionComponent {
     });
 
     readonly statusLabel = computed(() => {
-        if (this.isExpired()) return 'EXPIRED';
+        if (this.isExpired()) return 'YESTREAM.EXPIRED';
         const plan = this.cloud?.plan ? this.cloud.plan() : '';
-        if (plan === 'FOREVER' || plan === 'LIFETIME') return 'Active FOREVER';
-        return 'Active (TRIAL)';
+        if (plan === 'FOREVER' || plan === 'LIFETIME') return 'YESTREAM.ACTIVE_FOREVER';
+        return 'YESTREAM.ACTIVE';
     });
 
     readonly expiresFormatted = computed(() => {

@@ -3,22 +3,23 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { QRCodeComponent } from 'angularx-qrcode';
+import { TranslateModule } from '@ngx-translate/core';
 import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
 
 @Component({
     selector: 'app-yestream-quick-connect',
     standalone: true,
-    imports: [CommonModule, MatButtonModule, MatIconModule, QRCodeComponent],
+    imports: [CommonModule, MatButtonModule, MatIconModule, QRCodeComponent, TranslateModule],
     template: `
         @if (cloud) {
             <div class="yqc-card">
                 <div class="yqc-header">
                     <div class="yqc-badge">
                         <mat-icon>devices</mat-icon>
-                        <span>Yestream Cloud Connect</span>
+                        <span>{{ 'YESTREAM.CLOUD_CONNECT' | translate }}</span>
                     </div>
                     <div class="yqc-portal-hint">
-                        Manage via Web Portal or Reseller Panel
+                        {{ 'YESTREAM.CLOUD_CONNECT_SUBTITLE' | translate }}
                     </div>
                 </div>
 
@@ -38,19 +39,19 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                                 <mat-icon>qr_code_2</mat-icon>
                             </div>
                         }
-                        <span class="yqc-qr-caption">Scan to upload playlists</span>
+                        <span class="yqc-qr-caption">{{ 'YESTREAM.SCAN_UPLOAD_PLAYLISTS' | translate }}</span>
                     </div>
 
                     <div class="yqc-details">
                         <div class="yqc-row">
-                            <span class="yqc-label">MAC Address</span>
+                            <span class="yqc-label">{{ 'YESTREAM.MAC_ADDRESS' | translate }}</span>
                             <div class="yqc-value-pill">
                                 <code>{{ cloud.macAddress ? cloud.macAddress() : 'Loading...' }}</code>
                                 <button
                                     type="button"
                                     class="yqc-copy-btn"
                                     (click)="copyText(cloud.macAddress ? cloud.macAddress() : '', 'mac')"
-                                    title="Copy MAC"
+                                    [title]="'YESTREAM.COPY_MAC' | translate"
                                 >
                                     <mat-icon>{{ copiedField === 'mac' ? 'check' : 'content_copy' }}</mat-icon>
                                 </button>
@@ -58,14 +59,14 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                         </div>
 
                         <div class="yqc-row">
-                            <span class="yqc-label">Device Key</span>
+                            <span class="yqc-label">{{ 'YESTREAM.DEVICE_KEY' | translate }}</span>
                             <div class="yqc-value-pill">
                                 <code class="yqc-key">{{ cloud.deviceKey ? cloud.deviceKey() : '...' }}</code>
                                 <button
                                     type="button"
                                     class="yqc-copy-btn"
                                     (click)="copyText(cloud.deviceKey ? cloud.deviceKey() : '', 'key')"
-                                    title="Copy Key"
+                                    [title]="'YESTREAM.COPY_KEY' | translate"
                                 >
                                     <mat-icon>{{ copiedField === 'key' ? 'check' : 'content_copy' }}</mat-icon>
                                 </button>
@@ -73,7 +74,7 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                         </div>
 
                         <div class="yqc-row">
-                            <span class="yqc-label">Web Portal</span>
+                            <span class="yqc-label">{{ 'YESTREAM.WEB_PORTAL' | translate }}</span>
                             <div class="yqc-value-pill">
                                 <a [href]="cloud.portalLoginUrl ? cloud.portalLoginUrl() : 'https://yestream.ai.studio'" target="_blank" rel="noopener noreferrer" class="yqc-link">
                                     <span>yestream.ai.studio</span>
@@ -92,7 +93,7 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                                 (click)="reloadPlaylists()"
                             >
                                 <mat-icon [class.spinning]="cloud.syncLoading && cloud.syncLoading()">sync</mat-icon>
-                                {{ cloud.syncLoading && cloud.syncLoading() ? 'Checking Cloud...' : 'Reload from Cloud' }}
+                                {{ (cloud.syncLoading && cloud.syncLoading() ? 'YESTREAM.CHECKING_CLOUD' : 'YESTREAM.RELOAD_FROM_CLOUD') | translate }}
                             </button>
                         </div>
                     </div>
