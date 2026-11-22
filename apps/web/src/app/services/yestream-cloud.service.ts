@@ -226,17 +226,30 @@ export class YestreamCloudService {
             await this.registerDevice();
             reg = this.registration();
         }
-        if (!reg?.credential) return;
+        if (!reg?.credential) {
+            this.syncLoading.set(false);
+            return;
+        }
 
         this.syncLoading.set(true);
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+
             const res = await fetch(`${YESTREAM_CLOUD_ORIGIN}/api/v1/device/sync`, {
                 headers: {
                     'Authorization': `Bearer ${reg.credential}`
-                }
-            });
+                },
+                signal: controller.signal
+            }).finally(() => clearTimeout(timeoutId));
 
-            if (!res.ok) return;
+            if (!res.ok) {
+                if (res.status === 401) {
+                    console.warn('[YestreamCloud] Credential rejected (401), re-registering...');
+                    await this.registerDevice();
+                }
+                return;
+            }
 
             const data: YestreamSyncResponse = await res.json();
             if (data.status) {
@@ -274,7 +287,12 @@ export class YestreamCloudService {
 
             for (const item of cloudLists) {
                 const normalizedUrl = item.url ? normalizePlaylistUrl(item.url) : '';
-                const isXtream = item.type === 'xtream';
+                
+                // Smart Xtream detection: either type is 'xtream', or URL matches standard Xtream get.php pattern
+                const isXtreamPattern = normalizedUrl.includes('get.php') && 
+                    (normalizedUrl.includes('username=') || normalizedUrl.includes('user=')) && 
+                    (normalizedUrl.includes('password=') || normalizedUrl.includes('pass='));
+                const isXtream = item.type === 'xtream' || isXtreamPattern;
 
                 let serverUrl = '';
                 let username = '';
@@ -289,8 +307,19 @@ export class YestreamCloudService {
                             // ignore
                         }
                     }
-                    username = item.username || (normalizedUrl ? new URL(normalizedUrl).searchParams.get('username') || '' : '');
-                    password = item.password || (normalizedUrl ? new URL(normalizedUrl).searchParams.get('password') || '' : '');
+                    if (normalizedUrl) {
+                        try {
+                            const u = new URL(normalizedUrl);
+                            username = item.username || u.searchParams.get('username') || u.searchParams.get('user') || '';
+                            password = item.password || u.searchParams.get('password') || u.searchParams.get('pass') || '';
+                        } catch {
+                            username = item.username || '';
+                            password = item.password || '';
+                        }
+                    } else {
+                        username = item.username || '';
+                        password = item.password || '';
+                    }
                 }
 
                 // Check if existing locally by ID, mapped ID, URL, or Xtream connection
@@ -304,7 +333,7 @@ export class YestreamCloudService {
 
                 if (!exists) {
                     console.log(`[YestreamCloud] Importing playlist from cloud: ${item.name} (${item.id})`);
-                    if (isXtream) {
+                    if (isXtream && serverUrl && username) {
                         const newPlaylist: any = {
                             _id: item.id,
                             title: item.name,
@@ -324,40 +353,46 @@ export class YestreamCloudService {
                         this.saveIdMap();
                         await firstValueFrom(this.playlistsService.addPlaylist(newPlaylist));
                     } else {
-                        // M3U Playlist: fetch channels definition so items are populated and playable
-                        try {
-                            const parsed = await this.dataService.fetchPlaylistDefinition(normalizedUrl);
-                            const newM3u: any = {
-                                ...parsed,
-                                _id: item.id,
-                                title: item.name,
-                                filename: item.name,
-                                url: normalizedUrl,
-                                importDate: new Date().toISOString(),
-                                updateDate: Date.now(),
-                                type: 'm3u',
-                                ownerType: item.ownerType || 'reseller',
-                                lockedByReseller: !!item.lockedByReseller,
-                            };
-                            this.idMap[item.id] = item.id;
-                            this.saveIdMap();
-                            await firstValueFrom(this.playlistsService.addPlaylist(newM3u));
-                        } catch (fetchErr) {
-                            console.warn(`[YestreamCloud] Failed to fetch M3U channels for ${item.name}, creating shell:`, fetchErr);
-                            const shellPlaylist: any = {
-                                _id: item.id,
-                                title: item.name,
-                                filename: item.name,
-                                url: normalizedUrl,
-                                importDate: new Date().toISOString(),
-                                updateDate: Date.now(),
-                                type: 'm3u',
-                                ownerType: item.ownerType || 'reseller',
-                                lockedByReseller: !!item.lockedByReseller,
-                            };
-                            this.idMap[item.id] = item.id;
-                            this.saveIdMap();
-                            await firstValueFrom(this.playlistsService.addPlaylist(shellPlaylist));
+                        // M3U Playlist: create instantly without blocking cloud sync on massive downloads
+                        const newM3u: any = {
+                            _id: item.id,
+                            title: item.name,
+                            filename: item.name,
+                            url: normalizedUrl,
+                            importDate: new Date().toISOString(),
+                            updateDate: Date.now(),
+                            type: 'm3u',
+                            count: 0,
+                            playlist: {
+                                header: {},
+                                items: []
+                            },
+                            autoRefresh: false,
+                            ownerType: item.ownerType || 'reseller',
+                            lockedByReseller: !!item.lockedByReseller,
+                        };
+                        this.idMap[item.id] = item.id;
+                        this.saveIdMap();
+                        await firstValueFrom(this.playlistsService.addPlaylist(newM3u));
+
+                        // Non-blocking background channel fetch (timed out after 5s so sync is never delayed)
+                        if (normalizedUrl) {
+                            void Promise.race([
+                                this.dataService.fetchPlaylistDefinition(normalizedUrl),
+                                new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000))
+                            ]).then((parsed: any) => {
+                                if (parsed?.playlist?.items?.length) {
+                                    void firstValueFrom(this.playlistsService.updatePlaylist(item.id, {
+                                        ...newM3u,
+                                        ...parsed,
+                                        _id: item.id,
+                                        title: item.name,
+                                        filename: item.name
+                                    }));
+                                }
+                            }).catch(() => {
+                                // Channels will be fetched when user navigates to the playlist
+                            });
                         }
                     }
                 } else {
@@ -392,7 +427,11 @@ export class YestreamCloudService {
      * When user adds or edits a playlist inside the app, push it to cloud.
      */
     async pushPlaylistToCloud(playlist: Partial<Playlist>): Promise<void> {
-        if (this.isReconciling) return;
+        if (this.isReconciling) {
+            // Queue retry after brief reconciliation finishes
+            setTimeout(() => void this.pushPlaylistToCloud(playlist), 600);
+            return;
+        }
         let reg = this.registration();
         if (!reg?.credential) {
             await this.registerDevice();
@@ -408,6 +447,12 @@ export class YestreamCloudService {
             const localId = playlist._id || `local_${Date.now()}`;
             const cloudId = this.idMap[localId] || (playlist._id?.startsWith('pl_') ? playlist._id : undefined);
 
+            // Don't push local files or raw text that have no remote URL
+            if (!isXtream && (!playlist.url || !playlist.url.startsWith('http'))) {
+                console.log('[YestreamCloud] Local-only playlist, skipping cloud push');
+                return;
+            }
+
             const payload: any = {
                 localId,
                 name: playlist.title || playlist.filename || 'Untitled Playlist',
@@ -422,6 +467,9 @@ export class YestreamCloudService {
                 payload.host = playlist.serverUrl;
                 payload.username = playlist.username || '';
                 payload.password = playlist.password || '';
+                if (playlist.serverUrl && playlist.username && playlist.password) {
+                    payload.url = `${playlist.serverUrl}/get.php?username=${encodeURIComponent(playlist.username)}&password=${encodeURIComponent(playlist.password)}&type=m3u_plus`;
+                }
             } else {
                 payload.url = normalizePlaylistUrl(playlist.url || '');
             }
@@ -454,7 +502,10 @@ export class YestreamCloudService {
      * When user deletes a playlist inside the app, delete it from cloud.
      */
     async deletePlaylistFromCloud(playlistId: string): Promise<void> {
-        if (this.isReconciling) return;
+        if (this.isReconciling) {
+            setTimeout(() => void this.deletePlaylistFromCloud(playlistId), 600);
+            return;
+        }
         let reg = this.registration();
         if (!reg?.credential) {
             await this.registerDevice();
