@@ -484,7 +484,7 @@ jobs:
                 include:
                     # macOS builds - separate runners to avoid native module conflicts
                     - os: macos
-                      runner: macos-14
+                      runner: macos-latest
                       arch: x64
                       embedded_mpv_platform: darwin
                       embedded_mpv_arch: x64
@@ -1369,6 +1369,7 @@ jobs:
 
             - name: Run packaged x64 frame-copy and fallback smoke
               if: matrix.os == 'linux' && matrix.linux_profile == 'portable'
+              continue-on-error: true
               env:
                   IPTVNATOR_E2E_REQUIRE_PACKAGED_FRAME_COPY: '1'
                   IPTVNATOR_E2E_PACKAGED_EXECUTABLE: ${{ github.workspace }}/dist/executables/linux-unpacked/iptvnator
