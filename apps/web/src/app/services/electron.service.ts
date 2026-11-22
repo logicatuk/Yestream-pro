@@ -10,6 +10,7 @@ import {
     SettingsStore,
     SourceActivityService,
 } from '@iptvnator/services';
+import { normalizePlaylistUrl } from '@iptvnator/shared/m3u-utils';
 import {
     AUTO_UPDATE_PLAYLISTS,
     AutoUpdatePlaylistsResult,
@@ -160,10 +161,14 @@ export class ElectronService extends DataService {
         url: string,
         userAgent?: string
     ): Promise<Playlist> {
-        return window.electron.fetchPlaylistByUrl(url, undefined, {
-            ...this.settingsStore.getTrustOptions(),
-            userAgent,
-        });
+        return window.electron.fetchPlaylistByUrl(
+            normalizePlaylistUrl(url),
+            undefined,
+            {
+                ...this.settingsStore.getTrustOptions(),
+                userAgent,
+            }
+        );
     }
 
     override playlistImportRecovery(

@@ -12,6 +12,7 @@ import {
     isServerAccessChallenge,
     ServerStorageStatusService,
 } from '@iptvnator/services';
+import { normalizePlaylistUrl } from '@iptvnator/shared/m3u-utils';
 import {
     CONNECTIVITY_GUARD_RESET,
     isHostConnectivityFastFailMessage,
@@ -528,8 +529,9 @@ export class PwaService extends DataService {
     }
 
     getPlaylistFromUrl(url: string, userAgent?: string): Observable<Playlist> {
+        const normalized = normalizePlaylistUrl(url);
         const normalizedUserAgent = userAgent?.trim();
-        return this.providerTargets.request(url, (targetId) =>
+        return this.providerTargets.request(normalized, (targetId) =>
             this.http.get<Playlist>(`${this.corsProxyUrl}/parse`, {
                 params: {
                     targetId,

@@ -809,13 +809,17 @@ export class PlaylistsService {
         return this.serializePlaylistWrite(updatedPlaylist._id, async () => {
             if (isCurrent && !this.usesDocumentStore) {
                 await this.ensureIndexedDbPlaylistMigrations();
-                return this.transformIndexedDbPlaylistMeta(
+                const transformed = await this.transformIndexedDbPlaylistMeta(
                     updatedPlaylist._id,
                     (current) =>
                         isCurrent(current)
                             ? this.mergePlaylistMeta(current, updatedPlaylist)
                             : null
                 );
+                if (transformed) {
+                    void this.cloudBridge?.pushPlaylistToCloud(transformed);
+                }
+                return transformed;
             }
 
             const playlist = await firstValueFrom(

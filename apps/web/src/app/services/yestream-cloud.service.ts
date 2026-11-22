@@ -1,31 +1,14 @@
 import { Injectable, signal, computed, inject, Injector } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { PlaylistActions } from '@iptvnator/m3u-state';
-import { Playlist } from '@iptvnator/shared/interfaces';
-import { PlaylistsService } from '@iptvnator/services';
+import { Playlist, XTREAM_CONTENT_TYPES } from '@iptvnator/shared/interfaces';
+import { normalizePlaylistUrl } from '@iptvnator/shared/m3u-utils';
+import { PlaylistsService, DataService } from '@iptvnator/services';
 import { firstValueFrom } from 'rxjs';
-
-function normalizePlaylistUrl(url: string): string {
-    const trimmed = (url || '').trim();
-    if (!trimmed) return '';
-    try {
-        const parsed = new URL(trimmed);
-        if (/get\.php/i.test(parsed.pathname)) {
-            if (!parsed.searchParams.has('type')) {
-                parsed.searchParams.set('type', 'm3u_plus');
-            }
-            if (!parsed.searchParams.has('output')) {
-                parsed.searchParams.set('output', 'ts');
-            }
-        }
-        return parsed.toString();
-    } catch {
-        return trimmed;
-    }
-}
 
 export const YESTREAM_CLOUD_ORIGIN = 'https://yestream.ai.studio';
 const YESTREAM_STORAGE_KEY = 'yestream_device_identity_v1';
+const YESTREAM_ID_MAP_KEY = 'yestream_id_mapping_v1';
 
 export interface YestreamCloudPlaylist {
     id: string;
@@ -61,6 +44,9 @@ export class YestreamCloudService {
     private get playlistsService(): PlaylistsService {
         return this.injector.get(PlaylistsService);
     }
+    private get dataService(): DataService {
+        return this.injector.get(DataService);
+    }
 
     readonly registration = signal<any>(null);
     readonly loading = signal<boolean>(false);
@@ -87,8 +73,11 @@ export class YestreamCloudService {
         return false;
     });
 
+    private idMap: Record<string, string> = {}; // localId -> cloudId
+
     constructor() {
         this.loadStoredIdentity();
+        this.loadIdMap();
         void this.registerDevice();
     }
 
@@ -115,6 +104,25 @@ export class YestreamCloudService {
         }
     }
 
+    private loadIdMap(): void {
+        try {
+            const raw = localStorage.getItem(YESTREAM_ID_MAP_KEY);
+            if (raw) {
+                this.idMap = JSON.parse(raw) || {};
+            }
+        } catch {
+            this.idMap = {};
+        }
+    }
+
+    private saveIdMap(): void {
+        try {
+            localStorage.setItem(YESTREAM_ID_MAP_KEY, JSON.stringify(this.idMap));
+        } catch {
+            // ignore
+        }
+    }
+
     private async sha256Hex(message: string): Promise<string> {
         const msgBuffer = new TextEncoder().encode(message);
         const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -122,11 +130,11 @@ export class YestreamCloudService {
         return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    private async getOrCreateHardwareIdentity(): Promise<{ mac: string; fp: string }> {
-        let rawId = localStorage.getItem('yestream_raw_hardware_id');
+    private async getOrCreateHardwareIdentity(forceNew = false): Promise<{ mac: string; fp: string }> {
+        let rawId = forceNew ? null : localStorage.getItem('yestream_raw_hardware_id');
         if (!rawId) {
             const screenInfo = `${window.screen.width}x${window.screen.height}x${window.screen.colorDepth}`;
-            const navInfo = `${navigator.userAgent}-${navigator.language}-${navigator.hardwareConcurrency || 4}`;
+            const navInfo = `${navigator.userAgent}-${navigator.language}-${Date.now()}-${Math.random()}`;
             rawId = `${navInfo}-${screenInfo}`;
             try {
                 localStorage.setItem('yestream_raw_hardware_id', rawId);
@@ -148,20 +156,20 @@ export class YestreamCloudService {
         return { mac, fp };
     }
 
-    async registerDevice(): Promise<void> {
+    async registerDevice(forceNewHardware = false): Promise<void> {
         this.loading.set(true);
         this.error.set(null);
 
         try {
-            const stored = this.registration();
+            const stored = forceNewHardware ? null : this.registration();
             let mac: string;
             let fp: string;
 
-            if (stored?.mac && stored?.credential) {
+            if (stored?.mac && stored?.credential && !forceNewHardware) {
                 mac = stored.mac;
                 fp = stored.hardwareFingerprint || (await this.getOrCreateHardwareIdentity()).fp;
             } else {
-                const hw = await this.getOrCreateHardwareIdentity();
+                const hw = await this.getOrCreateHardwareIdentity(forceNewHardware);
                 mac = hw.mac;
                 fp = hw.fp;
             }
@@ -184,6 +192,11 @@ export class YestreamCloudService {
 
             if (!res.ok) {
                 const errData = await res.json().catch(() => ({}));
+                // If 409 conflict: MAC was registered with another fingerprint, auto-recover by rolling a fresh identity
+                if (res.status === 409 && !forceNewHardware) {
+                    console.warn('[YestreamCloud] MAC conflict, generating fresh hardware identity...');
+                    return await this.registerDevice(true);
+                }
                 throw new Error(errData.error || `HTTP ${res.status}`);
             }
 
@@ -208,18 +221,18 @@ export class YestreamCloudService {
      * Manual reload triggered by user: pulls playlists from Cloud API and synchronizes.
      */
     async syncFromCloud(): Promise<void> {
-        const reg = this.registration();
+        let reg = this.registration();
         if (!reg?.credential) {
             await this.registerDevice();
+            reg = this.registration();
         }
-        const updatedReg = this.registration();
-        if (!updatedReg?.credential) return;
+        if (!reg?.credential) return;
 
         this.syncLoading.set(true);
         try {
             const res = await fetch(`${YESTREAM_CLOUD_ORIGIN}/api/v1/device/sync`, {
                 headers: {
-                    'Authorization': `Bearer ${updatedReg.credential}`
+                    'Authorization': `Bearer ${reg.credential}`
                 }
             });
 
@@ -228,11 +241,11 @@ export class YestreamCloudService {
             const data: YestreamSyncResponse = await res.json();
             if (data.status) {
                 this.saveIdentity({
-                    ...updatedReg,
+                    ...reg,
                     status: data.status,
-                    plan: data.plan || updatedReg.plan,
-                    expiresAt: data.expiresAt || updatedReg.expiresAt,
-                    serverTime: data.serverTime || updatedReg.serverTime
+                    plan: data.plan || reg.plan,
+                    expiresAt: data.expiresAt || reg.expiresAt,
+                    serverTime: data.serverTime || reg.serverTime
                 });
             }
 
@@ -261,7 +274,7 @@ export class YestreamCloudService {
 
             for (const item of cloudLists) {
                 const normalizedUrl = item.url ? normalizePlaylistUrl(item.url) : '';
-                const isXtream = item.type === 'xtream' || (normalizedUrl && /get\.php/i.test(normalizedUrl));
+                const isXtream = item.type === 'xtream';
 
                 let serverUrl = '';
                 let username = '';
@@ -280,43 +293,88 @@ export class YestreamCloudService {
                     password = item.password || (normalizedUrl ? new URL(normalizedUrl).searchParams.get('password') || '' : '');
                 }
 
+                // Check if existing locally by ID, mapped ID, URL, or Xtream connection
+                const localMappedId = Object.keys(this.idMap).find(k => this.idMap[k] === item.id);
                 const exists = current.find(p =>
                     p._id === item.id ||
+                    (localMappedId && p._id === localMappedId) ||
                     (item.url && p.url === item.url) ||
                     (serverUrl && p.serverUrl === serverUrl && username && p.username === username)
                 );
 
                 if (!exists) {
                     console.log(`[YestreamCloud] Importing playlist from cloud: ${item.name} (${item.id})`);
-                    const newPlaylist: any = {
-                        _id: item.id,
-                        title: item.name,
-                        filename: item.name,
-                        importDate: new Date().toISOString(),
-                        updateDate: Date.now(),
-                        type: isXtream ? 'xtream' : 'm3u',
-                        ownerType: item.ownerType || 'reseller',
-                        lockedByReseller: !!item.lockedByReseller,
-                    };
-
                     if (isXtream) {
-                        newPlaylist.serverUrl = serverUrl;
-                        newPlaylist.username = username;
-                        newPlaylist.password = password;
-                        newPlaylist.xtreamContentTypes = ['live', 'vod', 'series'];
+                        const newPlaylist: any = {
+                            _id: item.id,
+                            title: item.name,
+                            filename: item.name,
+                            importDate: new Date().toISOString(),
+                            updateDate: Date.now(),
+                            type: 'xtream',
+                            serverUrl,
+                            username,
+                            password,
+                            xtreamContentTypes: [...XTREAM_CONTENT_TYPES], // ['movie', 'live', 'series']
+                            autoRefresh: false,
+                            ownerType: item.ownerType || 'reseller',
+                            lockedByReseller: !!item.lockedByReseller,
+                        };
+                        this.idMap[item.id] = item.id;
+                        this.saveIdMap();
+                        await firstValueFrom(this.playlistsService.addPlaylist(newPlaylist));
                     } else {
-                        newPlaylist.url = normalizedUrl;
+                        // M3U Playlist: fetch channels definition so items are populated and playable
+                        try {
+                            const parsed = await this.dataService.fetchPlaylistDefinition(normalizedUrl);
+                            const newM3u: any = {
+                                ...parsed,
+                                _id: item.id,
+                                title: item.name,
+                                filename: item.name,
+                                url: normalizedUrl,
+                                importDate: new Date().toISOString(),
+                                updateDate: Date.now(),
+                                type: 'm3u',
+                                ownerType: item.ownerType || 'reseller',
+                                lockedByReseller: !!item.lockedByReseller,
+                            };
+                            this.idMap[item.id] = item.id;
+                            this.saveIdMap();
+                            await firstValueFrom(this.playlistsService.addPlaylist(newM3u));
+                        } catch (fetchErr) {
+                            console.warn(`[YestreamCloud] Failed to fetch M3U channels for ${item.name}, creating shell:`, fetchErr);
+                            const shellPlaylist: any = {
+                                _id: item.id,
+                                title: item.name,
+                                filename: item.name,
+                                url: normalizedUrl,
+                                importDate: new Date().toISOString(),
+                                updateDate: Date.now(),
+                                type: 'm3u',
+                                ownerType: item.ownerType || 'reseller',
+                                lockedByReseller: !!item.lockedByReseller,
+                            };
+                            this.idMap[item.id] = item.id;
+                            this.saveIdMap();
+                            await firstValueFrom(this.playlistsService.addPlaylist(shellPlaylist));
+                        }
                     }
-
-                    await firstValueFrom(this.playlistsService.addPlaylist(newPlaylist));
+                } else {
+                    // Record ID mapping
+                    this.idMap[exists._id] = item.id;
+                    this.saveIdMap();
                 }
             }
 
             // Remove locally-imported cloud playlists if deleted on the panel
             const cloudIds = new Set(cloudLists.map(c => c.id));
             for (const p of current) {
-                if (p._id?.startsWith('pl_') && !cloudIds.has(p._id)) {
-                    console.log(`[YestreamCloud] Removing playlist deleted from cloud: ${p.title} (${p._id})`);
+                const cloudId = this.idMap[p._id] || (p._id?.startsWith('pl_') ? p._id : null);
+                if (cloudId && !cloudIds.has(cloudId)) {
+                    console.log(`[YestreamCloud] Removing playlist deleted on cloud panel: ${p.title} (${p._id})`);
+                    delete this.idMap[p._id];
+                    this.saveIdMap();
                     await firstValueFrom(this.playlistsService.deletePlaylist(p._id));
                     this.store.dispatch(PlaylistActions.playlistRemovalCommitted({ playlistId: p._id }));
                 }
@@ -335,25 +393,35 @@ export class YestreamCloudService {
      */
     async pushPlaylistToCloud(playlist: Partial<Playlist>): Promise<void> {
         if (this.isReconciling) return;
-        const reg = this.registration();
-        if (!reg?.credential) return;
+        let reg = this.registration();
+        if (!reg?.credential) {
+            await this.registerDevice();
+            reg = this.registration();
+        }
+        if (!reg?.credential) {
+            console.warn('[YestreamCloud] Device registration not ready for cloud push');
+            return;
+        }
 
         try {
-            const isXtream = !!playlist.serverUrl;
+            const isXtream = !!playlist.serverUrl || (playlist as any).type === 'xtream';
+            const localId = playlist._id || `local_${Date.now()}`;
+            const cloudId = this.idMap[localId] || (playlist._id?.startsWith('pl_') ? playlist._id : undefined);
+
             const payload: any = {
-                localId: playlist._id || `local_${Date.now()}`,
+                localId,
                 name: playlist.title || playlist.filename || 'Untitled Playlist',
                 type: isXtream ? 'xtream' : 'm3u'
             };
 
-            if (playlist._id?.startsWith('pl_')) {
-                payload.id = playlist._id;
+            if (cloudId) {
+                payload.id = cloudId;
             }
 
             if (isXtream) {
-                payload.xtreamHost = playlist.serverUrl;
-                payload.xtreamUser = playlist.username || '';
-                payload.xtreamPass = playlist.password || '';
+                payload.host = playlist.serverUrl;
+                payload.username = playlist.username || '';
+                payload.password = playlist.password || '';
             } else {
                 payload.url = normalizePlaylistUrl(playlist.url || '');
             }
@@ -369,7 +437,13 @@ export class YestreamCloudService {
 
             if (res.ok) {
                 const data = await res.json();
-                console.log('[YestreamCloud] Playlist synced to cloud:', data);
+                if (data?.playlist?.id) {
+                    this.idMap[localId] = data.playlist.id;
+                    this.saveIdMap();
+                }
+                console.log('[YestreamCloud] Playlist pushed to cloud successfully:', data);
+            } else {
+                console.warn('[YestreamCloud] Cloud push returned status:', res.status);
             }
         } catch (e) {
             console.warn('[YestreamCloud] Push playlist failed:', e);
@@ -381,21 +455,35 @@ export class YestreamCloudService {
      */
     async deletePlaylistFromCloud(playlistId: string): Promise<void> {
         if (this.isReconciling) return;
-        const reg = this.registration();
+        let reg = this.registration();
+        if (!reg?.credential) {
+            await this.registerDevice();
+            reg = this.registration();
+        }
         if (!reg?.credential) return;
 
         try {
-            const cloudItem = this.cloudPlaylists().find(p => p.id === playlistId || p.localId === playlistId);
-            const targetId = cloudItem ? cloudItem.id : (playlistId.startsWith('pl_') ? playlistId : null);
-            if (!targetId) return;
+            const targetId = this.idMap[playlistId] ||
+                (playlistId.startsWith('pl_') ? playlistId : null) ||
+                this.cloudPlaylists().find(p => p.id === playlistId || p.localId === playlistId)?.id;
 
-            await fetch(`${YESTREAM_CLOUD_ORIGIN}/api/v1/device/playlists/${targetId}`, {
+            if (!targetId) {
+                console.log('[YestreamCloud] No cloud ID found for deletion:', playlistId);
+                return;
+            }
+
+            const res = await fetch(`${YESTREAM_CLOUD_ORIGIN}/api/v1/device/playlists/${targetId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${reg.credential}`
                 }
             });
-            console.log('[YestreamCloud] Playlist deleted on cloud:', targetId);
+
+            if (res.ok) {
+                delete this.idMap[playlistId];
+                this.saveIdMap();
+                console.log('[YestreamCloud] Playlist deleted on cloud:', targetId);
+            }
         } catch (e) {
             console.warn('[YestreamCloud] Delete playlist from cloud failed:', e);
         }

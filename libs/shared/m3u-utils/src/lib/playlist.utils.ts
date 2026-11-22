@@ -19,6 +19,29 @@ export const getFilenameFromUrl = (value: string): string => {
     return 'Untitled playlist';
 };
 
+/**
+ * Normalizes a playlist URL, especially Xtream get.php links which require
+ * type and output parameters to prevent IPTV provider 400 Bad Request responses.
+ */
+export function normalizePlaylistUrl(url: string): string {
+    const trimmed = (url || '').trim();
+    if (!trimmed) return '';
+    try {
+        const parsed = new URL(trimmed);
+        if (/get\.php/i.test(parsed.pathname)) {
+            if (!parsed.searchParams.has('type')) {
+                parsed.searchParams.set('type', 'm3u_plus');
+            }
+            if (!parsed.searchParams.has('output')) {
+                parsed.searchParams.set('output', 'ts');
+            }
+        }
+        return parsed.toString();
+    } catch {
+        return trimmed;
+    }
+}
+
 const M3U_EPG_HEADER_ATTRS = ['x-tvg-url', 'url-tvg', 'tvg-url'] as const;
 // Header-declared sources are provider-controlled input. Only remote links
 // are harvested: a `file:` URL here would let a downloaded playlist point the

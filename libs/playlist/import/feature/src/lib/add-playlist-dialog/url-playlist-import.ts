@@ -1,7 +1,7 @@
 import { DestroyRef, inject, signal } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { PlaylistActions } from '@iptvnator/m3u-state';
-import { applyPlaylistEpgImportPreference } from '@iptvnator/shared/m3u-utils';
+import { applyPlaylistEpgImportPreference, normalizePlaylistUrl } from '@iptvnator/shared/m3u-utils';
 import { DataService, type PlaylistImportRecovery } from '@iptvnator/services';
 import {
     measureRendererPerformancePhase,
@@ -45,8 +45,9 @@ export function createUrlPlaylistImport() {
         errorCode.set(null);
         recovery.set(null);
         try {
+            const normalizedUrl = normalizePlaylistUrl(draft.playlistUrl.trim());
             const fetched = await data.fetchPlaylistDefinition(
-                draft.playlistUrl.trim(),
+                normalizedUrl,
                 draft.userAgent?.trim() || undefined
             );
             if (!current()) return;
