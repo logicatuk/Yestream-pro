@@ -156,7 +156,8 @@ public class ShellSite {
      * own "overview mode" fit is not reliable on every device. Unknown screen: width only.
      */
     public static String viewport(int layoutWidth, int screenWidth) {
-        if (screenWidth <= 0 || layoutWidth <= 0) return "width=" + layoutWidth;
+        if (layoutWidth <= 0) return "width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes";
+        if (screenWidth <= 0) return "width=" + layoutWidth;
         String scale = String.format(Locale.ROOT, "%.4f", screenWidth / (double) layoutWidth);
         if (scale.indexOf('.') >= 0) scale = scale.replaceAll("0+$", "").replaceAll("\\.$", "");
         return "width=" + layoutWidth + ", initial-scale=" + scale + ", minimum-scale=" + scale + ", maximum-scale=" + scale;

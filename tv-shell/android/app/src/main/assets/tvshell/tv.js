@@ -395,8 +395,11 @@
         return after !== before;
     }
 
+    var isTouchInteraction = false;
+
     // ---------------------------------------------------------------- focus
     function paintFocus(el) {
+        if (isTouchInteraction) return;
         el.classList.add(FOCUS_CLASS);
         var surface = controlSurface(el);
         if (surface && el.type === 'range') surface = surface.querySelector('.player-controls__timeline-track') || surface;
@@ -1596,6 +1599,14 @@
     }
 
     function installFocusMirror() {
+        document.addEventListener('touchstart', function () {
+            isTouchInteraction = true;
+            var previous = document.querySelectorAll('.' + FOCUS_CLASS);
+            for (var i = 0; i < previous.length; i++) previous[i].classList.remove(FOCUS_CLASS);
+        }, { capture: true, passive: true });
+        document.addEventListener('keydown', function () {
+            isTouchInteraction = false;
+        }, true);
         // Keep the ring on whatever the app focuses itself (dialog autofocus...).
         document.addEventListener('focusin', function (e) {
             var t = e.target;

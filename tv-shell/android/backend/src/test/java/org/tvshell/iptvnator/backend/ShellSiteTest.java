@@ -48,6 +48,7 @@ public class ShellSiteTest {
     }
 
     public void testViewportPinsTheScaleWhenTheScreenWidthIsKnown() throws IOException {
+        assertEquals("phone viewport", "width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes", ShellSite.viewport(0, 390));
         assertEquals("unknown screen", "width=1280", ShellSite.viewport(1280, 0));
         assertEquals("1080p TV, normal", "width=1280, initial-scale=0.75, minimum-scale=0.75, maximum-scale=0.75", ShellSite.viewport(1280, 960));
         assertEquals("1080p TV, large", "width=960, initial-scale=1, minimum-scale=1, maximum-scale=1", ShellSite.viewport(960, 960));

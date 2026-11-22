@@ -197,17 +197,26 @@ public class MainActivity extends Activity {
         s.setDomStorageEnabled(true);
         s.setDatabaseEnabled(true);
         s.setMediaPlaybackRequiresUserGesture(false);
-        s.setUseWideViewPort(true);
-        s.setLoadWithOverviewMode(true);
-        s.setSupportZoom(false);
-        s.setBuiltInZoomControls(false);
-        s.setDisplayZoomControls(false);
+        boolean isTv = isTvDevice(this);
+        if (isTv) {
+            s.setUseWideViewPort(true);
+            s.setLoadWithOverviewMode(true);
+            s.setSupportZoom(false);
+            s.setBuiltInZoomControls(false);
+            s.setDisplayZoomControls(false);
+        } else {
+            s.setUseWideViewPort(false);
+            s.setLoadWithOverviewMode(false);
+            s.setSupportZoom(true);
+            s.setBuiltInZoomControls(true);
+            s.setDisplayZoomControls(false);
+        }
         s.setTextZoom(100);
         s.setAllowFileAccess(false);
         s.setAllowContentAccess(false);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
         s.setJavaScriptCanOpenWindowsAutomatically(false);
-        s.setUserAgentString(s.getUserAgentString() + " IPTVnator/" + versionName());
+        s.setUserAgentString(s.getUserAgentString() + " Yestream/" + versionName());
         webView.setBackgroundColor(Color.BLACK);
         webView.setFocusable(true);
         webView.setFocusableInTouchMode(true);
@@ -384,7 +393,8 @@ public class MainActivity extends Activity {
         handler.removeCallbacks(readyWatchdog);
         handler.removeCallbacks(loadRetry);
         setKeepScreenOn(true); // through the splash; the page then reports its playback state
-        loadedLayoutWidth = prefs.layoutWidth();
+        boolean isTv = isTvDevice(this);
+        loadedLayoutWidth = isTv ? prefs.layoutWidth() : 0;
         loadedScreenWidth = screenCssWidth(this);
         server = ((ShellApp) getApplication()).ensureServer();
         if (server == null) {
@@ -450,6 +460,21 @@ public class MainActivity extends Activity {
         errorText.setText(message + "\n\n" + diagnostics());
         errorPanel.setVisibility(View.VISIBLE);
         errorPanel.findViewById(R.id.error_retry).requestFocus();
+    }
+
+    public static boolean isTvDevice(android.content.Context context) {
+        android.app.UiModeManager ui = (android.app.UiModeManager) context.getSystemService(Context.UI_MODE_SERVICE);
+        if (ui != null && ui.getCurrentModeType() == android.content.res.Configuration.UI_MODE_TYPE_TELEVISION) {
+            return true;
+        }
+        android.content.pm.PackageManager pm = context.getPackageManager();
+        if (pm.hasSystemFeature(android.content.pm.PackageManager.FEATURE_LEANBACK)) {
+            return true;
+        }
+        if (pm.hasSystemFeature("amazon.hardware.fire_tv")) {
+            return true;
+        }
+        return !pm.hasSystemFeature(android.content.pm.PackageManager.FEATURE_TOUCHSCREEN);
     }
 
     /** Screen width in CSS px at scale 1 (Android dp): 960 on a 1080p Fire TV. */
@@ -815,7 +840,7 @@ public class MainActivity extends Activity {
             SettingsActivity.dataCleared = false;
             if (webView != null) webView.clearCache(true);
             load();
-        } else if (server != null && prefs.layoutWidth() != loadedLayoutWidth) {
+        } else if (server != null && isTvDevice(this) && prefs.layoutWidth() != loadedLayoutWidth) {
             load();
         } else if (server != null && ShellApp.onFallbackPort() && ((ShellApp) getApplication()).ensureServer() != server) {
             load(); // the saved port is free again: back to the origin that holds the user's data
@@ -861,8 +886,9 @@ public class MainActivity extends Activity {
         // Keep the playback owner and pending result in the same document.
         loadedScreenWidth = width;
         server.setScreenWidth(width);
+        int layoutWidth = isTvDevice(this) ? loadedLayoutWidth : 0;
         js("(function(){var viewport=document.querySelector('meta[name=viewport]');if(viewport)viewport.content="
-            + JSONObject.quote(ShellSite.viewport(loadedLayoutWidth, width)) + ";})()");
+            + JSONObject.quote(ShellSite.viewport(layoutWidth, width)) + ";})()");
     }
 
     @Override
