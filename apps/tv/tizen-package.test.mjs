@@ -138,8 +138,8 @@ for (const [name, change] of [
             writeFileSync(
                 join(input, 'config.xml'),
                 readFileSync(join(input, 'config.xml'), 'utf8').replace(
-                    'required_version="5.5"',
-                    'required_version="5.0"'
+                    /required_version="[^"]+"/,
+                    'required_version="3.0"'
                 )
             ),
     ],

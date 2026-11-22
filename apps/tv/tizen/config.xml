@@ -9,7 +9,7 @@
     <tizen:application
         id="YestreamTV.TV"
         package="YestreamTV"
-        required_version="5.5"
+        required_version="4.0"
     />
     <tizen:profile name="tv-samsung" />
     <name>Yestream TV</name>

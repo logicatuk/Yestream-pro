@@ -38,3 +38,7 @@ if (widgets.length !== 1)
 const output = 'dist/tv-tizen-package';
 mkdirSync(output, { recursive: true });
 copyFileSync(join(input, widgets[0]), join(output, widgets[0]));
+const noSpaceName = widgets[0].replace(/\s+/g, '');
+if (noSpaceName !== widgets[0]) {
+    copyFileSync(join(input, widgets[0]), join(output, noSpaceName));
+}

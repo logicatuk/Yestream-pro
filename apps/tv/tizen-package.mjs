@@ -79,7 +79,11 @@ export function verifyTizenPackage(input) {
                 .getAttribute('id')
                 .startsWith(application.getAttribute('package') + '.')
         );
-        assert.equal(application.getAttribute('required_version'), '5.5');
+        assert.ok(
+            ['4.0', '5.5'].includes(
+                application.getAttribute('required_version')
+            )
+        );
         assert.equal(
             xml.querySelector('content')?.getAttribute('src'),
             'index.html'
