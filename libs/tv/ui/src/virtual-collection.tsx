@@ -76,13 +76,22 @@ export function VirtualCollection<T extends { id: string }>({
         const measure = () => {
             const current = latest.current;
             // Measure an item without focus: the focused card is scaled.
-            const first =
-                grid.current?.querySelector<HTMLElement>(
-                    '[data-virtual-index]:not(:focus):not(:focus-within)'
-                ) ??
-                grid.current?.querySelector<HTMLElement>(
+            const items =
+                grid.current?.querySelectorAll<HTMLElement>(
                     '[data-virtual-index]'
                 );
+            let first: HTMLElement | undefined;
+            if (items && items.length > 0) {
+                const active = document.activeElement;
+                for (let i = 0; i < items.length; i++) {
+                    const el = items[i];
+                    if (el !== active && !el.contains(active)) {
+                        first = el;
+                        break;
+                    }
+                }
+                if (!first) first = items[0];
+            }
             if (!first || !element.offsetWidth || !root.clientHeight) return;
             const style = getComputedStyle(grid.current!);
             const columns =

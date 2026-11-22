@@ -4,6 +4,116 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <title>Yestream TV</title>
+        <script>
+            // Tizen 4.0 (Chromium 56) / webOS 4.0 runtime polyfills
+            if (typeof globalThis === 'undefined') window.globalThis = window;
+            if (typeof AbortController === 'undefined') {
+                function AbortSignal() {
+                    this.aborted = false;
+                    this.onabort = null;
+                    this._listeners = [];
+                }
+                AbortSignal.prototype.addEventListener = function (type, listener) {
+                    if (type === 'abort') this._listeners.push(listener);
+                };
+                AbortSignal.prototype.removeEventListener = function (type, listener) {
+                    if (type === 'abort') {
+                        this._listeners = this._listeners.filter(function (l) { return l !== listener; });
+                    }
+                };
+                AbortSignal.prototype.dispatchEvent = function (event) {
+                    if (event.type === 'abort') {
+                        this.aborted = true;
+                        if (typeof this.onabort === 'function') this.onabort.call(this, event);
+                        for (var i = 0; i < this._listeners.length; i++) {
+                            try { this._listeners[i].call(this, event); } catch (e) {}
+                        }
+                    }
+                    return true;
+                };
+                function AbortController() {
+                    this.signal = new AbortSignal();
+                }
+                AbortController.prototype.abort = function () {
+                    if (this.signal.aborted) return;
+                    var event = { type: 'abort', target: this.signal };
+                    this.signal.dispatchEvent(event);
+                };
+                window.AbortController = AbortController;
+                window.AbortSignal = AbortSignal;
+                var origFetch = window.fetch;
+                if (origFetch) {
+                    window.fetch = function (url, options) {
+                        var signal = options && options.signal;
+                        if (signal && signal.aborted) {
+                            return Promise.reject(new DOMException('The user aborted a request.', 'AbortError'));
+                        }
+                        var p = origFetch.apply(this, arguments);
+                        if (signal) {
+                            return new Promise(function (resolve, reject) {
+                                var onAbort = function () {
+                                    reject(new DOMException('The user aborted a request.', 'AbortError'));
+                                };
+                                signal.addEventListener('abort', onAbort);
+                                p.then(
+                                    function (res) {
+                                        signal.removeEventListener('abort', onAbort);
+                                        resolve(res);
+                                    },
+                                    function (err) {
+                                        signal.removeEventListener('abort', onAbort);
+                                        reject(err);
+                                    }
+                                );
+                            });
+                        }
+                        return p;
+                    };
+                }
+            }
+            if (!String.prototype.padStart) {
+                String.prototype.padStart = function (len, pad) {
+                    len = len >> 0;
+                    pad = String(typeof pad !== 'undefined' ? pad : ' ');
+                    if (this.length > len) return String(this);
+                    len = len - this.length;
+                    if (len > pad.length) pad += pad.repeat(len / pad.length);
+                    return pad.slice(0, len) + String(this);
+                };
+            }
+            if (!String.prototype.padEnd) {
+                String.prototype.padEnd = function (len, pad) {
+                    len = len >> 0;
+                    pad = String(typeof pad !== 'undefined' ? pad : ' ');
+                    if (this.length > len) return String(this);
+                    len = len - this.length;
+                    if (len > pad.length) pad += pad.repeat(len / pad.length);
+                    return String(this) + pad.slice(0, len);
+                };
+            }
+            if (!Array.prototype.flat) {
+                Array.prototype.flat = function (d) {
+                    d = d === undefined ? 1 : d;
+                    return d > 0
+                        ? Array.prototype.reduce.call(this, function (acc, val) {
+                              return acc.concat(Array.isArray(val) ? Array.prototype.flat.call(val, d - 1) : val);
+                          }, [])
+                        : Array.prototype.slice.call(this);
+                };
+            }
+            if (!Array.prototype.flatMap) {
+                Array.prototype.flatMap = function (fn, thisArg) {
+                    return Array.prototype.map.call(this, fn, thisArg).flat();
+                };
+            }
+            if (!Object.fromEntries) {
+                Object.fromEntries = function (entries) {
+                    var obj = {};
+                    for (var pair of entries) obj[pair[0]] = pair[1];
+                    return obj;
+                };
+            }
+        </script>
     </head>
     <body>
         <div id="app"></div>

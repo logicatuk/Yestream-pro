@@ -21,7 +21,7 @@ export function verifyTvBundle(base) {
     parser.parse(code, { ecmaVersion: 2018 });
     assert.doesNotMatch(
         code,
-        /\bglobalThis\b|Object\.fromEntries|\.flatMap\(|\.replaceAll\(|Promise\.allSettled/
+        /\bglobalThis\b|Object\.fromEntries|\.flatMap\(|\.replaceAll\(|Promise\.allSettled|\\p\{|\(\?<[!=]/
     );
     return Buffer.byteLength(code);
 }
