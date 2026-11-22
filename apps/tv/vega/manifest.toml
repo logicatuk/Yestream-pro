@@ -1,0 +1,51 @@
+schema-version = 1
+
+[package]
+title = "Yestream TV"
+version = "__TV_VERSION__"
+id = "com.yestream.tv"
+
+[components]
+[[components.interactive]]
+id = "com.yestream.tv.main"
+runtime-module = "/com.amazon.kepler.keplerscript.runtime.loader_2@IKeplerScript_2_0"
+launch-type = "singleton"
+categories = ["com.amazon.category.main"]
+
+[wants]
+[[wants.service]]
+id = "com.amazon.gipc.uuid.*"
+
+# Hardware Media & Playback Services
+[[wants.service]]
+id = "com.amazon.media.server"
+[[wants.service]]
+id = "com.amazon.mediametrics.service"
+[[wants.service]]
+id = "com.amazon.mediabuffer.service"
+[[wants.service]]
+id = "com.amazon.mediatransform.service"
+
+# Audio Stream & Control
+[[wants.service]]
+id = "com.amazon.audio.stream"
+[[wants.service]]
+id = "com.amazon.audio.control"
+
+# DRM Services (Widevine / PlayReady)
+[[wants.service]]
+id = "com.amazon.drm.key"
+[[wants.service]]
+id = "com.amazon.drm.crypto"
+
+# Accessibility
+[[wants.service]]
+id = "com.amazon.kepler.ucc.publisher"
+
+[needs]
+[[needs.privilege]]
+id = "com.amazon.privilege.security.file-sharing"
+
+[offers]
+[[offers.service]]
+id = "com.amazon.gipc.uuid.*"

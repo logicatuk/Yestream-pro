@@ -1628,6 +1628,9 @@ jobs:
                   mkdir -p dist/tv-tizen-package
                   cd dist/tv-tizen-input && zip -r -q ../tv-tizen-package/yestream-tv-tizen-0.1.25.wgt . && cd ../..
 
+            - name: Build Amazon Vega OS package (.vpkg)
+              run: pnpm nx run tv:package-vega
+
             - name: Upload Smart TV artifacts
               uses: actions/upload-artifact@v7
               with:
@@ -1635,6 +1638,7 @@ jobs:
                   path: |
                       dist/tv-package/*.ipk
                       dist/tv-tizen-package/*.wgt
+                      dist/tv-vega-package/*.vpkg
                   retention-days: 7
 
     create-release:
@@ -1953,6 +1957,7 @@ jobs:
                       artifacts/windows-artifacts/*.blockmap
                       artifacts/smart-tv-artifacts/*.ipk
                       artifacts/smart-tv-artifacts/*.wgt
+                      artifacts/smart-tv-artifacts/*.vpkg
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

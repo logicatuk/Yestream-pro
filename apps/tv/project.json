@@ -37,6 +37,11 @@
             "outputs": ["{workspaceRoot}/dist/tv-tizen-package"],
             "command": "node apps/tv/package-tizen.mjs"
         },
+        "package-vega": {
+            "dependsOn": ["verify-build"],
+            "outputs": ["{workspaceRoot}/dist/tv-vega-package"],
+            "command": "node apps/tv/package-vega.mjs"
+        },
         "verify-build": {
             "dependsOn": ["build"],
             "command": "node apps/tv/verify-build.mjs"
