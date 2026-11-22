@@ -14,7 +14,7 @@ type Values<T extends { getRawValue(): unknown }> = ReturnType<
 export function createImportDrafts(children: {
     url: Signal<UrlUploadComponent | undefined>;
     xtream: Signal<XtreamCodeImportComponent | undefined>;
-    stalker: Signal<StalkerPortalImportComponent | undefined>;
+    stalker?: Signal<StalkerPortalImportComponent | undefined>;
     text: Signal<TextImportComponent | undefined>;
     file: Signal<FileUploadComponent | undefined>;
 }) {
@@ -35,9 +35,9 @@ export function createImportDrafts(children: {
                 xtream = children.xtream()?.form.getRawValue() ?? xtream;
                 break;
             case 'stalker':
-                stalker = children.stalker()?.form.getRawValue() ?? stalker;
+                stalker = children.stalker?.()?.form.getRawValue() ?? stalker;
                 derivesIds =
-                    children.stalker()?.derivesDeviceIds() ?? derivesIds;
+                    children.stalker?.()?.derivesDeviceIds() ?? derivesIds;
                 break;
             case 'text':
                 text = children.text()?.textForm.getRawValue() ?? text;
@@ -65,7 +65,7 @@ export function createImportDrafts(children: {
                 break;
             }
             case 'stalker': {
-                const child = children.stalker();
+                const child = children.stalker?.();
                 if (!child) return;
                 if (stalker) {
                     child.form.patchValue(stalker);

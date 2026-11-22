@@ -141,9 +141,6 @@ export default class Main {
         registerStaticHeaderShims();
         WindowEvents.bootstrapWindowEvents();
         PlaylistOpenEvents.bootstrapPlaylistOpenEvents();
-        registerHostedServerEvents(() => App.mainWindow);
-        if (store.get(HOSTED_SERVER_ENABLED, false))
-            await restoreHostedServer();
 
         const deferred = createDeferredBootstrap<
             DeferredEventsModule,

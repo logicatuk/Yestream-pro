@@ -70,9 +70,6 @@ import {
 import { SettingsParentalLockFacade } from './settings-parental-lock.facade';
 import { SettingsParentalLockSectionComponent } from './settings-parental-section.component';
 import { SettingsPlaybackSectionComponent } from './settings-playback-section.component';
-import { SettingsRemoteControlFacade } from './settings-remote-control.facade';
-import { SettingsRemoteControlSectionComponent } from './settings-remote-control-section.component';
-import { SettingsServerSectionComponent } from './settings-server-section.component';
 import { SettingsSearchFacade } from './settings-search.facade';
 import { SettingsSearchResultsComponent } from './settings-search-results.component';
 import {
@@ -113,9 +110,7 @@ import { SettingsSnackbarService } from './settings-snackbar.service';
         SettingsAppearanceSectionComponent,
         SettingsParentalLockSectionComponent,
         SettingsPlaybackSectionComponent,
-        SettingsRemoteControlSectionComponent,
         SettingsSearchResultsComponent,
-        SettingsServerSectionComponent,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
@@ -124,7 +119,6 @@ import { SettingsSnackbarService } from './settings-snackbar.service';
         SettingsEpgFacade,
         SettingsFormFacade,
         SettingsParentalLockFacade,
-        SettingsRemoteControlFacade,
         SettingsSearchFacade,
         SettingsSnackbarService,
         SettingsUnloadGuardService,
@@ -146,7 +140,6 @@ export class SettingsComponent
 
     readonly form = inject(SettingsFormFacade);
     readonly parentalLock = inject(SettingsParentalLockFacade);
-    readonly remoteControl = inject(SettingsRemoteControlFacade);
     readonly search = inject(SettingsSearchFacade);
 
     private readonly settingsCtx = inject(SettingsContextService);
@@ -177,10 +170,8 @@ export class SettingsComponent
     readonly supportsExternalPlayerPathSettings =
         this.runtime.supportsExternalPlayerPathSettings;
     readonly supportsVodMultiSource = this.vodSourceDiscovery.isAvailable;
-    readonly supportsRemoteControl = this.runtime.supportsRemoteControl;
-    readonly supportsServerStorage = inject(
-        ServerStorageStatusService
-    ).isActive();
+    readonly supportsRemoteControl = false;
+    readonly supportsServerStorage = false;
     readonly supportsStartupWindowMode = this.runtime.supportsStartupWindowMode;
     readonly supportsPortalConnectivityGuard =
         this.runtime.supportsPortalConnectivityGuard;
@@ -244,8 +235,6 @@ export class SettingsComponent
 
     readonly sectionNavItems: SettingsSection[] = buildSettingsSectionNavItems({
         supportsEpg: this.form.supportsEpgDisplay,
-        supportsRemoteControl: this.supportsRemoteControl,
-        supportsServerStorage: this.supportsServerStorage,
     });
 
     get sectionNav(): SettingsSection[] {
@@ -378,7 +367,6 @@ export class SettingsComponent
         void this.embeddedMpv.load();
         if (!shouldEnableServiceWorker()) this.appUpdate.checkAppVersion();
         this.appUpdate.init();
-        void this.remoteControl.fetchLocalIpAddresses();
 
         this.settingsCtx.setSections(this.sectionNav);
     }

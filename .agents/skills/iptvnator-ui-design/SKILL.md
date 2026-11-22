@@ -1,24 +1,24 @@
 ---
-name: iptvnator-ui-design
-description: Use when changing user-visible Angular UI in IPTVnator, especially channel rows or lists, EPG views, settings and playlist surfaces, selection states, shared portal components, or light/dark styling.
+name: Yestream-ui-design
+description: Use when changing user-visible Angular UI in Yestream, especially channel rows or lists, EPG views, settings and playlist surfaces, selection states, shared portal components, or light/dark styling.
 ---
 
-# IPTVnator UI Design
+# Yestream UI Design
 
 ## Inspect First
 
-- Policy: `docs/architecture/iptvnator-ui-guidelines.md`
+- Policy: `docs/architecture/Yestream-ui-guidelines.md`
 - Theme and navigation: `apps/web/src/m3-theme.scss`,
   `libs/ui/styles/_nav-list.scss`
 - Channel row: `libs/ui/components/src/lib/channel-list-container/channel-list-item/`
 - Shared EPG timeline/list: `libs/ui/epg/src/lib/epg-timeline/`,
   `libs/ui/epg/src/lib/epg-list-view/`
 
-Before adding local markup, inspect `@iptvnator/ui/components`,
-`@iptvnator/ui/epg`, `@iptvnator/ui/playback`,
-`@iptvnator/ui/shared-portals`, `@iptvnator/portal/shared/ui`, and
-`@iptvnator/playlist/shared/ui`. Stateful collection loading, persistence, and
-cross-provider orchestration belong in `@iptvnator/portal/shared/data-access`,
+Before adding local markup, inspect `@Yestream/ui/components`,
+`@Yestream/ui/epg`, `@Yestream/ui/playback`,
+`@Yestream/ui/shared-portals`, `@Yestream/portal/shared/ui`, and
+`@Yestream/playlist/shared/ui`. Stateful collection loading, persistence, and
+cross-provider orchestration belong in `@Yestream/portal/shared/data-access`,
 not UI or util.
 
 ## Design Contract
@@ -40,7 +40,7 @@ not UI or util.
   `pnpm run styles:icon-ligatures:validate` checks them (UI guidelines, Icon
   Names).
 - Favourites use the heart and ratings the star, both from `APP_ICONS`
-  (`@iptvnator/ui/components/app-icons`);
+  (`@Yestream/ui/components/app-icons`);
   `pnpm run ui:favorite-glyph:validate` checks it (UI guidelines, Favourite
   And Rating Glyphs).
 

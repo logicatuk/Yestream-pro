@@ -62,8 +62,7 @@ const EMPTY_STATE_BY_MODE: Record<
 
 function providerToPortalType(provider: PortalProvider): UnifiedPortalType {
     if (provider === 'playlists') return 'm3u';
-    if (provider === 'xtreams') return 'xtream';
-    return 'stalker';
+    return 'xtream';
 }
 
 @Component({
@@ -130,9 +129,7 @@ export class GlobalCollectionDetailHostComponent implements OnDestroy {
         }
         const requestId = ++this.renderRequestId;
         this.clearDetail();
-        this.isLoading.set(
-            item?.sourceType === 'xtream' || item?.sourceType === 'stalker'
-        );
+        this.isLoading.set(item?.sourceType === 'xtream');
 
         if (!item) {
             return;
@@ -149,8 +146,6 @@ export class GlobalCollectionDetailHostComponent implements OnDestroy {
         this.detailRef = componentRef;
         this.detailKey = key;
         componentRef.setInput('item', item);
-        // Both portal details accept the one-shot resume handoff (Xtream
-        // series, Stalker embedded-VOD / lazy is_series shows).
         componentRef.setInput('seriesResume', seriesResume);
         this.subscribeToClose(componentRef.instance);
         this.isLoading.set(false);
@@ -162,11 +157,6 @@ export class GlobalCollectionDetailHostComponent implements OnDestroy {
         if (sourceType === 'xtream') {
             const component = await import('@iptvnator/portal/xtream/feature');
             return component.XtreamCollectionDetailComponent;
-        }
-
-        if (sourceType === 'stalker') {
-            const component = await import('@iptvnator/portal/stalker/feature');
-            return component.StalkerCollectionDetailComponent;
         }
 
         return null;
@@ -225,18 +215,11 @@ export class GlobalCollectionDetailHostComponent implements OnDestroy {
                     unifiedCollectionDetail
                     let-item
                     let-seriesResume="seriesResume"
-                    let-close="close"
                 >
                     @if (item.sourceType === 'xtream') {
                         <app-global-collection-detail-host
                             [item]="item"
                             [seriesResume]="seriesResume"
-                        />
-                    } @else if (item.sourceType === 'stalker') {
-                        <app-global-collection-detail-host
-                            [item]="item"
-                            [seriesResume]="seriesResume"
-                            (closeRequested)="close()"
                         />
                     }
                 </ng-template>

@@ -456,8 +456,10 @@ export function stubSettingsSideEffects(
         settingsComponent.appUpdate,
         'checkAppVersion'
     ).mockImplementation();
-    jest.spyOn(
-        settingsComponent.remoteControl,
-        'fetchLocalIpAddresses'
-    ).mockResolvedValue(undefined);
+    if ((settingsComponent as any).remoteControl) {
+        jest.spyOn(
+            (settingsComponent as any).remoteControl,
+            'fetchLocalIpAddresses'
+        ).mockResolvedValue(undefined);
+    }
 }

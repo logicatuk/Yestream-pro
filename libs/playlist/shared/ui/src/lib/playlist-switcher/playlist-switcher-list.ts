@@ -10,7 +10,7 @@ export const SWITCHER_TYPE_STORAGE_KEY = 'playlist-switcher:type:v2';
 const LEGACY_TYPE_STORAGE_KEY = 'playlist-switcher:type-filters';
 /** The search is no longer kept between openings. */
 const LEGACY_QUERY_STORAGE_KEY = 'playlist-switcher:search-query';
-const TYPES: readonly SourcesTypeFilter[] = ['all', 'm3u', 'xtream', 'stalker'];
+const TYPES: readonly SourcesTypeFilter[] = ['all', 'm3u', 'xtream'];
 /** Below this many sources the "Recent" group would repeat the whole list. */
 export const SWITCHER_RECENT_MIN_SOURCES = 6;
 

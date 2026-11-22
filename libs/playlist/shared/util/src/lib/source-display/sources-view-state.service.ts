@@ -7,7 +7,7 @@ import {
 
 export const SOURCES_VIEW_STORAGE_KEY = 'sources:view:v1';
 
-const TYPES: readonly SourcesTypeFilter[] = ['all', 'm3u', 'xtream', 'stalker'];
+const TYPES: readonly SourcesTypeFilter[] = ['all', 'm3u', 'xtream'];
 const STATUSES: readonly SourcesStatusFilter[] = ['all', 'ok', 'bad'];
 const DEFAULT_FILTER: SourcesFilter = { type: 'all', status: 'all' };
 

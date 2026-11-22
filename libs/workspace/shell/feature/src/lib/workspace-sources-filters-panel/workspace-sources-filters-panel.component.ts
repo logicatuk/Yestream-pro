@@ -81,11 +81,6 @@ export class WorkspaceSourcesFiltersPanelComponent {
             icon: SOURCE_TYPE_ICONS.xtream,
             labelKey: 'HOME.PLAYLIST_TYPES.XTREAM',
         },
-        {
-            id: 'stalker',
-            icon: SOURCE_TYPE_ICONS.stalker,
-            labelKey: 'HOME.PLAYLIST_TYPES.STALKER',
-        },
     ];
     readonly statusOptions: readonly StatusOption[] = [
         { id: 'all', labelKey: 'WORKSPACE.SOURCES.STATUS_ANY' },

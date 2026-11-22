@@ -1,9 +1,9 @@
 ---
-name: iptvnator-nx-architecture
-description: Use when deciding where IPTVnator code belongs, creating or moving Nx projects, changing scoped aliases or tags, editing lint targets, or validating module boundaries.
+name: Yestream-nx-architecture
+description: Use when deciding where Yestream code belongs, creating or moving Nx projects, changing scoped aliases or tags, editing lint targets, or validating module boundaries.
 ---
 
-# IPTVnator Nx Architecture
+# Yestream Nx Architecture
 
 ## Discover Before Deciding
 

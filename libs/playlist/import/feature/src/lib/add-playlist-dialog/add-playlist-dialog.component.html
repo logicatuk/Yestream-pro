@@ -76,9 +76,6 @@
                 @case ('text') {
                     <app-text-import (textAdded)="uploadAsText($event)" />
                 }
-                @case ('stalker') {
-                    <app-stalker-portal-import (addClicked)="closeDialog()" />
-                }
                 @case ('xtream') {
                     @if (canReturnToM3u()) {
                         <button mat-button type="button" (click)="backToM3u()">
@@ -203,22 +200,6 @@
                     >
                         {{ 'HOME.URL_UPLOAD.ADD_PLAYLIST' | translate }}
                     </button>
-                }
-                @case ('stalker') {
-                    @if (stalkerImport()?.isLoading()) {
-                        <button mat-flat-button type="button" disabled>
-                            {{ 'HOME.STALKER_PORTAL.VALIDATING' | translate }}
-                        </button>
-                    } @else {
-                        <button
-                            mat-flat-button
-                            type="button"
-                            [disabled]="!stalkerImport()?.form?.valid"
-                            (click)="stalkerImport()?.addPlaylist()"
-                        >
-                            {{ 'HOME.URL_UPLOAD.ADD_PLAYLIST' | translate }}
-                        </button>
-                    }
                 }
             }
         </div>

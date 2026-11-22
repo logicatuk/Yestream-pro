@@ -44,7 +44,6 @@ import {
 } from '@iptvnator/shared/interfaces';
 import { AutoImportComponent } from '../auto-import/auto-import.component';
 import { FileUploadComponent } from '../file-upload/file-upload.component';
-import { StalkerPortalImportComponent } from '../stalker-portal-import/stalker-portal-import.component';
 import { TextImportComponent } from '../text-import/text-import.component';
 import { UrlUploadComponent } from '../url-upload/url-upload.component';
 import { UrlXtreamSuggestion } from '../url-upload/url-xtream-suggestion';
@@ -68,7 +67,7 @@ const METHOD_BY_CANDIDATE_KIND: Record<
     PlaylistType
 > = {
     xtream: 'xtream',
-    stalker: 'stalker',
+    stalker: 'url',
     'm3u-url': 'url',
     'm3u-text': 'text',
 };
@@ -86,7 +85,6 @@ const METHOD_BY_CANDIDATE_KIND: Record<
         MatCheckboxModule,
         MatDialogModule,
         MatIcon,
-        StalkerPortalImportComponent,
         TextImportComponent,
         TranslateModule,
         UrlUploadComponent,
@@ -112,12 +110,10 @@ export class AddPlaylistDialogComponent {
     readonly fileUpload = viewChild(FileUploadComponent);
     readonly textImport = viewChild(TextImportComponent);
     readonly xtreamImport = viewChild(XtreamCodeImportComponent);
-    readonly stalkerImport = viewChild(StalkerPortalImportComponent);
     readonly autoImport = viewChild(AutoImportComponent);
     private readonly drafts = createImportDrafts({
         url: this.urlUpload,
         xtream: this.xtreamImport,
-        stalker: this.stalkerImport,
         text: this.textImport,
         file: this.fileUpload,
     });
@@ -174,12 +170,6 @@ export class AddPlaylistDialogComponent {
             subKey: 'HOME.ADD_PLAYLIST.METHOD_XTREAM_SUB',
         },
         {
-            value: 'stalker',
-            icon: SOURCE_TYPE_ICONS.stalker,
-            labelKey: 'HOME.ADD_PLAYLIST.METHOD_STALKER_LABEL',
-            subKey: 'HOME.ADD_PLAYLIST.METHOD_STALKER_SUB',
-        },
-        {
             value: 'text',
             icon: SOURCE_TYPE_ICONS['m3u-text'],
             labelKey: 'HOME.ADD_PLAYLIST.METHOD_TEXT_LABEL',
@@ -218,7 +208,6 @@ export class AddPlaylistDialogComponent {
         });
         const cancel = () => {
             this.urlImport.cancel();
-            this.stalkerImport()?.cancelPendingImport?.();
             this.drafts.clearAll();
         };
         inject(DestroyRef).onDestroy(cancel);
@@ -231,8 +220,7 @@ export class AddPlaylistDialogComponent {
             .subscribe((event) => {
                 if (
                     event instanceof NavigationStart &&
-                    (this.urlImport.pending() ||
-                        this.stalkerImport()?.isLoading())
+                    this.urlImport.pending()
                 ) {
                     this.closeDialog();
                 }
@@ -269,7 +257,6 @@ export class AddPlaylistDialogComponent {
         this.drafts.capture(this.method());
         this.urlImport.cancel();
         this.urlImport.clearError();
-        this.stalkerImport()?.cancelPendingImport?.();
         this.method.set(method);
         this.drafts.request(method);
     }
@@ -320,25 +307,6 @@ export class AddPlaylistDialogComponent {
                     ...(candidate.userAgent
                         ? { userAgent: candidate.userAgent }
                         : {}),
-                });
-                break;
-            }
-            case 'stalker': {
-                const child = this.stalkerImport();
-                if (!child) {
-                    return;
-                }
-                child.form.patchValue({
-                    title: candidate.suggestedTitle ?? '',
-                    portalUrl: candidate.portalUrl ?? '',
-                    macAddress: candidate.macAddress ?? '',
-                    serialNumber: candidate.serialNumber ?? '',
-                    deviceId1: candidate.deviceId1 ?? '',
-                    deviceId2: candidate.deviceId2 ?? '',
-                    signature1: candidate.signature1 ?? '',
-                    signature2: candidate.signature2 ?? '',
-                    username: candidate.username ?? '',
-                    password: candidate.password ?? '',
                 });
                 break;
             }
@@ -418,9 +386,6 @@ export class AddPlaylistDialogComponent {
             case 'xtream':
                 this.xtreamImport()?.clearForm();
                 break;
-            case 'stalker':
-                this.stalkerImport()?.clearForm();
-                break;
             case 'auto':
                 this.autoImport()?.clearForm();
                 break;
@@ -437,8 +402,6 @@ export class AddPlaylistDialogComponent {
                 );
             case 'xtream':
                 return !!this.xtreamImport()?.isTestingConnection;
-            case 'stalker':
-                return !!this.stalkerImport()?.isLoading();
             default:
                 return false;
         }
@@ -447,7 +410,6 @@ export class AddPlaylistDialogComponent {
     closeDialog(): void {
         this.drafts.clearAll();
         this.urlImport.cancel();
-        this.stalkerImport()?.cancelPendingImport?.();
         this.dialogRef.close();
     }
 }

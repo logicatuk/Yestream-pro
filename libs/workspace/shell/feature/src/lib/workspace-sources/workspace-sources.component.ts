@@ -62,12 +62,11 @@ import {
     SourceSortOption,
 } from './workspace-sources-sort-options';
 
-const TYPE_TITLE_KEYS = {
+const TYPE_TITLE_KEYS: Record<string, string> = {
     all: 'WORKSPACE.SOURCES.ALL_PLAYLISTS',
     m3u: 'WORKSPACE.SOURCES.M3U_PLAYLISTS',
     xtream: 'WORKSPACE.SOURCES.XTREAM_PLAYLISTS',
-    stalker: 'WORKSPACE.SOURCES.STALKER_PLAYLISTS',
-} as const;
+};
 
 /**
  * The Sources page: a 28px title with the visible count, Clean up (desktop,
@@ -148,7 +147,8 @@ export class WorkspaceSourcesComponent {
         const key =
             this.showFailingFirst && filter.status === 'bad'
                 ? 'WORKSPACE.SOURCES.STATUS_BAD'
-                : TYPE_TITLE_KEYS[filter.type];
+                : (TYPE_TITLE_KEYS[filter.type] ??
+                  TYPE_TITLE_KEYS['all']);
         return this.translate.instant(key);
     });
 

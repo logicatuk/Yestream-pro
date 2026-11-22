@@ -4,9 +4,9 @@
   <img src="./apps/web/src/assets/icons/favicon.256x256.png" width="96" height="96" alt="Yestream icon" />
 </p>
 
-**A free, open-source IPTV player for macOS, Windows, Linux and the browser.**
-Bring your M3U playlists, Xtream Codes account or Stalker portal to watch live
-TV, browse movies and series, and pick up where you left off.
+**A free, open-source IPTV player for macOS, Windows, Linux, Smart TVs and mobile.**
+Bring your M3U playlists or Xtream Codes account to watch live
+TV, browse movies and series, and pick up where you left off with local watch progress and favorites.
 
 **[Download](https://yestream.ai.studio/downloadsdownload/)** ·
 [Website](https://yestream.ai.studio/downloads) ·
@@ -41,8 +41,7 @@ nightly builds, see [Installation](docs/installation.md).
 
 ## Features
 
-- **Your sources together:** local or remote M3U/M3U8 playlists, Xtream Codes,
-  and Stalker / Ministra portals.
+- **Your sources together:** local or remote M3U/M3U8 playlists and Xtream Codes accounts.
 - **Live TV:** channel groups, search and favorites, with a multi-channel
   programme guide for M3U and Xtream. XMLTV imports and catch-up run on desktop.
 - **Movies and series:** posters, seasons, watch history and resume positions;
@@ -53,8 +52,7 @@ nightly builds, see [Installation](docs/installation.md).
   continue-watching and favorites across sources.
 - **Make it yours:** light and dark themes, 21 language options, keyboard
   shortcuts and a command palette (`Ctrl/Cmd+K`).
-- **Use your screen:** desktop apps, a self-hosted PWA and a phone remote for
-  the desktop player.
+- **Use your screen:** desktop apps, Smart TVs (Android TV, Fire TV, Samsung Tizen, LG webOS), and mobile.
 
 [Full feature list and platform limits](docs/features.md) ·
 [Keyboard shortcuts](docs/keyboard-shortcuts.md) ·

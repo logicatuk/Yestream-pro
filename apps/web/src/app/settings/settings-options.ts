@@ -167,19 +167,15 @@ export function buildSettingsPlayerOptions({
 export interface SettingsSectionVisibility {
     /** The EPG page renders: its display settings at least. */
     supportsEpg: boolean;
-    supportsRemoteControl: boolean;
-    supportsServerStorage: boolean;
+    supportsRemoteControl?: boolean;
+    supportsServerStorage?: boolean;
 }
 
 export function buildSettingsSectionNavItems({
     supportsEpg,
-    supportsRemoteControl,
-    supportsServerStorage,
 }: SettingsSectionVisibility): SettingsSection[] {
     const capabilities = {
         'epg-display': supportsEpg,
-        'remote-control': supportsRemoteControl,
-        'server-storage': supportsServerStorage,
     };
     return SETTINGS_SECTION_DEFINITIONS.map((section) => ({
         id: section.id,

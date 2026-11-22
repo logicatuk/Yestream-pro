@@ -56,7 +56,7 @@ import {
     writeSwitcherType,
 } from './playlist-switcher-list';
 
-const KINDS: readonly PlaylistSourceKind[] = ['m3u', 'xtream', 'stalker'];
+const KINDS: readonly PlaylistSourceKind[] = ['m3u', 'xtream'];
 
 /**
  * The switcher popover: search, a type segment, "Recent" and "All" groups

@@ -6,10 +6,6 @@ import {
     SettingsStore,
 } from '@iptvnator/services';
 import { WorkspaceStartupPreferencesService } from '@iptvnator/workspace/shell/util';
-import {
-    serverAccessGuard,
-    serverSignInGuard,
-} from './server-storage/server-access.guard';
 import { settingsUnsavedChangesGuard } from './settings/settings-unsaved-changes.guard';
 
 // The workspace activates only once settings AND the parental lock state
@@ -81,7 +77,6 @@ export const routes: Routes = [
     },
     {
         path: 'workspace',
-        canActivate: [serverAccessGuard],
         resolve: {
             settingsReady: settingsReadyResolver,
         },
@@ -180,13 +175,6 @@ export const routes: Routes = [
                     ),
             },
             {
-                path: '',
-                loadChildren: () =>
-                    import('@iptvnator/portal/stalker/feature').then((m) =>
-                        m.createStalkerRoutes()
-                    ),
-            },
-            {
                 path: 'settings',
                 children: [
                     {
@@ -211,14 +199,6 @@ export const routes: Routes = [
                 ],
             },
         ],
-    },
-    {
-        path: 'server-sign-in',
-        canActivate: [serverSignInGuard],
-        loadComponent: () =>
-            import('./server-storage/server-sign-in.component').then(
-                (c) => c.ServerSignInComponent
-            ),
     },
     {
         path: 'settings',

@@ -88,19 +88,13 @@ export function bootstrapDeferredEvents(
     PlayerEvents.bootstrapPlayerEvents();
     SettingsEvents.bootstrapSettingsEvents();
     ParentalLockEvents.bootstrapParentalLockEvents();
-    StalkerEvents.bootstrapStalkerEvents();
     XtreamEvents.bootstrapXtreamEvents();
     registerStreamProbeHandlers();
     registerM3uSourceProbe();
     registerSourceProbeCancellation();
     registerConnectivityGuardHandlers();
-    registerSourceSyncEvents(async () => {
-        await stopHostedServerForRestart();
-        await shutdownDeferredServices();
-    });
     DatabaseEvents.bootstrapDatabaseEvents();
     EpgEvents.bootstrapEpgEvents();
-    RemoteControlEvents.bootstrapRemoteControlEvents();
 
     // Keep the downloads broadcaster bound to the live window. macOS can
     // rebuild the window while the process runs, and a stale reference

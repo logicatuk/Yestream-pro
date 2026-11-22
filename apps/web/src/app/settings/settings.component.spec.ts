@@ -130,9 +130,6 @@ describe('SettingsComponent', () => {
         expect(appUpdateInit).toHaveBeenCalledTimes(1);
         expect(lifecycleComponent.appUpdate.checkAppVersion).toHaveBeenCalled();
         expect(embeddedMpvLoad).toHaveBeenCalled();
-        expect(
-            lifecycleComponent.remoteControl.fetchLocalIpAddresses
-        ).toHaveBeenCalled();
         // The lifecycle really reaches the desktop bridge, not just the facade
         expect(window.electron.getAppUpdateStatus).toHaveBeenCalled();
         expect(window.electron.onAppUpdateStatusChange).toHaveBeenCalled();
