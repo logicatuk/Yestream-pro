@@ -48,6 +48,7 @@ import { TextImportComponent } from '../text-import/text-import.component';
 import { UrlUploadComponent } from '../url-upload/url-upload.component';
 import { UrlXtreamSuggestion } from '../url-upload/url-xtream-suggestion';
 import { XtreamCodeImportComponent } from '../xtream-code-import/xtream-code-import.component';
+import { YestreamQuickConnectComponent } from '@iptvnator/playlist/shared/ui';
 import { createUrlPlaylistImport } from './url-playlist-import';
 import { createImportDrafts } from './import-drafts';
 
@@ -89,6 +90,7 @@ const METHOD_BY_CANDIDATE_KIND: Record<
         TranslateModule,
         UrlUploadComponent,
         XtreamCodeImportComponent,
+        YestreamQuickConnectComponent,
     ],
     selector: 'app-add-playlist',
     templateUrl: './add-playlist-dialog.component.html',

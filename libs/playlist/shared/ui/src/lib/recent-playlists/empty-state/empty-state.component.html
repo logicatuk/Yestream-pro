@@ -55,6 +55,8 @@
                 <p class="welcome-sources__body">{{ 'HOME.PLAYLISTS.SOURCES_WELCOME_BODY' | translate }}</p>
             </header>
 
+            <app-yestream-quick-connect />
+
             <div class="welcome-sources__grid">
                 @for (card of sourceCards; track card.type) {
                     <article class="source-card">

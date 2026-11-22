@@ -7,6 +7,10 @@ import {
     mutateFavoritePlaylist,
 } from '../favorites-events';
 import {
+    YESTREAM_CLOUD_BRIDGE,
+    type YestreamCloudBridge,
+} from './yestream-cloud-bridge.token';
+import {
     DatabaseService,
     type DbOperationOptions,
 } from './database-electron.service';
@@ -95,6 +99,9 @@ export class PlaylistsService {
     private readonly snackBar = inject(LazySnackBar);
     private readonly translateService = inject(TranslateService);
     private readonly storageBackend = inject(PlaylistStorageBackend);
+    private readonly cloudBridge = inject(YESTREAM_CLOUD_BRIDGE, {
+        optional: true,
+    });
     private readonly playlistDeleteCleanups =
         inject(PLAYLIST_DELETE_CLEANUP, { optional: true }) ?? [];
     private electronMigrationPromise: Promise<void> | null = null;
@@ -467,7 +474,7 @@ export class PlaylistsService {
         });
     }
 
-    private persistPlaylistMutation(
+    private async persistPlaylistMutation(
         nextPlaylist: Playlist,
         operationId?: string
     ) {
@@ -477,9 +484,11 @@ export class PlaylistsService {
             );
         }
 
-        return firstValueFrom(
+        const updated = await firstValueFrom(
             this.dbService.update(DbStores.Playlists, nextPlaylist)
         );
+        void this.cloudBridge?.pushPlaylistToCloud(nextPlaylist);
+        return updated;
     }
 
     private transformIndexedDbPlaylistMeta(
@@ -582,6 +591,7 @@ export class PlaylistsService {
                 await firstValueFrom(
                     this.dbService.add(DbStores.Playlists, playlist)
                 );
+                void this.cloudBridge?.pushPlaylistToCloud(playlist);
                 return playlist;
             })
         );
@@ -647,9 +657,11 @@ export class PlaylistsService {
                         return undefined;
                     }
 
-                    return firstValueFrom(
+                    const delRes = await firstValueFrom(
                         this.dbService.delete(DbStores.Playlists, playlistId)
                     );
+                    void this.cloudBridge?.deletePlaylistFromCloud(playlistId);
+                    return delRes;
                 })
         );
 

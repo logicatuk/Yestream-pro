@@ -93,6 +93,8 @@ const SOURCE_CARDS: readonly SourceCard[] = [
     },
 ];
 
+import { YestreamQuickConnectComponent } from '../../yestream-quick-connect/yestream-quick-connect.component';
+
 @Component({
     selector: 'app-empty-state',
     templateUrl: './empty-state.component.html',
@@ -103,7 +105,7 @@ const SOURCE_CARDS: readonly SourceCard[] = [
         './empty-state.responsive.scss',
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatButtonModule, MatIcon, TranslatePipe],
+    imports: [MatButtonModule, MatIcon, TranslatePipe, YestreamQuickConnectComponent],
 })
 export class EmptyStateComponent {
     readonly type = input.required<EmptyStateType>();

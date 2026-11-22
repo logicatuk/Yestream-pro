@@ -39,7 +39,9 @@ import { provideXtreamDataSource } from '@iptvnator/portal/xtream/data-access';
 import {
     provideParentalLockPlaylistCleanup,
     DataService,
+    YESTREAM_CLOUD_BRIDGE,
 } from '@iptvnator/services';
+import { YestreamCloudService } from './services/yestream-cloud.service';
 import { dbConfig } from '@iptvnator/shared/interfaces';
 import { getInitialLanguage } from './app-language-preference';
 import { storeDevtoolsProviders } from '../environments/store-devtools.providers';
@@ -167,6 +169,10 @@ export const appConfig: ApplicationConfig = {
         {
             provide: FAVORITES_PLAYLIST_BRIDGE,
             useFactory: favoritesPlaylistBridgeFactory,
+        },
+        {
+            provide: YESTREAM_CLOUD_BRIDGE,
+            useExisting: YestreamCloudService,
         },
         ...provideXtreamDataSource(activityDataSourceFactory),
         {
