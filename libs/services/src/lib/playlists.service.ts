@@ -479,9 +479,11 @@ export class PlaylistsService {
         operationId?: string
     ) {
         if (this.usesDocumentStore) {
-            return firstValueFrom(
+            const res = await firstValueFrom(
                 this.upsertSqlitePlaylist(nextPlaylist, operationId)
             );
+            void this.cloudBridge?.pushPlaylistToCloud(nextPlaylist);
+            return res;
         }
 
         const updated = await firstValueFrom(
@@ -654,6 +656,7 @@ export class PlaylistsService {
                                     );
                             } else await store.dbDeletePlaylist(playlistId);
                         }
+                        void this.cloudBridge?.deletePlaylistFromCloud(playlistId);
                         return undefined;
                     }
 

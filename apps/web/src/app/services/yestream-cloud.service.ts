@@ -399,6 +399,37 @@ export class YestreamCloudService {
                     // Record ID mapping
                     this.idMap[exists._id] = item.id;
                     this.saveIdMap();
+
+                    // Check if playlist was modified on cloud panel
+                    const nameChanged = !!item.name && (item.name !== exists.title || item.name !== exists.filename);
+                    const xtreamChanged = isXtream && (
+                        (serverUrl && serverUrl !== exists.serverUrl) ||
+                        (username && username !== exists.username) ||
+                        (password && password !== exists.password)
+                    );
+                    const m3uUrlChanged = !isXtream && !!normalizedUrl && normalizedUrl !== exists.url;
+                    const lockChanged = typeof item.lockedByReseller === 'boolean' && item.lockedByReseller !== exists.lockedByReseller;
+
+                    if (nameChanged || xtreamChanged || m3uUrlChanged || lockChanged) {
+                        console.log(`[YestreamCloud] Syncing cloud changes to local playlist: ${item.name} (${exists._id})`);
+                        const updated: any = {
+                            ...exists,
+                            title: item.name || exists.title,
+                            filename: item.name || exists.filename,
+                            updateDate: Date.now(),
+                            lockedByReseller: typeof item.lockedByReseller === 'boolean' ? item.lockedByReseller : exists.lockedByReseller,
+                            ownerType: item.ownerType || exists.ownerType || 'reseller'
+                        };
+                        if (isXtream && serverUrl) {
+                            updated.serverUrl = serverUrl;
+                            updated.username = username;
+                            updated.password = password;
+                        } else if (!isXtream && normalizedUrl) {
+                            updated.url = normalizedUrl;
+                        }
+
+                        await firstValueFrom(this.playlistsService.updatePlaylist(exists._id, updated));
+                    }
                 }
             }
 
@@ -428,8 +459,7 @@ export class YestreamCloudService {
      */
     async pushPlaylistToCloud(playlist: Partial<Playlist>): Promise<void> {
         if (this.isReconciling) {
-            // Queue retry after brief reconciliation finishes
-            setTimeout(() => void this.pushPlaylistToCloud(playlist), 600);
+            // Do not echo cloud reconciliation back to cloud
             return;
         }
         let reg = this.registration();
@@ -445,7 +475,20 @@ export class YestreamCloudService {
         try {
             const isXtream = !!playlist.serverUrl || (playlist as any).type === 'xtream';
             const localId = playlist._id || `local_${Date.now()}`;
-            const cloudId = this.idMap[localId] || (playlist._id?.startsWith('pl_') ? playlist._id : undefined);
+            let cloudId = this.idMap[localId] || (playlist._id?.startsWith('pl_') ? playlist._id : undefined);
+
+            if (!cloudId) {
+                const match = this.cloudPlaylists().find(c =>
+                    c.localId === localId ||
+                    (playlist.url && c.url === playlist.url) ||
+                    (playlist.serverUrl && c.host && (c.host === playlist.serverUrl || `http://${c.host}` === playlist.serverUrl))
+                );
+                if (match) {
+                    cloudId = match.id;
+                    this.idMap[localId] = cloudId;
+                    this.saveIdMap();
+                }
+            }
 
             // Don't push local files or raw text that have no remote URL
             if (!isXtream && (!playlist.url || !playlist.url.startsWith('http'))) {
@@ -503,7 +546,7 @@ export class YestreamCloudService {
      */
     async deletePlaylistFromCloud(playlistId: string): Promise<void> {
         if (this.isReconciling) {
-            setTimeout(() => void this.deletePlaylistFromCloud(playlistId), 600);
+            // Do not echo cloud reconciliation deletions back to cloud
             return;
         }
         let reg = this.registration();
@@ -514,9 +557,22 @@ export class YestreamCloudService {
         if (!reg?.credential) return;
 
         try {
-            const targetId = this.idMap[playlistId] ||
+            let targetId = this.idMap[playlistId] ||
                 (playlistId.startsWith('pl_') ? playlistId : null) ||
                 this.cloudPlaylists().find(p => p.id === playlistId || p.localId === playlistId)?.id;
+
+            if (!targetId) {
+                // Check if any cloud playlist matches by title or localId
+                const cloudLists = this.cloudPlaylists();
+                const match = cloudLists.find(c => 
+                    c.id === playlistId ||
+                    c.localId === playlistId ||
+                    c.name === playlistId
+                );
+                if (match) {
+                    targetId = match.id;
+                }
+            }
 
             if (!targetId) {
                 console.log('[YestreamCloud] No cloud ID found for deletion:', playlistId);
