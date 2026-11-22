@@ -9,6 +9,10 @@
 
 <app-update-notification-panel />
 
+@defer (when isExpired()) {
+    <app-yestream-expiry-guard />
+}
+
 @if (usesCustomWindowControls) {
     <app-window-controls />
 }

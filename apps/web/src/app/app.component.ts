@@ -1,11 +1,12 @@
 import { startAppMenuActions } from './services/app-menu-actions';
 import {
+    ChangeDetectionStrategy,
     Component,
+    computed,
     effect,
     inject,
     OnInit,
     signal,
-    ChangeDetectionStrategy,
 } from '@angular/core';
 import { LazySnackBar } from '@iptvnator/services/lazy-snack-bar';
 import { Router, RouterOutlet } from '@angular/router';
@@ -32,6 +33,7 @@ import {
     RuntimeCapabilitiesService,
     SettingsStore,
     EpgSourceSettingsService,
+    YESTREAM_CLOUD_BRIDGE,
 } from '@iptvnator/services';
 import {
     AUTO_UPDATE_PLAYLISTS,
@@ -49,6 +51,7 @@ import { PlaybackKeepAwakeService } from './services/playback-keep-awake.service
 import { PlaylistOpenRequestService } from './services/playlist-open-request.service';
 import { AppUpdateNotificationPanelComponent } from './app-update-notification-panel.component';
 import { AppStartupStatusComponent } from './app-startup-status.component';
+import { YestreamExpiryGuardComponent } from '@iptvnator/playlist/shared/ui';
 import { syncDocumentLanguage } from './services/document-language';
 
 const debugAppComponent = createDevLogger('AppComponent');
@@ -78,10 +81,13 @@ const debugAppComponent = createDevLogger('AppComponent');
         EpgProgressPanelComponent,
         RouterOutlet,
         WindowControlsComponent,
+        YestreamExpiryGuardComponent,
     ],
 })
 export class AppComponent implements OnInit {
     readonly routeReady = signal(false);
+    private readonly cloud = inject(YESTREAM_CLOUD_BRIDGE, { optional: true });
+    readonly isExpired = computed(() => (this.cloud?.isExpired ? this.cloud.isExpired() : false));
     get isElectron() {
         return this.runtime.isElectron;
     }

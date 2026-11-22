@@ -14,3 +14,4 @@ export * from './lib/source-row/source-row.component';
 export * from './lib/source-row/source-tile.component';
 export * from './lib/source-removal/source-removal.service';
 export * from './lib/yestream-quick-connect/yestream-quick-connect.component';
+export * from './lib/yestream-expiry-guard/yestream-expiry-guard.component';
