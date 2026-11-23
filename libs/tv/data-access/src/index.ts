@@ -34,3 +34,4 @@ export { findParentSeries } from './parent-series';
 
 export * from './library';
 export * from './library-sources';
+export * from './tv-cloud';

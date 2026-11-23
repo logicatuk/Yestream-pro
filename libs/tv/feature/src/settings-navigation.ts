@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { JSX } from 'preact';
 
 export const settingsCategories = [
-    ['account', 'Account & Device', 'Subscription & identity'],
+    ['account', 'Account & Device', 'Subscription & server details'],
     ['appearance', 'Appearance', 'Home composition'],
     ['epg', 'Programme guide', 'Provider schedules'],
     ['playback', 'Playback', 'Autoplay next episode'],
@@ -77,7 +77,7 @@ export function useSettingsNavigation(memory: SettingsMemory) {
         const frame = requestAnimationFrame(() => {
             const target = Array.from(
                 root.current?.querySelectorAll<HTMLElement>('[data-focus]') ??
-                    []
+                []
             ).find(
                 (element) =>
                     element.dataset.focus === memory.focus && available(element)

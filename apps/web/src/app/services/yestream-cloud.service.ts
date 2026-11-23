@@ -6,7 +6,7 @@ import { normalizePlaylistUrl } from '@iptvnator/shared/m3u-utils';
 import { PlaylistsService, DataService } from '@iptvnator/services';
 import { firstValueFrom } from 'rxjs';
 
-export const YESTREAM_CLOUD_ORIGIN = 'https://yestream.ai.studio';
+export const YESTREAM_CLOUD_ORIGIN = 'https://yestream-405211835468.europe-west2.run.app';
 const YESTREAM_STORAGE_KEY = 'yestream_device_identity_v1';
 const YESTREAM_ID_MAP_KEY = 'yestream_id_mapping_v1';
 

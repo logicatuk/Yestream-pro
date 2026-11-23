@@ -1,6 +1,6 @@
 {
     "id": "com.yestream.tv.prototype",
-    "version": "0.1.25",
+    "version": "0.25.5",
     "vendor": "Yestream",
     "type": "web",
     "main": "index.html",

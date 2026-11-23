@@ -14,6 +14,13 @@ import { useTv } from './use-tv';
 import { mainNavigation } from './navigation';
 import { Sources } from './forms';
 import { Settings } from './settings';
+import { TvExpiryGuard } from './expiry-guard';
+import {
+    loadStoredTvRegistration,
+    registerTvDevice,
+    isTvExpired,
+    TvDeviceRegistration,
+} from '@iptvnator/tv/data-access';
 import type { TvBuildInfo } from './about';
 import type { SettingsMemory } from './settings-navigation';
 import { Home, CatalogScreen } from './screens';
@@ -28,8 +35,20 @@ import { NativePlayerView } from './native-player-view';
 import { useTvRemote } from './use-tv-remote';
 import { PersonPage } from './person-page';
 import type { FilmographyMemory } from './use-filmography-search';
-import { ExpiryLock } from './expiry-lock';
 export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
+    const [registration, setRegistration] = useState<TvDeviceRegistration | null>(
+        loadStoredTvRegistration()
+    );
+    useEffect(() => {
+        let mounted = true;
+        void registerTvDevice().then((reg) => {
+            if (mounted) setRegistration(reg);
+        });
+        return () => {
+            mounted = false;
+        };
+    }, []);
+    const expired = isTvExpired(registration);
     const personMemory = useRef<FilmographyMemory>(new WeakMap());
     const settingsMemory = useRef<SettingsMemory>({
         category: 'appearance',
@@ -97,8 +116,8 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
         r.view === 'detail'
             ? tv.selected
             : r.view === 'home'
-              ? feature.item
-              : undefined,
+                ? feature.item
+                : undefined,
         tv.data.tmdb
     );
     const display = {
@@ -107,8 +126,8 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
         home:
             r.view === 'home' && metadata.item
                 ? tv.home.map((item) =>
-                      item.id === metadata.item?.id ? metadata.item : item
-                  )
+                    item.id === metadata.item?.id ? metadata.item : item
+                )
                 : tv.home,
     };
     const element = video.current;
@@ -116,24 +135,6 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
         tv.fullscreen,
         !!overlay.panel || (element?.paused ?? true)
     );
-    // --- Expiry check: poll backend every 5 min; show lock screen if expired ---
-    const [isExpired, setIsExpired] = useState(false);
-    useEffect(() => {
-        if (!tv.data.backend || !tv.data.backendToken) return;
-        const check = () => {
-            fetch(`${tv.data.backend}/api/status`, {
-                headers: { Authorization: `Bearer ${tv.data.backendToken}` },
-            })
-                .then((r) => r.json())
-                .then((d: { expired?: boolean; active?: boolean }) => {
-                    setIsExpired(d.expired === true || d.active === false);
-                })
-                .catch(() => undefined); // network failure → keep current state
-        };
-        check();
-        const id = setInterval(check, 5 * 60 * 1000);
-        return () => clearInterval(id);
-    }, [tv.data.backend, tv.data.backendToken]);
     return (
         <div
             class={`tv-app ${tv.data.layout}`}
@@ -169,10 +170,6 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
                     )}
                 </section>
             ) : null}
-            {/* Expiry lock screen — renders over everything when subscription expires */}
-            {isExpired && tv.storageReady && (
-                <ExpiryLock tv={tv} />
-            )}
             <aside hidden={tv.fullscreen || !tv.storageReady}>
                 <div class="wordmark">
                     Ye<span>stream</span><small>TV EDITION</small>
@@ -195,7 +192,8 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
                     ))}
                 </nav>
                 <div class="side-caption">
-                    YOUR PLAYLISTS.<br />
+                    YOUR SOURCES.
+                    <br />
                     YOUR SCREEN.
                 </div>
             </aside>
@@ -205,10 +203,10 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
                     cinematic
                         ? `cinematic-page ${r.view}-page`
                         : r.view === 'settings'
-                          ? 'settings-page'
-                          : r.view === 'live'
-                            ? 'live-page'
-                            : ''
+                            ? 'settings-page'
+                            : r.view === 'live'
+                                ? 'live-page'
+                                : ''
                 }
             >
                 {cinematic ? <Backdrop item={metadata.item} /> : null}
@@ -235,7 +233,7 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
                                 tv.navigate('sources');
                             }}
                         >
-                            Edit sources
+                            Edit playlists
                         </button>
                     </div>
                 ) : null}
@@ -244,8 +242,15 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
                 ) : null}
                 {tv.busy ? (
                     <div class="loading" role="status">
-                        Connecting to your source…
+                        Connecting to your playlist…
                     </div>
+                ) : null}
+                {expired && r.view !== 'sources' && r.view !== 'settings' && registration ? (
+                    <TvExpiryGuard
+                        registration={registration}
+                        onStatusRefreshed={(updated) => setRegistration(updated)}
+                        onOpenSettings={() => tv.navigate('settings')}
+                    />
                 ) : null}
                 {r.view === 'home' ? (
                     <Home

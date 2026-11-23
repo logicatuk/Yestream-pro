@@ -16,7 +16,7 @@ export function PageHeader({
         history: 'History',
         search: 'Find your next story.',
         live: 'Live television',
-        sources: 'Sources',
+        sources: 'Playlists',
         settings: 'Settings',
         home: '',
         detail: '',
@@ -52,15 +52,15 @@ export function PageHeader({
                 </div>
             )}
             {view === 'home' || view === 'history' ? (
-                <span class="home-scope">All sources</span>
+                <span class="home-scope">All playlists</span>
             ) : view === 'favorites' ? (
                 <FavoriteSources tv={tv} cancel={cancelOpening} />
             ) : (
                 <TvSelect
-                    label="Active source"
+                    label="Active playlist"
                     focusKey="source-picker"
                     value={tv.data.activeId}
-                    placeholder="No source connected"
+                    placeholder="No playlist connected"
                     options={tv.data.sources.map((s) => ({
                         value: s.id,
                         label: `${s.name} · ${s.provider.toUpperCase()}`,

@@ -6,7 +6,7 @@ import {
 } from './settings-navigation';
 import type { TvModel } from './use-tv';
 import { About, type TvBuildInfo } from './about';
-import { AccountPanel } from './account-panel';
+import { TvAccountDetails } from './account-details';
 
 export function Settings({
     tv,
@@ -66,7 +66,7 @@ export function Settings({
                         }}
                     >
                         {id === 'account' ? (
-                            <AccountPanel tv={tv} />
+                            <TvAccountDetails tv={tv} />
                         ) : id === 'appearance' ? (
                             <SettingsPreferences
                                 tv={tv}
