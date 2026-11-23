@@ -6,6 +6,7 @@ import {
 } from './settings-navigation';
 import type { TvModel } from './use-tv';
 import { About, type TvBuildInfo } from './about';
+import { AccountPanel } from './account-panel';
 
 export function Settings({
     tv,
@@ -64,7 +65,9 @@ export function Settings({
                             memory.scroll[id] = event.currentTarget.scrollTop;
                         }}
                     >
-                        {id === 'appearance' ? (
+                        {id === 'account' ? (
+                            <AccountPanel tv={tv} />
+                        ) : id === 'appearance' ? (
                             <SettingsPreferences
                                 tv={tv}
                                 category="layout"

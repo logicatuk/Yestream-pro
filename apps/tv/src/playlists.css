@@ -1,0 +1,423 @@
+/* ============================================================
+   Playlists split-pane screen
+   ============================================================ */
+.playlists-screen {
+    display: flex;
+    gap: 32px;
+    height: 100%;
+    min-height: 0;
+}
+
+/* Left pane – Quick Connect card */
+.playlists-left {
+    width: 360px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.playlists-qc {
+    background: var(--tv-surface);
+    border-radius: 16px;
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    height: 100%;
+}
+
+.playlists-qc-heading {
+    font-size: var(--tv-type-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--tv-muted);
+    align-self: flex-start;
+}
+
+.playlists-qc-qr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 220px;
+    height: 220px;
+    background: #1a2520;
+    border-radius: 12px;
+    padding: 10px;
+    flex-shrink: 0;
+}
+
+.playlists-qc-qr img {
+    display: block;
+    width: 200px;
+    height: 200px;
+    border-radius: 4px;
+}
+
+.playlists-qc-loading,
+.playlists-qc-error {
+    color: var(--tv-muted);
+    font-size: var(--tv-type-meta);
+    text-align: center;
+}
+
+.playlists-qc-timer {
+    font-size: var(--tv-type-meta);
+    text-align: center;
+}
+
+.playlists-qc-fields {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.playlists-qc-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.playlists-qc-label {
+    font-size: var(--tv-type-eyebrow);
+    color: var(--tv-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    width: 36px;
+    flex-shrink: 0;
+}
+
+.playlists-qc-value {
+    font-size: var(--tv-type-meta);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.playlists-qc-key {
+    font-size: var(--tv-type-heading);
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--tv-accent, #4ade80);
+}
+
+.playlists-qc--no-backend {
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+/* Right pane – Playlist list */
+.playlists-right {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.playlists-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--tv-focus-reach);
+    margin: calc(-1 * var(--tv-focus-reach));
+}
+
+.playlists-empty {
+    padding: 32px 0;
+}
+
+.playlist-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: var(--tv-space-1);
+    border-radius: var(--tv-control-radius);
+    padding: 0 8px;
+    background: var(--tv-surface);
+    transition: background 0.1s;
+}
+
+.playlist-row--active {
+    outline: 2px solid var(--tv-accent, #4ade80);
+}
+
+.playlist-row-name {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: transparent;
+    border: none;
+    min-height: var(--tv-list-row);
+    padding: 12px 16px 12px 0;
+    text-align: left;
+}
+
+.playlist-row-indicator {
+    font-size: 10px;
+    width: 14px;
+    flex-shrink: 0;
+    color: var(--tv-accent, #4ade80);
+}
+
+.playlist-row--active .playlist-row-indicator {
+    color: var(--tv-accent, #4ade80);
+}
+
+.playlist-row-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.playlist-row-type {
+    font-size: var(--tv-type-eyebrow);
+    color: var(--tv-muted);
+    flex-shrink: 0;
+}
+
+.playlist-row-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.playlist-row-actions button {
+    padding: 8px 20px;
+    min-height: auto;
+    font-size: var(--tv-type-meta);
+}
+
+.playlists-add-row {
+    flex-shrink: 0;
+    padding-bottom: var(--tv-space-3);
+}
+
+.playlists-add-btn {
+    min-width: 240px;
+}
+
+/* ============================================================
+   Add Playlist dialog
+   ============================================================ */
+.add-playlist-dialog {
+    max-width: 760px;
+}
+
+.add-playlist-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+}
+
+.add-playlist-tab {
+    background: transparent;
+    border: 2px solid var(--tv-line);
+    padding: 10px 32px;
+    font-size: var(--tv-type-body);
+}
+
+.add-playlist-tab.active,
+.add-playlist-tab[aria-selected='true'] {
+    background: var(--tv-text);
+    color: var(--tv-bg);
+    border-color: var(--tv-text);
+}
+
+.add-playlist-form label {
+    margin-bottom: var(--tv-space-3);
+}
+
+.add-playlist-form input {
+    width: 100%;
+}
+
+.add-playlist-actions {
+    margin-top: var(--tv-space-5);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.add-playlist-error {
+    color: #f87171;
+    margin: 0 0 var(--tv-space-3);
+}
+
+/* ============================================================
+   Account & Device panel
+   ============================================================ */
+.account-panel {
+    max-width: 900px;
+}
+
+.account-panel h2 {
+    margin-bottom: var(--tv-space-5);
+}
+
+.account-section {
+    margin-bottom: var(--tv-space-5);
+}
+
+.account-section h3 {
+    font-size: var(--tv-type-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--tv-muted);
+    margin-bottom: 12px;
+}
+
+.account-subheading {
+    font-size: var(--tv-type-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--tv-muted);
+    margin: var(--tv-space-3) 0 12px;
+}
+
+.account-section dl {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.account-row {
+    display: flex;
+    align-items: baseline;
+    min-height: 48px;
+    border-bottom: 1px solid var(--tv-line, rgba(255,255,255,0.08));
+    gap: 24px;
+}
+
+.account-row:last-child {
+    border-bottom: none;
+}
+
+.account-row-label {
+    width: 180px;
+    flex-shrink: 0;
+    font-size: var(--tv-type-meta);
+    color: var(--tv-muted);
+}
+
+.account-row-value {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--tv-type-body);
+}
+
+/* ============================================================
+   Expiry Lock Screen
+   ============================================================ */
+.expiry-lock {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(10, 20, 15, 0.97);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+}
+
+.expiry-lock-inner {
+    max-width: 900px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 24px;
+}
+
+.expiry-lock-icon {
+    font-size: 72px;
+    line-height: 1;
+}
+
+.expiry-lock-title {
+    font-size: var(--tv-type-title);
+    margin: 0;
+}
+
+.expiry-lock-subtitle {
+    font-size: var(--tv-type-body);
+    max-width: 540px;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.expiry-lock-content {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    margin: 8px 0;
+}
+
+.expiry-lock-qr {
+    background: #0d1a14;
+    border-radius: 12px;
+    padding: 12px;
+    flex-shrink: 0;
+}
+
+.expiry-lock-qr img {
+    display: block;
+}
+
+.expiry-lock-credentials {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    text-align: left;
+}
+
+.expiry-cred-row {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+}
+
+.expiry-cred-label {
+    font-size: var(--tv-type-eyebrow);
+    color: var(--tv-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    width: 40px;
+    flex-shrink: 0;
+}
+
+.expiry-cred-value {
+    font-size: var(--tv-type-body);
+}
+
+.expiry-cred-key {
+    font-size: var(--tv-type-heading);
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--tv-accent, #4ade80);
+}
+
+.expiry-lock-result {
+    font-size: var(--tv-type-body);
+    color: var(--tv-muted);
+    margin: 0;
+}
+
+.expiry-lock-result--ok {
+    color: var(--tv-accent, #4ade80);
+}
+
+.expiry-lock-btn {
+    min-width: 320px;
+    font-size: var(--tv-type-body);
+    text-align: center;
+}

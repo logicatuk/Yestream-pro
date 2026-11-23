@@ -9,7 +9,7 @@ import { PageHeader } from './page-header';
 import { Favorites } from './favorites';
 import { History } from './history';
 import { usePlayerControls } from './player-controls';
-import { useEffect, useRef } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { useTv } from './use-tv';
 import { mainNavigation } from './navigation';
 import { Sources } from './forms';
@@ -28,6 +28,7 @@ import { NativePlayerView } from './native-player-view';
 import { useTvRemote } from './use-tv-remote';
 import { PersonPage } from './person-page';
 import type { FilmographyMemory } from './use-filmography-search';
+import { ExpiryLock } from './expiry-lock';
 export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
     const personMemory = useRef<FilmographyMemory>(new WeakMap());
     const settingsMemory = useRef<SettingsMemory>({
@@ -115,6 +116,24 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
         tv.fullscreen,
         !!overlay.panel || (element?.paused ?? true)
     );
+    // --- Expiry check: poll backend every 5 min; show lock screen if expired ---
+    const [isExpired, setIsExpired] = useState(false);
+    useEffect(() => {
+        if (!tv.data.backend || !tv.data.backendToken) return;
+        const check = () => {
+            fetch(`${tv.data.backend}/api/status`, {
+                headers: { Authorization: `Bearer ${tv.data.backendToken}` },
+            })
+                .then((r) => r.json())
+                .then((d: { expired?: boolean; active?: boolean }) => {
+                    setIsExpired(d.expired === true || d.active === false);
+                })
+                .catch(() => undefined); // network failure → keep current state
+        };
+        check();
+        const id = setInterval(check, 5 * 60 * 1000);
+        return () => clearInterval(id);
+    }, [tv.data.backend, tv.data.backendToken]);
     return (
         <div
             class={`tv-app ${tv.data.layout}`}
@@ -150,6 +169,10 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
                     )}
                 </section>
             ) : null}
+            {/* Expiry lock screen — renders over everything when subscription expires */}
+            {isExpired && tv.storageReady && (
+                <ExpiryLock tv={tv} />
+            )}
             <aside hidden={tv.fullscreen || !tv.storageReady}>
                 <div class="wordmark">
                     Ye<span>stream</span><small>TV EDITION</small>
@@ -172,8 +195,7 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
                     ))}
                 </nav>
                 <div class="side-caption">
-                    YOUR SOURCES.
-                    <br />
+                    YOUR PLAYLISTS.<br />
                     YOUR SCREEN.
                 </div>
             </aside>

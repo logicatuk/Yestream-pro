@@ -19,7 +19,7 @@ export const mainNavigation: [View, string][] = [
     ['favorites', 'Favorites'],
     ['history', 'History'],
     ['search', 'Search'],
-    ['sources', 'Sources'],
+    ['sources', 'Playlists'],
     ['settings', 'Settings'],
 ];
 export const isCollectionView = (view?: View) =>

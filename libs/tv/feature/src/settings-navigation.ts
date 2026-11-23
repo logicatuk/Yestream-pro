@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { JSX } from 'preact';
 
 export const settingsCategories = [
+    ['account', 'Account & Device', 'Subscription & identity'],
     ['appearance', 'Appearance', 'Home composition'],
     ['epg', 'Programme guide', 'Provider schedules'],
     ['playback', 'Playback', 'Autoplay next episode'],

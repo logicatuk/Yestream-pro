@@ -16,3 +16,4 @@ import './settings.css';
 import './dialog.css';
 import './about.css';
 import './focus.css';
+import './playlists.css';
