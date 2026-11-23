@@ -156,6 +156,92 @@ export class YestreamCloudService {
         return { mac, fp };
     }
 
+    static detectDevicePlatform(): { platform: string; model: string; os: string; appVersion: string } {
+        const appVersion = '0.25.1';
+        if (typeof window === 'undefined') {
+            return { platform: 'Web', model: 'Server', os: 'Linux', appVersion };
+        }
+
+        const ua = navigator.userAgent || '';
+        const isTouch = (navigator.maxTouchPoints || 0) > 0;
+        const isTvShell = !!((window as any).TvShell || (window as any).__tvShell || ua.includes('Yestream/'));
+        const isElectron = !!((window as any).electron || (window as any).electronBridge || ua.includes('Electron'));
+        const isTizen = !!((window as any).tizen || ua.includes('Tizen') || (ua.includes('SmartTV') && ua.includes('Samsung')));
+        const isWebOS = !!((window as any).webOS || ua.includes('Web0S') || ua.includes('NetCast'));
+        const isFireTv = ua.includes('AFT') || ua.includes('FireTV') || ua.includes('Silk');
+        const isAndroid = ua.includes('Android');
+        const isAndroidTv = (isTvShell && !isTouch) || ua.includes('Android TV') || ua.includes('GoogleTV') || ua.includes('BRAVIA') || ua.includes('SHIELD');
+
+        // 1. Amazon Fire TV / Firestick
+        if (isFireTv) {
+            let model = 'Amazon Fire TV / Firestick';
+            const aftMatch = ua.match(/AFT[A-Z0-9]+/i);
+            if (aftMatch) model = `Amazon ${aftMatch[0]}`;
+            return { platform: 'Fire TV', model, os: 'Fire OS', appVersion };
+        }
+
+        // 2. Android TV / Google TV
+        if (isAndroidTv) {
+            return { platform: 'Android TV', model: 'Android TV Device', os: 'Android TV', appVersion };
+        }
+
+        // 3. Samsung Tizen TV
+        if (isTizen) {
+            return { platform: 'Samsung TV', model: 'Samsung Smart TV (Tizen)', os: 'Tizen OS', appVersion };
+        }
+
+        // 4. LG webOS TV
+        if (isWebOS) {
+            return { platform: 'LG TV', model: 'LG Smart TV (webOS)', os: 'webOS', appVersion };
+        }
+
+        // 5. Android Phone / Tablet (Native APK or Mobile Browser)
+        if (isAndroid) {
+            let model = isTouch ? 'Android Mobile' : 'Android Device';
+            const yestreamMatch = ua.match(/Yestream\/[^\s]+\s*\((Mobile|TV);\s*([^)]+)\)/);
+            if (yestreamMatch && yestreamMatch[2]) {
+                model = yestreamMatch[2].trim();
+            } else {
+                const match = ua.match(/Android[^;]+;\s*([^;)]+)[;)]/);
+                if (match && match[1]) {
+                    const raw = match[1].trim();
+                    if (!raw.includes('Build/') && !raw.startsWith('wv')) {
+                        model = raw.replace(/\s*Build\/.*$/, '');
+                    }
+                }
+            }
+            const platform = isTvShell ? 'Android' : 'Web (Android)';
+            return { platform, model, os: 'Android', appVersion };
+        }
+
+        // 6. Apple iOS / iPadOS
+        if (/iPhone|iPad|iPod/.test(ua)) {
+            const isTablet = /iPad/.test(ua) || (navigator.platform === 'MacIntel' && isTouch);
+            return {
+                platform: isTablet ? 'iPadOS' : 'iOS',
+                model: isTablet ? 'Apple iPad' : 'Apple iPhone',
+                os: isTablet ? 'iPadOS' : 'iOS',
+                appVersion
+            };
+        }
+
+        // 7. Desktop Electron App (macOS, Windows, Linux)
+        if (isElectron) {
+            if (ua.includes('Mac')) return { platform: 'macOS', model: 'Mac Desktop App', os: 'macOS', appVersion };
+            if (ua.includes('Win')) return { platform: 'Windows', model: 'Windows Desktop App', os: 'Windows', appVersion };
+            return { platform: 'Linux', model: 'Linux Desktop App', os: 'Linux', appVersion };
+        }
+
+        // 8. Standard Desktop Web Browser
+        if (ua.includes('Mac')) return { platform: 'Web', model: 'Mac Browser Client', os: 'macOS', appVersion };
+        if (ua.includes('Win')) return { platform: 'Web', model: 'Windows Browser Client', os: 'Windows', appVersion };
+        if (ua.includes('Linux')) return { platform: 'Web', model: 'Linux Browser Client', os: 'Linux', appVersion };
+
+        return { platform: 'Web', model: 'Browser Client', os: 'Unknown', appVersion };
+    }
+
+    readonly deviceInfo = computed(() => YestreamCloudService.detectDevicePlatform());
+
     async registerDevice(forceNewHardware = false): Promise<void> {
         this.loading.set(true);
         this.error.set(null);
@@ -174,14 +260,15 @@ export class YestreamCloudService {
                 fp = hw.fp;
             }
 
+            const devInfo = YestreamCloudService.detectDevicePlatform();
             const payload = {
                 mac,
                 hardwareFingerprint: fp,
                 credential: stored?.credential || undefined,
-                platform: 'Web',
-                model: 'Browser Client',
-                os: navigator.userAgent.includes('Mac') ? 'macOS' : navigator.userAgent.includes('Win') ? 'Windows' : 'Linux',
-                appVersion: '0.25.1'
+                platform: devInfo.platform,
+                model: devInfo.model,
+                os: devInfo.os,
+                appVersion: devInfo.appVersion
             };
 
             const res = await fetch(`${YESTREAM_CLOUD_ORIGIN}/api/v1/devices/register`, {

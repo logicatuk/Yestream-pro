@@ -262,4 +262,22 @@
             min-height: 240px;
         }
     }
+
+    @media (max-height: 520px) and (max-width: 1024px) {
+        .sidebar {
+            width: min(280px, 36vw) !important;
+            min-width: 220px !important;
+            max-width: 320px !important;
+        }
+
+        .epg.epg--inline {
+            flex: 0 0 var(--epg-collapsed-height, 44px) !important;
+            min-height: var(--epg-collapsed-height, 44px) !important;
+        }
+
+        .video-player {
+            flex: 1 1 auto;
+            min-height: 0;
+        }
+    }
 }

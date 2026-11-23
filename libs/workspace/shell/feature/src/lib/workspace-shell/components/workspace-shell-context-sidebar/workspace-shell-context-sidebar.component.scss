@@ -90,7 +90,7 @@
 // drawer in by toggling the `drawer-open` class on this host. Hidden state
 // uses visibility (delayed until the slide-out finishes) so the off-screen
 // panel can't be tabbed or scrolled into.
-@media (max-width: 640px) {
+@media (max-width: 640px), (max-height: 520px) and (max-width: 1024px) {
     :host {
         position: fixed;
         top: 0;

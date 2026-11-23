@@ -291,11 +291,15 @@ import { XtreamApiService, XtreamStore, XtreamAccountInfo } from '@iptvnator/por
                     <div class="account-grid">
                         <div class="account-prop">
                             <span class="account-prop__label">{{ 'YESTREAM.PLATFORM' | translate }}</span>
-                            <span class="account-prop__val">{{ 'YESTREAM.WEB_CLIENT_PWA' | translate }}</span>
+                            <span class="account-prop__val">{{ platformName() }}</span>
+                        </div>
+                        <div class="account-prop">
+                            <span class="account-prop__label">Model</span>
+                            <span class="account-prop__val">{{ deviceModel() }}</span>
                         </div>
                         <div class="account-prop">
                             <span class="account-prop__label">Operating System</span>
-                            <span class="account-prop__val">{{ osName }}</span>
+                            <span class="account-prop__val">{{ detectedOs() }}</span>
                         </div>
                         <div class="account-prop">
                             <span class="account-prop__label">Application Version</span>
@@ -763,6 +767,19 @@ export class SettingsAccountSectionComponent {
         : navigator.userAgent.includes('Win')
         ? 'Windows'
         : 'Linux / Android';
+
+    readonly platformName = computed(() => {
+        const info = this.cloud?.deviceInfo ? this.cloud.deviceInfo() : null;
+        return info?.platform || (navigator.userAgent.includes('Android') ? 'Android' : 'Web');
+    });
+    readonly deviceModel = computed(() => {
+        const info = this.cloud?.deviceInfo ? this.cloud.deviceInfo() : null;
+        return info?.model || 'Device';
+    });
+    readonly detectedOs = computed(() => {
+        const info = this.cloud?.deviceInfo ? this.cloud.deviceInfo() : null;
+        return info?.os || this.osName;
+    });
 
     readonly macAddress = computed(() => this.cloud?.macAddress ? this.cloud.macAddress() : 'Loading...');
     readonly deviceKey = computed(() => this.cloud?.deviceKey ? this.cloud.deviceKey() : '...');

@@ -30,3 +30,21 @@
         --cover-rail-width: 170px;
     }
 }
+
+@media (max-width: 640px), (max-height: 520px) and (max-width: 1024px) {
+    :root {
+        --cover-grid-min-width: 110px;
+        --cover-rail-width: 125px;
+        --cover-gap: 10px;
+    }
+    :root[data-cover-size='small'] {
+        --cover-grid-min-width: 95px;
+        --cover-rail-width: 110px;
+        --cover-gap: 8px;
+    }
+    :root[data-cover-size='large'] {
+        --cover-grid-min-width: 135px;
+        --cover-rail-width: 150px;
+        --cover-gap: 12px;
+    }
+}
