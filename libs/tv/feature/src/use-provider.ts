@@ -43,7 +43,7 @@ export function useProvider(
 
         callbacks.current.reset();
         provider.current?.dispose();
-        if (!storageReady || !active || !data.backend) {
+        if (!storageReady || !active) {
             setBusy(false);
             return;
         }
@@ -105,6 +105,6 @@ export function useProvider(
         ready: owner.current === connectionKey ? ready : 0,
         busy,
         connectionKey,
-        enabled: storageReady && !!active && !!data.backend,
+        enabled: storageReady && !!active,
     };
 }

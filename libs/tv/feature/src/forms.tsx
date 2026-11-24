@@ -65,31 +65,83 @@ export function Sources({ tv }: { tv: TvModel }) {
             const { registration: updated, playlists } = await syncTvDevice(registration);
             setRegistration(updated);
             if (playlists && playlists.length > 0) {
-                // Add any newly synced cloud playlists to local tv data
+                let syncedCount = 0;
+                let firstSyncedId = '';
+
                 for (const cp of playlists) {
-                    const existing = tv.data.sources.find((s) => s.id === cp.id || s.name === cp.name);
-                    if (!existing && (cp.type === 'xtream' || cp.type === 'm3u')) {
-                        const newSource: Source = {
-                            id: cp.id || `cloud-${Date.now()}`,
-                            name: cp.name,
-                            provider: cp.type as Provider,
-                            url: httpUrl(cp.type === 'xtream' ? cp.host || cp.url || '' : cp.url || ''),
-                            ...(cp.type === 'xtream'
-                                ? { username: cp.username, password: cp.password }
-                                : {}),
-                        };
-                        await tv.saveSource(newSource);
+                    const isXtream = cp.type === 'xtream' || (cp.url && cp.url.includes('get.php'));
+                    let serverUrl = '';
+                    let username = cp.username || '';
+                    let password = cp.password || '';
+
+                    if (isXtream) {
+                        if (cp.host) {
+                            serverUrl = cp.host.startsWith('http') ? cp.host : `http://${cp.host}`;
+                        } else if (cp.url) {
+                            try {
+                                serverUrl = new URL(cp.url).origin;
+                            } catch {
+                                serverUrl = cp.url;
+                            }
+                        }
+                        if (cp.url) {
+                            try {
+                                const u = new URL(cp.url);
+                                username = username || u.searchParams.get('username') || u.searchParams.get('user') || '';
+                                password = password || u.searchParams.get('password') || u.searchParams.get('pass') || '';
+                            } catch {
+                                // ignore
+                            }
+                        }
+                    } else {
+                        serverUrl = cp.url || '';
                     }
+
+                    if (!serverUrl) continue;
+                    if (!/^https?:\/\//i.test(serverUrl)) {
+                        serverUrl = `http://${serverUrl}`;
+                    }
+
+                    const sourceId = cp.id || `cloud-${Date.now()}`;
+                    const newSource: Source = {
+                        id: sourceId,
+                        name: cp.name || 'Cloud Playlist',
+                        provider: (isXtream ? 'xtream' : 'm3u') as Provider,
+                        url: serverUrl,
+                        ...(isXtream ? { username, password } : {}),
+                    };
+
+                    const existing = tv.data.sources.find((s) => s.id === cp.id || s.name === cp.name);
+                    if (existing) {
+                        await tv.update((d) => ({
+                            ...d,
+                            sources: d.sources.map((s) => s.id === existing.id ? { ...s, ...newSource, id: existing.id } : s),
+                            activeId: d.activeId || existing.id,
+                        }));
+                        if (!firstSyncedId) firstSyncedId = existing.id;
+                    } else {
+                        await tv.update((d) => ({
+                            ...d,
+                            sources: [...d.sources, newSource],
+                            activeId: d.activeId || newSource.id,
+                        }));
+                        if (!firstSyncedId) firstSyncedId = newSource.id;
+                    }
+                    syncedCount++;
                 }
-                setSyncMsg(`Synced! ${playlists.length} cloud playlist(s) updated.`);
+
+                if (firstSyncedId && !tv.data.activeId) {
+                    void tv.switchSource(firstSyncedId);
+                }
+                setSyncMsg(`Synced! ${syncedCount} playlist(s) connected and ready.`);
             } else {
                 setSyncMsg('Device synced. No new cloud playlists.');
             }
-        } catch {
-            setSyncMsg('Sync failed. Please check internet connection.');
+        } catch (e: any) {
+            setSyncMsg(`Sync error: ${e?.message || 'Check network connection'}`);
         } finally {
             setSyncing(false);
-            setTimeout(() => setSyncMsg(''), 4000);
+            setTimeout(() => setSyncMsg(''), 5000);
         }
     }
 
@@ -113,13 +165,22 @@ export function Sources({ tv }: { tv: TvModel }) {
         const values = new FormData(event.currentTarget as HTMLFormElement);
         const field = (key: string) => String(values.get(key) ?? '').trim();
         try {
+            let rawUrl = field('url');
+            if (!rawUrl) throw new Error('Please enter a server or playlist URL');
+            if (!/^https?:\/\//i.test(rawUrl)) {
+                rawUrl = `http://${rawUrl}`;
+            }
+
+            const sourceId =
+                editing?.id ??
+                `tv-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+            const name = field('name') || (type === 'xtream' ? 'Xtream Service' : 'M3U Playlist');
+
             const source: Source = {
-                id:
-                    editing?.id ??
-                    `tv-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-                name: field('name'),
+                id: sourceId,
+                name,
                 provider: type,
-                url: httpUrl(field('url')),
+                url: httpUrl(rawUrl),
                 ...(type !== 'm3u'
                     ? {
                           username: field('username'),
@@ -130,9 +191,10 @@ export function Sources({ tv }: { tv: TvModel }) {
             setSaving(true);
             await tv.saveSource(source);
             setShowDialog(false);
-        } catch {
+        } catch (err: any) {
             setFailure(
-                'Invalid URL. Please use a valid HTTP or HTTPS address without inline credentials.'
+                err?.message ||
+                'Invalid URL. Please enter a valid HTTP or HTTPS address.'
             );
         } finally {
             setSaving(false);

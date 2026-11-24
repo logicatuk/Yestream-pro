@@ -332,9 +332,9 @@ export function useTv(video: { current: HTMLVideoElement | null }) {
         clearError,
         setError,
     });
-    async function saveSource(source: Source, address: string) {
+    async function saveSource(source: Source, address?: string) {
         try {
-            if (!(await backend.connect(address))) return;
+            if (address && !(await backend.connect(address))) return;
             await update((d) => ({
                 ...d,
                 sources: [

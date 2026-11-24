@@ -8,13 +8,50 @@ export class ProviderRequestError extends Error {
         super('Provider request failed. Check the source and backend.');
     }
 }
+function parseSimpleM3u(content: string): { playlist: { items: any[] } } {
+    const items: any[] = [];
+    const lines = content.split(/\r?\n/);
+    let currentInf: { name?: string; group?: { title?: string }; tvg?: { logo?: string } } | null = null;
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line.startsWith('#EXTINF:')) {
+            const logoMatch = line.match(/tvg-logo="([^"]*)"/i);
+            const groupMatch = line.match(/group-title="([^"]*)"/i);
+            const commaIdx = line.indexOf(',');
+            const name = commaIdx !== -1 ? line.slice(commaIdx + 1).trim() : 'Channel';
+            currentInf = {
+                name,
+                group: { title: groupMatch ? groupMatch[1] : 'General' },
+                tvg: { logo: logoMatch ? logoMatch[1] : undefined },
+            };
+        } else if (line && !line.startsWith('#')) {
+            if (currentInf) {
+                items.push({
+                    url: line,
+                    name: currentInf.name,
+                    group: currentInf.group,
+                    tvg: currentInf.tvg,
+                });
+                currentInf = null;
+            }
+        }
+    }
+    return { playlist: { items } };
+}
+
 export class ProviderTransport {
     private targets = new Map<string, string>();
     constructor(
         readonly backend: string,
         private readonly accessToken = ''
     ) {
-        httpUrl(backend);
+        if (backend) {
+            try {
+                httpUrl(backend);
+            } catch {
+                // Ignore invalid or empty backend URL
+            }
+        }
     }
     private async json(
         url: string,
@@ -81,6 +118,39 @@ export class ProviderTransport {
         this.targets.set(url, id);
         return id;
     }
+    private async directRequest(
+        source: Source,
+        route: 'xtream' | 'stalker' | 'parse',
+        params: Record<string, string | number>,
+        signal: AbortSignal,
+        endpoint = source.endpoint ?? source.url
+    ): Promise<unknown> {
+        if (route === 'xtream') {
+            let base = (endpoint || '').trim();
+            if (!/^https?:\/\//i.test(base)) {
+                base = `http://${base}`;
+            }
+            base = base.replace(/\/+(?:player_api|get|panel_api)\.php.*$/i, '').replace(/\/+$/, '');
+            const url = new URL(`${base}/player_api.php`);
+            Object.keys(params).forEach((k) => url.searchParams.set(k, String(params[k])));
+            const res = await fetch(url.href, { signal });
+            if (!res.ok) {
+                throw new ProviderRequestError(res.status, true);
+            }
+            const json = await res.json();
+            return json?.payload !== undefined ? json.payload : json;
+        }
+        if (route === 'parse') {
+            const res = await fetch(endpoint, { signal });
+            if (!res.ok) {
+                throw new ProviderRequestError(res.status, true);
+            }
+            const text = await res.text();
+            return parseSimpleM3u(text);
+        }
+        throw new ProviderRequestError(500, true);
+    }
+
     async request(
         source: Source,
         route: 'xtream' | 'stalker' | 'parse',
@@ -89,40 +159,49 @@ export class ProviderTransport {
         endpoint = source.endpoint ?? source.url,
         repaired = false
     ): Promise<unknown> {
-        const targetId = await this.target(endpoint, signal);
-        if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
-        const query = new URLSearchParams({ targetId });
-        if (route === 'parse' && source.userAgent)
-            query.set('userAgent', source.userAgent);
-        Object.keys(params).forEach((k) => query.set(k, String(params[k])));
-        let result: { payload?: unknown };
+        if (!this.backend) {
+            return this.directRequest(source, route, params, signal, endpoint);
+        }
         try {
-            result = (await this.json(
-                `${this.backend.replace(/\/$/, '')}/${route}?${query}`,
-                signal
-            )) as { payload?: unknown };
+            const targetId = await this.target(endpoint, signal);
+            if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
+            const query = new URLSearchParams({ targetId });
+            if (route === 'parse' && source.userAgent)
+                query.set('userAgent', source.userAgent);
+            Object.keys(params).forEach((k) => query.set(k, String(params[k])));
+            let result: { payload?: unknown };
+            try {
+                result = (await this.json(
+                    `${this.backend.replace(/\/$/, '')}/${route}?${query}`,
+                    signal
+                )) as { payload?: unknown };
+            } catch (error) {
+                if (
+                    !repaired &&
+                    !signal.aborted &&
+                    error instanceof ProviderRequestError &&
+                    error.missingTarget
+                ) {
+                    this.targets.delete(endpoint);
+                    return this.request(
+                        source,
+                        route,
+                        params,
+                        signal,
+                        endpoint,
+                        true
+                    );
+                }
+                throw error;
+            }
+            return route === 'parse' ? result : (result?.payload !== undefined ? result.payload : result);
         } catch (error) {
-            if (
-                !repaired &&
-                !signal.aborted &&
-                error instanceof ProviderRequestError &&
-                error.missingTarget
-            ) {
-                // Backend restart drops its in-memory target registry. Repair once;
-                // never retry an upstream/provider 404 or loop on an incompatible API.
-                this.targets.delete(endpoint);
-                return this.request(
-                    source,
-                    route,
-                    params,
-                    signal,
-                    endpoint,
-                    true
-                );
+            // If backend is unreachable or dead, seamlessly fallback to direct provider fetch
+            if (!signal.aborted && (route === 'xtream' || route === 'parse')) {
+                return this.directRequest(source, route, params, signal, endpoint);
             }
             throw error;
         }
-        return route === 'parse' ? result : result.payload;
     }
     clear() {
         this.targets.clear();
