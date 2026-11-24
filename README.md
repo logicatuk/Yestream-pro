@@ -80,19 +80,23 @@ reverse proxies, playback troubleshooting and platform limits.
 
 ### LG webOS and Samsung Tizen
 
-LG webOS and Samsung Tizen share a dedicated, experimental TV client for M3U,
-Xtream Codes and Stalker / Ministra sources. It requires a compatible Yestream
-web backend. Build and install the package for your TV in Developer Mode.
+LG webOS and Samsung Tizen share a dedicated TV client for M3U,
+Xtream Codes and Stalker / Ministra sources, packaged for webOS (`.ipk`) and Tizen (`.wgt`).
+It features real-time cloud synchronization, split-screen playlist management,
+dual-tab playlist onboarding, and remote-friendly navigation.
 
 - [LG webOS installation](apps/tv/README.md#installation)
 - [Samsung Tizen installation and signing](apps/tv/tizen/README.md)
 
-Add sources from your phone by scanning a QR code, or connect the TV to your
-self-hosted Yestream source library. Favorites, history and resume positions
-currently stay on the TV.
+**Key TV Highlights:**
+- **Split-Screen Playlists View**: Left pane features a persistent Quick Connect QR card with MAC address, 6-digit Device Key, and instant **Sync Cloud Playlists** button. Right pane manages configured playlists with active playback indicators.
+- **Dual-Tab Playlist Modal**: Easily add playlists directly on your TV with dedicated tabs for **Xtream Codes API** and **M3U Playlist**.
+- **Customer Self-Service QR Code**: Scan the QR code to open the authenticated customer portal (`https://yestream.ai.studio/customer/login`) to manage playlists from your smartphone without typing with a remote control.
+- **Yestream Cloud Integration**: Device registration (`/api/v1/devices/register`) and automatic sync (`/api/v1/device/sync`) with automatic token renewal and 401 recovery.
+- **Account & Device Settings**: View live hardware details, MAC address, detected platform/model, and subscription/trial expiration status.
+- **Expiration Guard**: Full-screen lock screen displayed when a license expires, offering instant renewal links and status checks.
 
-See the [TV README](apps/tv/README.md) for compatibility, phone setup, source
-synchronization and screenshots.
+See the [TV README](apps/tv/README.md) for compatibility, installation, cloud sync, and screenshots.
 
 ### Fire TV / Android TV shell (experimental)
 

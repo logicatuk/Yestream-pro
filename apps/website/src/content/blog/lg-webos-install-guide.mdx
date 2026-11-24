@@ -1,7 +1,7 @@
 ---
-title: Install Yestream 0.25.0 on LG webOS
-description: Install the experimental Yestream TV package with LG Developer Mode and connect it to your self-hosted backend.
-pubDate: 2026-11-12
+title: Install Yestream 0.25.6 on LG webOS
+description: Install the latest Yestream TV package with LG Developer Mode, split-screen Playlists view, Quick Connect QR code, and Yestream Cloud sync.
+pubDate: 2026-11-24
 author: 4gray
 tags:
     - guide
@@ -9,28 +9,47 @@ tags:
 
 import ContentDisclaimer from '../../components/blog/ContentDisclaimer.astro';
 
-The experimental TV app ships as a ready-to-install IPK. It targets LG webOS 5.x and was tested on an LG BX (2020). Newer versions were unverified for this release; 4.x and earlier are below the target.
+The dedicated Yestream TV app ships as a ready-to-install IPK package (`com.yestream.tv.prototype_0.25.6_all.ipk`). It targets LG webOS 5.x+ (Chromium 68+) and has been verified on LG OLED BX and newer webOS smart TVs.
 
 <ContentDisclaimer />
 
-## Before you install
+## What's new in v0.25.6
 
-You need a **compatible self-hosted Yestream backend** reachable from the TV, even if you add sources on the TV. Follow the [v0.25.0 backend setup](https://github.com/logicatuk/Yestream-pro/blob/v0.25.0/apps/tv/README.md#1-prepare-the-backend) for the matching Docker build. In `CLIENT_URL`, allow your web origin and `file://com.iptvnator.tv.prototype-webos`.
+- **Split-Screen Playlists Management**: Replaces legacy sources with a modern dual-pane layout.
+- **Quick Connect QR Card**: Scan the TV screen with your smartphone camera to log directly into your customer self-service portal (`https://yestream.ai.studio/customer/login`) to manage playlists without remote-control typing.
+- **Instant Cloud Sync**: One-click **Sync Cloud Playlists** button connects to Yestream Cloud (`/api/v1/devices/register` & `/api/v1/device/sync`) with automatic token renewal and 401 recovery.
+- **Dual-Tab Playlist Modal**: Easily configure **Xtream Codes API** or **M3U Playlists** directly from your TV remote.
+- **Account & Device Diagnostics**: View live hardware MAC address, 6-digit Device Key, and active license/trial expiration dates in **Settings → Account & Device**.
+- **Expiration Guard**: Full-screen lock screen when your trial or license expires with one-click status verification.
 
 ## Enable Developer Mode and pair the TV
 
 1. On the TV, install **Developer Mode** from LG Apps. Sign in with your LG Developer account, enable **Dev Mode Status**, and let the TV restart.
-2. On a computer on the same network, [install LG’s webOS CLI](https://webostv.developer.lge.com/develop/tools/cli-installation). Run `ares-setup-device`, choose **add**, and save `living-room-tv` with the TV’s IP address, port `9922`, SSH user `prisoner`, and a blank password.
-3. Reopen Developer Mode on the TV and turn on **Key Server**. Run `ares-novacom --device living-room-tv --getkey` and enter the case-sensitive passphrase shown on the TV. See [LG’s pairing steps](https://webostv.developer.lge.com/develop/getting-started/developer-mode-app#connecting-with-cli).
+2. On a computer on the same home network, [install LG’s webOS CLI](https://webostv.developer.lge.com/develop/tools/cli-installation). Run `ares-setup-device`, choose **add**, and save `living-room-tv` with the TV’s IP address, port `9922`, SSH user `prisoner`, and a blank password.
+3. Reopen Developer Mode on the TV and turn on **Key Server**. Run `ares-novacom --device living-room-tv --getkey` and enter the 6-character passphrase shown on the TV.
 
-## Install and connect
+> **macOS OpenSSH Tip**: Modern macOS OpenSSH disables older `ssh-rsa` key types by default. If `ares-install` fails with `no matching host key type found`, add the following to your `~/.ssh/config`:
+> ```ssh-config
+> Host 192.168.*.*
+>     HostKeyAlgorithms +ssh-rsa
+>     PubkeyAcceptedKeyTypes +ssh-rsa
+> ```
 
-[Download the IPK](https://github.com/logicatuk/Yestream-pro/releases/download/v0.25.0/com.iptvnator.tv.prototype_0.1.25_all.ipk). From the download folder, run:
+## Install and launch
+
+[Download the IPK](https://github.com/logicatuk/Yestream-pro/releases/download/v0.25.6/com.yestream.tv.prototype_0.25.6_all.ipk). From your terminal, run:
 
 ```sh
-ares-install --device living-room-tv com.iptvnator.tv.prototype_0.1.25_all.ipk
+ares-install --device living-room-tv com.yestream.tv.prototype_0.25.6_all.ipk
+ares-launch --device living-room-tv com.yestream.tv.prototype
 ```
 
-Open **Yestream TV**. Under **Sources** or **Settings → Connection**, use **Find backend** and select your server if prompted. To connect manually, enter the API URL (for example, `http://iptvnator.home.test:4333/api`) and choose **Check and connect**. Enter your server’s access token before connecting if required.
+## Quick Start on the TV
 
-Press **EXTEND** in Developer Mode before the session expires. LG removes sideloaded apps when Developer Mode is disabled.
+1. Open **Yestream TV** on your LG Smart TV.
+2. Navigate to **Playlists** in the top navigation bar.
+3. On the left pane, note your **MAC Address** and **Device Key**, or scan the dynamic **Quick Connect QR code** with your phone.
+4. On your smartphone, log in and add your M3U playlist or Xtream Codes subscription.
+5. Back on your TV, click **↻ Sync Cloud Playlists** to load your channels, movies, and series instantly!
+
+Remember to press **EXTEND** in the LG Developer Mode app before the session timer expires.

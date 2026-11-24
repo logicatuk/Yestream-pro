@@ -900,3 +900,42 @@ LG documents the target engine in the [CLI guide](https://webostv.developer.lge.
 and [streaming support](https://webostv.developer.lge.com/develop/specifications/streaming-protocol-drm).
 See the [development and device checklist](../development/tv-development.md)
 for commands and the exact distinction between mock and hardware verification.
+
+## Cloud Synchronization and Hardware Identity
+
+Yestream TV incorporates a production cloud synchronization subsystem implemented in `libs/tv/data-access/src/tv-cloud.ts` and connected to the high-level UI components in `libs/tv/feature`.
+
+### 1. Hardware Identity & Stable Fingerprinting
+- **webOS MAC Retrieval**: Reads the TV's network MAC address using `webOS.service.request('luna://com.palm.connectionmanager', ...)` or Luna API `com.webos.service.connectionmanager`.
+- **Pure-JS SHA-256 Virtual MAC**: On platforms without native Luna services (or standard browser previews), a stable virtual MAC (`XX:XX:XX:XX:XX:XX`) is derived by hashing stable hardware entropy (User Agent, screen resolution, color depth, hardware concurrency, and stored UUID) using an embedded, zero-dependency SHA-256 implementation.
+- **6-Digit Device Key**: Generates a stable pseudo-random numeric key (`100000` to `999999`) persisted in local storage (`yestream_tv_device_key`), required for pairing and customer portal access.
+- **Platform Detection**: Automatically classifies the operating environment as `LG TV · LG Smart TV (webOS 5.x+)`, `Samsung TV · Samsung Smart TV (Tizen 5.5+)`, or `Web / Development Environment`.
+
+### 2. Device Registration & Endpoints
+- **Cloud Run Production Backend**: `https://yestream-405211835468.europe-west2.run.app`
+- **Branded Web Portal**: `https://yestream.ai.studio`
+- **Registration (`POST /api/v1/devices/register`)**:
+  - Registers the TV with payload `{ mac, key, platform, model, appVersion }`.
+  - Returns device identity, device credential bearer token, license plan (`TRIAL`, `ACTIVE`, `EXPIRED`), and expiration timestamp.
+- **Device Sync (`GET /api/v1/device/sync`)**:
+  - Authenticated via `Authorization: Bearer <credential>`.
+  - Fetches cloud-configured playlists assigned directly to this hardware MAC.
+- **Customer Self-Service URL**:
+  - Generates dynamic portal URL: `https://yestream.ai.studio/customer/login?mac=<MAC>&key=<KEY>&redirect=/me/playlists`.
+  - Rendered as a scannable QR code on TV screens, enabling customers to log in and manage playlists from a smartphone or computer without typing credentials using a TV remote.
+- **Dual-Channel Sync Fallback**:
+  - If device-level sync is empty, automatically synchronizes playlists from customer storage (`GET /api/v1/customer/playlists`).
+- **Automatic 401 Recovery**:
+  - If a device credential is revoked or invalidated (e.g. following portal re-login or administrator action), `/api/v1/device/sync` returns HTTP 401. The TV client automatically purges stale cached tokens, calls `registerDevice()` again, and executes a clean retry.
+
+### 3. UI Implementation
+- **Split-Screen Playlists (`TvForms` in `libs/tv/feature/src/forms.tsx`)**:
+  - Left pane: `TvQuickConnectCard` containing the dynamic QR code, MAC address, 6-digit Device Key, license badge, and "↻ Sync Cloud Playlists" button.
+  - Right pane: Configured playlists list with active playlist indicator and "+ Add Playlist" modal.
+- **Dual-Tab Modal**:
+  - Tab 1: **Xtream Codes API** (Server URL, Username, Password, Name).
+  - Tab 2: **M3U Playlist** (M3U / M3U8 URL, Name).
+- **Account & Device Settings (`TvAccountDetails` in `libs/tv/feature/src/account-details.tsx`)**:
+  - Hardware MAC, Device Key, detected platform, model, app version, and active expiration date.
+- **Expiration Guard Lock Screen (`TvExpiryGuard` in `libs/tv/feature/src/expiry-guard.tsx`)**:
+  - Full-screen modal activated when trial or license expires, displaying reactivation QR code and "Check License Status" validation button.

@@ -78,20 +78,34 @@ BX's Chromium 68 engine, native HLS, transport stream decoding or MAG headers.
 `tv-playlist.m3u` and `tv-test-media.webm` are local mock-server fixtures only.
 
 The package target produces
-`dist/tv-package/com.iptvnator.tv.prototype_0.1.25_all.ipk` with the pinned webOS
+`dist/tv-package/com.yestream.tv.prototype_0.25.6_all.ipk` with the pinned webOS
 CLI. Inspect it with:
 
 ```sh
-pnpm exec ares-package -i dist/tv-package/com.iptvnator.tv.prototype_0.1.25_all.ipk
+pnpm exec ares-package -i dist/tv-package/com.yestream.tv.prototype_0.25.6_all.ipk
 pnpm exec ares-setup-device --list
 ```
 
 Only after the user supplies an enabled Developer Mode target and pairing:
 
 ```sh
-pnpm exec ares-install --device <configured-device> dist/tv-package/com.iptvnator.tv.prototype_0.1.25_all.ipk
-pnpm exec ares-launch --device <configured-device> com.iptvnator.tv.prototype
+pnpm exec ares-install --device <configured-device> dist/tv-package/com.yestream.tv.prototype_0.25.6_all.ipk
+pnpm exec ares-launch --device <configured-device> com.yestream.tv.prototype
 ```
+
+> [!TIP]
+> **macOS OpenSSH & Key Setup**:
+> Modern OpenSSH on macOS defaults to rejecting legacy `ssh-rsa` key algorithms.
+> Add to `~/.ssh/config`:
+> ```ssh-config
+> Host 192.168.*.*
+>     HostKeyAlgorithms +ssh-rsa
+>     PubkeyAcceptedKeyTypes +ssh-rsa
+> ```
+> If the downloaded developer mode private key (`~/.ssh/lgtv_webos`) requires a passphrase,
+> decrypt it for automated CLI usage:
+> `openssl rsa -in ~/.ssh/lgtv_webos -out ~/.ssh/lgtv_webos_decrypted -passin pass:<PASSPHRASE>`
+> and point `~/.webos/tv/novacom-devices.json` to the decrypted key.
 
 Do not root, wake, reconfigure or pair a television without appropriate scope.
 Do not copy unrelated credentials into fixtures or diagnostic scripts.

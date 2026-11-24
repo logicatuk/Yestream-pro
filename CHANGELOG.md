@@ -11,6 +11,31 @@ this marker — see `.changes/README.md`.
 
 <!-- next-release -->
 
+# [0.25.6](https://github.com/logicatuk/Yestream-pro/compare/v0.25.5...v0.25.6) (2026-11-23)
+
+### Smart TV (LG webOS & Samsung Tizen) Cloud Sync & Playlists Architecture
+
+- **tv-playlists** — Replaced legacy "Sources" nomenclature with "Playlists" across navigation, headers, and UI.
+- **tv-split-screen** — Redesigned Playlists screen with a 10-foot split-screen layout:
+  - Left pane: Quick Connect card featuring a dynamic QR code redirecting to the official self-service customer portal (`https://yestream.ai.studio/customer/login?mac=...&key=...&redirect=/me/playlists`), hardware MAC address, 6-digit Device Key, subscription status badge, and an interactive "↻ Sync Cloud Playlists" button.
+  - Right pane: Configured playlists list with active source badges, select, edit, and remove controls, plus an "+ Add Playlist" modal with dual tabs for **Xtream Codes API** and **M3U Playlist**.
+- **tv-cloud-engine** — Integrated TV Cloud Synchronization engine (`tv-cloud.ts`) with automatic platform detection (`LG TV` on webOS 5.x+ and `Samsung TV` on Tizen), persistent hardware MAC and SHA-256 fingerprint generation (with pure-JS fallback for older WebKit/Chromium engines), automatic device registration via `POST /api/v1/devices/register`, and background auto-sync via `GET /api/v1/device/sync` with dual-channel fallback to `/api/v1/customer/playlists` and automatic 401 re-authentication.
+- **tv-account** — Added a dedicated "Account & Device" section to TV Settings displaying hardware MAC, 6-digit Device Key, detected platform, model, app version, subscription plan, expiration date, and active Xtream provider server diagnostics (server host, protocol, active connections, timezone, allowed formats).
+- **tv-expiry-guard** — Added an Expiration Lock Screen (`TvExpiryGuard`) that gracefully locks playback when a trial or subscription ends, showing renewal instructions, QR code, credentials, and a remote-focusable "↻ Check Status & Unlock" button.
+- **tv-deployment** — Automated LG webOS deployment and testing directly on Developer Mode targets using `ares-cli` and novacom SSH key management.
+
+# [0.25.5](https://github.com/logicatuk/Yestream-pro/compare/v0.25.4...v0.25.5) (2026-11-22)
+
+### Mobile Landscape & Dynamic Platform Detection
+
+- **ui-mobile** — Optimized mobile phone landscape responsive layout:
+  - Reduced `--cover-grid-min-width` to `110px` on mobile landscape so 5–7 media cards fit per row instead of 2 oversized cards.
+  - Context drawer automatically collapses off-screen on landscape phones (`max-height: 520px`).
+  - Constrained Live TV sidebar to 280px and collapsed inline EPG to a 44px compact toolbar on landscape phones so video playback gets the full remaining screen space.
+- **cloud-platform** — Dynamic hardware platform and model detection in `YestreamCloudService.detectDevicePlatform()`: accurately distinguishes between Android mobile phones (e.g., Samsung Galaxy S24 Ultra), Android TV / Google TV, Fire TV, Samsung Tizen TV, LG webOS TV, Apple iOS / iPadOS, macOS, Windows, Linux, and Web clients.
+- **i18n** — Complete 21-language localization coverage for Account, Cloud sync, and Expiration Guard across all translation dictionaries.
+
+
 # [0.25.0](https://github.com/logicatuk/Yestream-pro/compare/v0.24.0...v0.25.0) (2026-11-08)
 
 Yestream 0.25 brings a shared library you can host from desktop, a redesigned browsing experience, and a PIN for selected categories.
