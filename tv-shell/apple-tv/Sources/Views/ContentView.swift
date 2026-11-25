@@ -6,48 +6,75 @@ public struct ContentView: View {
 
     public var body: some View {
         ZStack {
-            TabView(selection: $appState.selectedTab) {
+            // Screen Switcher
+            switch appState.currentDestination {
+            case .home:
+                HomeView()
+                    .transition(.opacity)
+
+            case .liveTV:
                 LiveTVView()
-                    .tabItem {
-                        Label("TV", systemImage: "tv")
-                    }
-                    .tag(0)
+                    .transition(.opacity)
 
-                MoviesView()
-                    .tabItem {
-                        Label("Movies", systemImage: "film")
-                    }
-                    .tag(1)
+            case .movies:
+                VStack(spacing: 0) {
+                    TopSectionNavBar(title: "Movies")
+                    MoviesView()
+                }
+                .transition(.opacity)
+                .onExitCommand {
+                    appState.currentDestination = .home
+                }
 
-                SeriesView()
-                    .tabItem {
-                        Label("Series", systemImage: "play.tv")
-                    }
-                    .tag(2)
+            case .series:
+                VStack(spacing: 0) {
+                    TopSectionNavBar(title: "Series")
+                    SeriesView()
+                }
+                .transition(.opacity)
+                .onExitCommand {
+                    appState.currentDestination = .home
+                }
 
-                FavoritesView()
-                    .tabItem {
-                        Label("Favorites", systemImage: "heart")
-                    }
-                    .tag(3)
+            case .playlists:
+                VStack(spacing: 0) {
+                    TopSectionNavBar(title: "Playlists")
+                    PlaylistsView()
+                }
+                .transition(.opacity)
+                .onExitCommand {
+                    appState.currentDestination = .home
+                }
 
-                SearchView()
-                    .tabItem {
-                        Label("Search", systemImage: "magnifyingglass")
-                    }
-                    .tag(4)
+            case .favorites:
+                VStack(spacing: 0) {
+                    TopSectionNavBar(title: "Favorites")
+                    FavoritesView()
+                }
+                .transition(.opacity)
+                .onExitCommand {
+                    appState.currentDestination = .home
+                }
 
-                PlaylistsView()
-                    .tabItem {
-                        Label("Playlists", systemImage: "list.bullet.rectangle")
-                    }
-                    .tag(5)
+            case .search:
+                VStack(spacing: 0) {
+                    TopSectionNavBar(title: "Search")
+                    SearchView()
+                }
+                .transition(.opacity)
+                .onExitCommand {
+                    appState.currentDestination = .home
+                }
 
-                SettingsView()
-                    .tabItem {
-                        Label("Settings", systemImage: "gearshape")
-                    }
-                    .tag(6)
+            case .settings:
+                VStack(spacing: 0) {
+                    TopSectionNavBar(title: "Settings")
+                    SettingsView()
+                }
+                .transition(.opacity)
+                .onExitCommand {
+                    appState.currentDestination = .home
+                }
             }
 
             // Sync / Catalog Loading HUD Overlay
@@ -84,14 +111,53 @@ public struct ContentView: View {
             }
         }
         .task {
-            if appState.playlists.isEmpty {
-                appState.selectedTab = 5
-            }
             // Auto register and sync on launch
             await cloud.registerDevice()
             if appState.activePlaylistId != nil && appState.channels.isEmpty {
                 await appState.loadActivePlaylistCatalog(forceRefresh: false)
             }
         }
+    }
+}
+
+// MARK: - Top Section Navigation Bar (When outside Home)
+struct TopSectionNavBar: View {
+    let title: String
+    @ObservedObject var appState = AppState.shared
+
+    var body: some View {
+        HStack {
+            Button(action: {
+                appState.currentDestination = .home
+            }) {
+                HStack(spacing: 8) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 14, weight: .bold))
+                    Text("Home")
+                        .font(.system(size: 14, weight: .bold))
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(Color.white.opacity(0.08))
+                .cornerRadius(12)
+            }
+            .buttonStyle(.plain)
+
+            Spacer()
+
+            Text(title.uppercased())
+                .font(.system(size: 14, weight: .black, design: .monospaced))
+                .tracking(2)
+                .foregroundColor(.white.opacity(0.75))
+
+            Spacer()
+
+            // Balance Spacer
+            Color.clear.frame(width: 80, height: 1)
+        }
+        .padding(.horizontal, 40)
+        .padding(.top, 24)
+        .padding(.bottom, 8)
+        .background(Color.black.opacity(0.4))
     }
 }

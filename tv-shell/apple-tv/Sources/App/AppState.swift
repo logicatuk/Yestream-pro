@@ -12,11 +12,23 @@ public struct CachedPlaylistCatalog: Codable {
     public let seriesList: [SeriesItem]
 }
 
+public enum AppDestination: Hashable {
+    case home
+    case liveTV
+    case movies
+    case series
+    case playlists
+    case favorites
+    case search
+    case settings
+}
+
 @MainActor
 public class AppState: ObservableObject {
     public static let shared = AppState()
 
     // Navigation
+    @Published public var currentDestination: AppDestination = .home
     @Published public var selectedTab: Int = 0
 
     // Catalog Synchronization & Caching HUD
@@ -309,5 +321,29 @@ public class AppState: ObservableObject {
         if let data = try? JSONEncoder().encode(history) {
             UserDefaults.standard.set(data, forKey: "yestream_history")
         }
+    }
+}
+
+// MARK: - IPTV Text Cleansing Extensions
+public extension String {
+    var cleanedIptvTitle: String {
+        var str = self.trimmingCharacters(in: .whitespacesAndNewlines)
+        let junkTokens = ["#####", "====", "***", "---", "|||", "###", "==="]
+        for token in junkTokens {
+            str = str.replacingOccurrences(of: token, with: "")
+        }
+        let cleaned = str.trimmingCharacters(in: CharacterSet(charactersIn: " -_#*=|/").union(.whitespacesAndNewlines))
+        return cleaned.isEmpty ? self : cleaned
+    }
+
+    var isIptvJunkSeparator: Bool {
+        let trimmed = self.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.hasPrefix("###") || trimmed.hasPrefix("***") || trimmed.hasPrefix("===") || trimmed.hasPrefix("---") {
+            let stripped = trimmed.cleanedIptvTitle.lowercased()
+            if stripped.isEmpty || stripped.contains("separator") || stripped.contains("divider") {
+                return true
+            }
+        }
+        return false
     }
 }

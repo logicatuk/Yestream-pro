@@ -5,393 +5,417 @@ public struct LiveTVView: View {
     @ObservedObject var appState = AppState.shared
     @State private var selectedChannel: MediaItem?
     @State private var fullscreenChannel: MediaItem?
-    @State private var selectedProgramForDetails: EpgScheduleItem?
-    @State private var selectedDateOffset: Int = 0 // 0 = Today, +1 = Tomorrow, -1 = Yesterday
 
+    // Filter states
+    @State private var categoryFilterText: String = ""
+    @State private var categoryQuickPill: CategoryQuickPill = .all
+    @State private var channelFilterText: String = ""
+    @State private var qualityFilterOnlyHD: Bool = false
+
+    enum CategoryQuickPill: String, CaseIterable {
+        case all = "All"
+        case favorites = "Favorites"
+        case recent = "Recent"
+    }
+
+    // Cleaned & Filtered Categories
+    public var displayedCategories: [XtreamCategory] {
+        var list = appState.categories.filter { !$0.category_name.isIptvJunkSeparator }
+        if !categoryFilterText.isEmpty {
+            list = list.filter { $0.category_name.cleanedIptvTitle.localizedCaseInsensitiveContains(categoryFilterText) }
+        }
+        return list
+    }
+
+    // Cleaned & Filtered Channels
     public var filteredChannels: [MediaItem] {
-        if appState.selectedCategory == "FAVORITES" {
-            return appState.favorites.filter { $0.kind == .live }
+        var base: [MediaItem] = []
+
+        if categoryQuickPill == .favorites || appState.selectedCategory == "FAVORITES" {
+            base = appState.favorites.filter { $0.kind == .live }
+        } else if categoryQuickPill == .recent {
+            base = appState.history.filter { $0.kind == .live }
+        } else if appState.selectedCategory.isEmpty || appState.selectedCategory == "ALL" {
+            base = appState.channels
+        } else {
+            base = appState.channels.filter { $0.categoryId == appState.selectedCategory }
         }
-        if appState.selectedCategory.isEmpty || appState.selectedCategory == "ALL" {
-            return appState.channels
+
+        // Search text filter
+        if !channelFilterText.isEmpty {
+            base = base.filter { $0.title.cleanedIptvTitle.localizedCaseInsensitiveContains(channelFilterText) }
         }
-        return appState.channels.filter { $0.categoryId == appState.selectedCategory }
+
+        // Quality HD/4K toggle
+        if qualityFilterOnlyHD {
+            base = base.filter {
+                let t = $0.title.uppercased()
+                return t.contains("4K") || t.contains("FHD") || t.contains("HD") || t.contains("HEVC")
+            }
+        }
+
+        return base
     }
 
     private var activeChannel: MediaItem? {
         selectedChannel ?? filteredChannels.first
     }
 
-    private var formattedDateTitle: String {
-        let calendar = Calendar.current
-        let date = calendar.date(byAdding: .day, value: selectedDateOffset, to: Date()) ?? Date()
-        if selectedDateOffset == 0 {
-            let df = DateFormatter()
-            df.locale = Locale(identifier: "fr_FR")
-            df.dateFormat = "d MMM"
-            return "Aujourd'hui \(df.string(from: date))"
-        } else if selectedDateOffset == 1 {
-            return "Demain"
-        } else if selectedDateOffset == -1 {
-            return "Hier"
-        } else {
-            let df = DateFormatter()
-            df.locale = Locale(identifier: "fr_FR")
-            df.dateFormat = "EEE d MMM"
-            return df.string(from: date).capitalized
-        }
-    }
-
-    private var currentTimeString: String {
-        let df = DateFormatter()
-        df.dateFormat = "HH:mm"
-        return df.string(from: Date())
-    }
-
     public var body: some View {
-        HStack(spacing: 0) {
-            // ==========================================
-            // COLUMN 1: CATEGORIES SIDEBAR (Width: 320)
-            // ==========================================
-            ScrollView(.vertical) {
-                VStack(alignment: .leading, spacing: 6) {
-                    // 1. FAVORITES CATEGORY
-                    Button(action: {
-                        appState.selectedCategory = "FAVORITES"
-                    }) {
-                        HStack(spacing: 10) {
-                            Image(systemName: "star.fill")
-                                .foregroundColor(.yellow)
-                                .font(.system(size: 14))
-                            Text("Favorites")
-                                .font(.system(size: 14, weight: .semibold))
-                                .lineLimit(1)
-                            Spacer()
-                            let favCount = appState.channelCount(for: "FAVORITES")
-                            Text("\(favCount)")
-                                .font(.system(size: 11, weight: .bold))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(Color.yellow.opacity(0.2))
-                                .foregroundColor(.yellow)
-                                .cornerRadius(8)
-                            if appState.selectedCategory == "FAVORITES" {
-                                Image(systemName: "checkmark")
-                                    .font(.system(size: 12, weight: .bold))
-                                    .foregroundColor(.white)
-                            }
-                        }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 9)
-                    }
-                    .buttonStyle(.card)
+        GeometryReader { geo in
+            let col1Width = geo.size.width * 0.30
+            let col2Width = geo.size.width * 0.30
+            let col3Width = geo.size.width * 0.40
 
-                    // 2. ALL CHANNELS
-                    Button(action: {
-                        appState.selectedCategory = "ALL"
-                    }) {
-                        HStack(spacing: 10) {
-                            Image(systemName: "tv")
-                                .foregroundColor(.cyan)
-                                .font(.system(size: 14))
-                            Text("All Channels")
-                                .font(.system(size: 14, weight: .semibold))
-                                .lineLimit(1)
-                            Spacer()
-                            Text("\(appState.channelCount(for: "ALL"))")
-                                .font(.system(size: 11, weight: .bold))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(Color.white.opacity(0.12))
-                                .foregroundColor(.white.opacity(0.85))
-                                .cornerRadius(8)
-                            if appState.selectedCategory == "ALL" || appState.selectedCategory.isEmpty {
-                                Image(systemName: "checkmark")
-                                    .font(.system(size: 12, weight: .bold))
-                                    .foregroundColor(.white)
-                            }
-                        }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 9)
-                    }
-                    .buttonStyle(.card)
-
-                    Divider().padding(.vertical, 4)
-
-                    // 3. CATEGORIES LIST WITH CHANNEL COUNT BADGES
-                    ForEach(appState.categories) { cat in
+            HStack(spacing: 0) {
+                // ==========================================
+                // COLUMN 1: CATEGORIES (30% Width)
+                // ==========================================
+                VStack(spacing: 12) {
+                    // Header Bar with Back to Home Button
+                    HStack(spacing: 8) {
                         Button(action: {
-                            appState.selectedCategory = cat.category_id
+                            appState.currentDestination = .home
                         }) {
-                            HStack(spacing: 8) {
-                                Text(cat.category_name)
-                                    .font(.system(size: 13, weight: .medium))
-                                    .lineLimit(1)
-                                Spacer()
-                                let count = appState.channelCount(for: cat.category_id)
-                                Text("\(count)")
-                                    .font(.system(size: 11, weight: .semibold))
-                                    .padding(.horizontal, 7)
-                                    .padding(.vertical, 3)
-                                    .background(cat.category_id == appState.selectedCategory ? Color.blue.opacity(0.3) : Color.white.opacity(0.08))
-                                    .foregroundColor(cat.category_id == appState.selectedCategory ? .white : .secondary)
-                                    .cornerRadius(8)
-                                if cat.category_id == appState.selectedCategory {
-                                    Image(systemName: "checkmark")
-                                        .font(.system(size: 11, weight: .bold))
-                                        .foregroundColor(.white)
-                                }
+                            HStack(spacing: 6) {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 13, weight: .bold))
+                                Text("Home")
+                                    .font(.system(size: 13, weight: .bold))
                             }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(Color.white.opacity(0.08))
+                            .cornerRadius(12)
                         }
-                        .buttonStyle(.card)
+                        .buttonStyle(.plain)
+
+                        Spacer()
+
+                        Text("CATEGORIES")
+                            .font(.system(size: 12, weight: .bold, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.6))
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.top, 16)
+
+                    // Pinned Top Filter & Siri Search
+                    HStack(spacing: 8) {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(.white.opacity(0.5))
+                            .font(.system(size: 14))
+
+                        TextField("Filter categories...", text: $categoryFilterText)
+                            .font(.system(size: 13))
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color.white.opacity(0.06))
+                    .cornerRadius(12)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                    )
+                    .padding(.horizontal, 14)
+
+                    // Quick Pills: All, Favorites, Recent
+                    HStack(spacing: 6) {
+                        ForEach(CategoryQuickPill.allCases, id: \.self) { pill in
+                            Button(action: {
+                                categoryQuickPill = pill
+                                if pill == .favorites {
+                                    appState.selectedCategory = "FAVORITES"
+                                } else if pill == .all {
+                                    appState.selectedCategory = "ALL"
+                                }
+                            }) {
+                                Text(pill.rawValue)
+                                    .font(.system(size: 11, weight: .bold))
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(categoryQuickPill == pill ? Color.white.opacity(0.2) : Color.white.opacity(0.05))
+                                    .foregroundColor(categoryQuickPill == pill ? .white : .white.opacity(0.7))
+                                    .cornerRadius(14)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        Spacer()
+                    }
+                    .padding(.horizontal, 14)
+
+                    // Clean Category List
+                    ScrollView(.vertical) {
+                        LazyVStack(spacing: 4) {
+                            ForEach(displayedCategories) { cat in
+                                let count = appState.channelCount(for: cat.category_id)
+                                let isSel = (appState.selectedCategory == cat.category_id && categoryQuickPill == .all)
+
+                                Button(action: {
+                                    categoryQuickPill = .all
+                                    appState.selectedCategory = cat.category_id
+                                }) {
+                                    HStack(spacing: 8) {
+                                        Text(cat.category_name.cleanedIptvTitle)
+                                            .font(.system(size: 13, weight: .medium))
+                                            .foregroundColor(.white)
+                                            .lineLimit(1)
+
+                                        Spacer()
+
+                                        Text("\(count)")
+                                            .font(.system(size: 11, weight: .medium, design: .monospaced))
+                                            .foregroundColor(.white.opacity(0.5))
+                                            .padding(.horizontal, 6)
+                                            .padding(.vertical, 2)
+                                            .background(Color.white.opacity(0.06))
+                                            .cornerRadius(6)
+
+                                        if isSel {
+                                            Image(systemName: "checkmark")
+                                                .font(.system(size: 11, weight: .bold))
+                                                .foregroundColor(.white)
+                                        }
+                                    }
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .fill(isSel ? Color.white.opacity(0.12) : Color.clear)
+                                    )
+                                }
+                                .buttonStyle(.card)
+                            }
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 4)
                     }
                 }
-                .padding(.trailing, 8)
-            }
-            .frame(width: 320)
+                .frame(width: col1Width)
+                .background(Color(red: 0.05, green: 0.05, blue: 0.07))
 
-            Divider()
+                Divider().background(Color.white.opacity(0.08))
 
-            // ==========================================
-            // COLUMN 2: CHANNELS LIST (Width: 440)
-            // ==========================================
-            VStack(spacing: 0) {
-                if appState.isLoadingChannels {
-                    Spacer()
-                    ProgressView("Loading channels…")
-                    Spacer()
-                } else if filteredChannels.isEmpty {
-                    Spacer()
-                    VStack(spacing: 12) {
-                        Image(systemName: appState.selectedCategory == "FAVORITES" ? "heart.slash" : "tv.slash")
-                            .font(.system(size: 48))
-                            .foregroundColor(.secondary)
-                        Text(appState.selectedCategory == "FAVORITES" ? "No favorite channels yet." : "No channels available.")
-                            .font(.headline)
-                        Text(appState.selectedCategory == "FAVORITES" ? "Add channels to favorites by clicking the heart icon." : "Select another category.")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    Spacer()
-                } else {
-                    ScrollView(.vertical) {
-                        LazyVStack(spacing: 6) {
-                            ForEach(Array(filteredChannels.enumerated()), id: \.element.id) { index, ch in
-                                EnhancedChannelRow(
-                                    channel: ch,
-                                    index: index + 1,
-                                    isSelected: (activeChannel?.id == ch.id),
-                                    onSelect: {
-                                        selectedChannel = ch
-                                    },
-                                    onPlayFullscreen: {
-                                        fullscreenChannel = ch
-                                    },
-                                    onShowInfo: {
-                                        let items = buildScheduleItems(for: ch)
-                                        selectedProgramForDetails = items.first(where: { $0.isLive }) ?? items.first
-                                    }
-                                )
-                                .task {
-                                    await appState.loadEpg(for: ch)
-                                }
-                            }
+                // ==========================================
+                // COLUMN 2: CHANNELS WITH FILTER (30% Width)
+                // ==========================================
+                VStack(spacing: 12) {
+                    // Top Filter Input + HD/4K Quality Toggle
+                    HStack(spacing: 8) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "magnifyingglass")
+                                .foregroundColor(.white.opacity(0.5))
+                                .font(.system(size: 13))
+
+                            TextField("Filter channels...", text: $channelFilterText)
+                                .font(.system(size: 13))
                         }
                         .padding(.horizontal, 10)
                         .padding(.vertical, 8)
-                    }
-                }
-            }
-            .frame(width: 440)
+                        .background(Color.white.opacity(0.06))
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                        )
 
-            Divider()
-
-            // ==========================================
-            // COLUMN 3: LIVE PLAYER & HORIZONTAL EPG GRID
-            // ==========================================
-            VStack(alignment: .leading, spacing: 12) {
-                if let ch = activeChannel {
-                    // TOP: Embedded Live Player Preview (16:9 Aspect Ratio)
-                    ZStack(alignment: .bottomTrailing) {
-                        MiniPlayerView(streamUrl: ch.streamUrl)
-                            .frame(height: 330)
-                            .cornerRadius(14)
-                            .clipped()
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 14)
-                                    .stroke(Color.white.opacity(0.12), lineWidth: 1)
-                            )
-
-                        // Fullscreen Button Overlay
+                        // HD/4K Pill Toggle
                         Button(action: {
-                            fullscreenChannel = ch
+                            qualityFilterOnlyHD.toggle()
                         }) {
-                            HStack(spacing: 6) {
-                                Image(systemName: "arrow.up.left.and.arrow.down.right")
-                                    .font(.system(size: 12))
-                                Text("Full Screen")
-                                    .font(.system(size: 13, weight: .bold))
-                            }
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 8)
-                            .background(Color.black.opacity(0.75))
-                            .foregroundColor(.white)
-                            .cornerRadius(20)
-                            .overlay(
-                                Capsule().stroke(Color.white.opacity(0.2), lineWidth: 1)
-                            )
+                            Text("HD/4K")
+                                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 8)
+                                .background(qualityFilterOnlyHD ? Color.white.opacity(0.25) : Color.white.opacity(0.06))
+                                .foregroundColor(qualityFilterOnlyHD ? .white : .white.opacity(0.6))
+                                .cornerRadius(12)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                )
                         }
                         .buttonStyle(.plain)
-                        .padding(14)
                     }
+                    .padding(.horizontal, 14)
+                    .padding(.top, 16)
 
-                    // BOTTOM: Horizontal EPG Guide Timeline
-                    let scheduleItems = buildScheduleItems(for: ch)
-                    let currentLive = scheduleItems.first(where: { $0.isLive }) ?? scheduleItems.first
-
-                    VStack(alignment: .leading, spacing: 10) {
-                        // 1. Channel Title & Subtitle + Toolbar Header
-                        HStack(alignment: .center, spacing: 12) {
-                            VStack(alignment: .leading, spacing: 2) {
-                                HStack(spacing: 8) {
-                                    Circle().fill(Color.red).frame(width: 7, height: 7)
-                                    Text(ch.title)
-                                        .font(.system(size: 18, weight: .bold))
-                                        .lineLimit(1)
-                                }
-
-                                Text(currentLive?.title ?? ch.categoryName ?? "Programme en cours")
-                                    .font(.system(size: 13))
-                                    .foregroundColor(.white.opacity(0.8))
-                                    .lineLimit(1)
-                            }
-
-                            Spacer()
-
-                            // Toolbar: Info, Layout, Search, Date Navigator
-                            HStack(spacing: 8) {
-                                Button(action: {
-                                    selectedProgramForDetails = currentLive
-                                }) {
-                                    Image(systemName: "info.circle")
-                                        .font(.system(size: 15))
-                                        .frame(width: 32, height: 32)
-                                        .background(Color.white.opacity(0.08))
-                                        .clipShape(Circle())
-                                }
-                                .buttonStyle(.plain)
-
-                                Button(action: {
-                                    fullscreenChannel = ch
-                                }) {
-                                    Image(systemName: "rectangle.grid.2x2")
-                                        .font(.system(size: 14))
-                                        .frame(width: 32, height: 32)
-                                        .background(Color.white.opacity(0.08))
-                                        .clipShape(Circle())
-                                }
-                                .buttonStyle(.plain)
-
-                                // Date Navigator: < Aujourd'hui 25 nov. >
-                                HStack(spacing: 6) {
-                                    Button(action: {
-                                        selectedDateOffset -= 1
-                                    }) {
-                                        Image(systemName: "chevron.left")
-                                            .font(.system(size: 11, weight: .bold))
-                                    }
-                                    .buttonStyle(.plain)
-
-                                    Text(formattedDateTitle)
-                                        .font(.system(size: 12, weight: .semibold))
-                                        .padding(.horizontal, 4)
-
-                                    Button(action: {
-                                        selectedDateOffset += 1
-                                    }) {
-                                        Image(systemName: "chevron.right")
-                                            .font(.system(size: 11, weight: .bold))
-                                    }
-                                    .buttonStyle(.plain)
-                                }
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 6)
-                                .background(Color.white.opacity(0.08))
-                                .cornerRadius(16)
-                            }
+                    // Channels List (Compact 68pt Rows)
+                    if appState.isLoadingChannels {
+                        Spacer()
+                        ProgressView("Loading channels…")
+                        Spacer()
+                    } else if filteredChannels.isEmpty {
+                        Spacer()
+                        VStack(spacing: 8) {
+                            Image(systemName: "tv.slash")
+                                .font(.system(size: 36))
+                                .foregroundColor(.white.opacity(0.3))
+                            Text("No channels match filter")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.7))
                         }
-
-                        // 2. Timeline Ruler Header (14:00, 16:00, 16:55 pin, 18:00, 20:00)
-                        HStack(spacing: 0) {
-                            Text("14:00")
-                                .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                                .foregroundColor(.secondary)
-                            Spacer()
-                            Text("16:00")
-                                .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                                .foregroundColor(.secondary)
-                            Spacer()
-                            // Current Time Red Badge
-                            HStack(spacing: 4) {
-                                Circle().fill(Color.red).frame(width: 5, height: 5)
-                                Text(currentTimeString)
-                                    .font(.system(size: 11, weight: .bold, design: .monospaced))
-                                    .foregroundColor(.white)
-                            }
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 2)
-                            .background(Color.red.opacity(0.8))
-                            .cornerRadius(6)
-                            Spacer()
-                            Text("18:00")
-                                .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                                .foregroundColor(.secondary)
-                            Spacer()
-                            Text("20:00")
-                                .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                                .foregroundColor(.secondary)
-                        }
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 4)
-                        .background(Color.white.opacity(0.04))
-                        .cornerRadius(6)
-
-                        // 3. Horizontal Schedule Blocks (Matching Image 1)
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            LazyHStack(spacing: 8) {
-                                ForEach(scheduleItems) { item in
-                                    EpgTimelineCard(
-                                        item: item,
+                        Spacer()
+                    } else {
+                        ScrollView(.vertical) {
+                            LazyVStack(spacing: 6) {
+                                ForEach(Array(filteredChannels.enumerated()), id: \.element.id) { index, ch in
+                                    CompactChannelRow(
+                                        channel: ch,
+                                        index: index + 1,
+                                        isSelected: (activeChannel?.id == ch.id),
                                         onSelect: {
-                                            selectedProgramForDetails = item
+                                            selectedChannel = ch
+                                        },
+                                        onPlayFullscreen: {
+                                            fullscreenChannel = ch
                                         }
                                     )
+                                    .task {
+                                        await appState.loadEpg(for: ch)
+                                    }
                                 }
                             }
+                            .padding(.horizontal, 12)
                             .padding(.vertical, 4)
                         }
-                        .frame(height: 155)
+                    }
+                }
+                .frame(width: col2Width)
+                .background(Color(red: 0.04, green: 0.04, blue: 0.06))
 
+                Divider().background(Color.white.opacity(0.08))
+
+                // ==========================================
+                // COLUMN 3: FLOATING PLAYER + VERTICAL EPG (40%)
+                // ==========================================
+                VStack(alignment: .leading, spacing: 14) {
+                    if let ch = activeChannel {
+                        // TOP HALF: 16:9 Borderless Rounded Video Preview (16pt radius)
+                        ZStack(alignment: .bottomTrailing) {
+                            MiniPlayerView(streamUrl: ch.streamUrl)
+                                .frame(height: col3Width * 9.0 / 16.0)
+                                .cornerRadius(16)
+                                .clipped()
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                                )
+
+                            // Subtle Bottom-Right Full Screen Glass Pill
+                            Button(action: {
+                                fullscreenChannel = ch
+                            }) {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                        .font(.system(size: 11))
+                                    Text("Full Screen")
+                                        .font(.system(size: 12, weight: .bold))
+                                }
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 7)
+                                .background(Color.black.opacity(0.75))
+                                .foregroundColor(.white)
+                                .cornerRadius(16)
+                                .overlay(
+                                    Capsule().stroke(Color.white.opacity(0.2), lineWidth: 1)
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .padding(12)
+                        }
+
+                        // BOTTOM HALF: Vertical EPG Timeline Guide
+                        let schedule = buildSchedule(for: ch)
+                        let currentProg = schedule.first(where: { $0.isLive }) ?? schedule.first
+                        let upcomingProgs = Array(schedule.filter { !$0.isLive }.prefix(5))
+
+                        VStack(alignment: .leading, spacing: 12) {
+                            // 1. Now Playing Header Card
+                            VStack(alignment: .leading, spacing: 6) {
+                                HStack(spacing: 8) {
+                                    // Live Badge
+                                    HStack(spacing: 4) {
+                                        Circle().fill(Color.red).frame(width: 5, height: 5)
+                                        Text("EN DIRECT")
+                                            .font(.system(size: 9, weight: .black))
+                                            .foregroundColor(.red)
+                                    }
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.red.opacity(0.15))
+                                    .cornerRadius(4)
+
+                                    Text(ch.title.cleanedIptvTitle)
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundColor(.white)
+                                        .lineLimit(1)
+
+                                    Spacer()
+
+                                    if let p = currentProg {
+                                        Text(p.timeRange)
+                                            .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                                            .foregroundColor(.white.opacity(0.85))
+                                    }
+                                }
+
+                                if let p = currentProg {
+                                    Text(p.title)
+                                        .font(.system(size: 15, weight: .bold))
+                                        .foregroundColor(.white)
+                                        .lineLimit(1)
+
+                                    Text(p.description.isEmpty ? "Retrouvez votre émission en direct sur \(ch.title.cleanedIptvTitle)." : p.description)
+                                        .font(.system(size: 11))
+                                        .foregroundColor(.white.opacity(0.65))
+                                        .lineLimit(2)
+                                        .lineSpacing(2)
+                                }
+                            }
+                            .padding(14)
+                            .background(Color.white.opacity(0.05))
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                            )
+
+                            // 2. Up Next Vertical Timeline Header
+                            Text("À SUIVRE / UP NEXT")
+                                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                .foregroundColor(.white.opacity(0.5))
+                                .tracking(1)
+
+                            // 3. Scrollable Vertical Timeline Rows with Left Connecting Line
+                            ScrollView(.vertical, showsIndicators: false) {
+                                VStack(alignment: .leading, spacing: 0) {
+                                    ForEach(Array(upcomingProgs.enumerated()), id: \.element.id) { idx, item in
+                                        VerticalTimelineRow(
+                                            item: item,
+                                            isLast: idx == upcomingProgs.count - 1
+                                        )
+                                    }
+                                }
+                                .padding(.vertical, 4)
+                            }
+                        }
+                    } else {
+                        Spacer()
+                        Text("Select a channel to preview")
+                            .foregroundColor(.white.opacity(0.5))
                         Spacer()
                     }
-                    .padding(.horizontal, 8)
-                } else {
-                    Spacer()
-                    Text("Select a channel to preview")
-                        .foregroundColor(.secondary)
-                    Spacer()
                 }
+                .frame(width: col3Width)
+                .padding(.horizontal, 16)
+                .background(Color(red: 0.03, green: 0.03, blue: 0.05))
             }
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, 14)
         }
         .fullScreenCover(item: $fullscreenChannel) { channel in
             PlayerView(item: channel)
         }
-        .sheet(item: $selectedProgramForDetails) { item in
-            ProgramDetailModal(item: item, channelTitle: activeChannel?.title ?? "Channel")
+        .onExitCommand {
+            appState.currentDestination = .home
         }
         .onChange(of: appState.selectedCategory) { _ in
             selectedChannel = filteredChannels.first
@@ -408,88 +432,71 @@ public struct LiveTVView: View {
         }
     }
 
-    // MARK: - Schedule Items Builder
-    private func buildScheduleItems(for channel: MediaItem) -> [EpgScheduleItem] {
+    // MARK: - Schedule Builder (Xtream EPG + Fallback)
+    private func buildSchedule(for channel: MediaItem) -> [VerticalEpgItem] {
         let cached = appState.epgCache[channel.id] ?? []
         if !cached.isEmpty {
             return cached.enumerated().map { index, p in
-                let isLive = (index == 0) || (p.progress > 0.0 && p.progress < 1.0)
-                let sTime = extractClock(p.start)
-                let eTime = extractClock(p.end)
-                let rawDuration = Int(((p.stopTimestamp ?? 0) - (p.startTimestamp ?? 0)) / 60)
-                let duration = Swift.max(30, Swift.min(180, rawDuration))
-                return EpgScheduleItem(
+                let sClock = extractClock(p.start)
+                let eClock = extractClock(p.end)
+                return VerticalEpgItem(
                     id: p.id,
-                    title: p.title.isEmpty ? channel.title : p.title,
+                    title: p.title.isEmpty ? channel.title.cleanedIptvTitle : p.title,
                     description: p.description,
-                    startTime: sTime,
-                    endTime: eTime,
-                    timeRange: p.formattedTimeRange.isEmpty ? "\(sTime) - \(eTime)" : p.formattedTimeRange,
-                    isLive: isLive,
-                    progress: p.progress,
-                    durationMinutes: duration > 0 ? duration : 45
+                    startTime: sClock,
+                    endTime: eClock,
+                    timeRange: "\(sClock) – \(eClock)",
+                    isLive: (index == 0)
                 )
             }
         }
 
-        // Fallback / Instant Realistic Grid
+        // Realistic Fallback
         let now = Date()
         let cal = Calendar.current
         let hour = cal.component(.hour, from: now)
-        let min = cal.component(.minute, from: now)
-
-        let t0 = String(format: "%02d:%02d", max(0, hour - 1), 0)
-        let t1 = String(format: "%02d:%02d", hour, 0)
-        let t2 = String(format: "%02d:%02d", hour + 1, 0)
-        let t3 = String(format: "%02d:%02d", hour + 2, 0)
-        let t4 = String(format: "%02d:%02d", hour + 3, 0)
-
-        let elapsedFraction = Double(min) / 60.0
+        let t0 = String(format: "%02d:00", hour)
+        let t1 = String(format: "%02d:45", hour)
+        let t2 = String(format: "%02d:30", (hour + 1) % 24)
+        let t3 = String(format: "%02d:00", (hour + 2) % 24)
+        let t4 = String(format: "%02d:30", (hour + 3) % 24)
 
         return [
-            EpgScheduleItem(
-                id: "\(channel.id)_past",
-                title: "Émission précédente",
-                description: "Programme diffusé plus tôt sur \(channel.title).",
+            VerticalEpgItem(
+                id: "\(channel.id)_live",
+                title: channel.title.cleanedIptvTitle,
+                description: "Émission diffusée en continu.",
                 startTime: t0,
                 endTime: t1,
-                timeRange: "\(t0) - \(t1)",
-                isLive: false,
-                progress: 1.0,
-                durationMinutes: 60
+                timeRange: "\(t0) – \(t1)",
+                isLive: true
             ),
-            EpgScheduleItem(
-                id: "\(channel.id)_live",
-                title: channel.title,
-                description: "En direct sur \(channel.title). Retrouvez toute l'actualité et le divertissement.",
+            VerticalEpgItem(
+                id: "\(channel.id)_next1",
+                title: "Journal & Magazine d'information",
+                description: "Le point complet sur l'actualité nationale et internationale.",
                 startTime: t1,
                 endTime: t2,
-                timeRange: "\(t1) - \(t2)",
-                isLive: true,
-                progress: elapsedFraction,
-                durationMinutes: 60
+                timeRange: "\(t1) – \(t2)",
+                isLive: false
             ),
-            EpgScheduleItem(
-                id: "\(channel.id)_next1",
-                title: "Grand Journal & Mag",
-                description: "Le magazine de la rédaction et l'actualité en continu.",
+            VerticalEpgItem(
+                id: "\(channel.id)_next2",
+                title: "Soirée Divertissement & Débat",
+                description: "Grand format avec les invités de la rédaction.",
                 startTime: t2,
                 endTime: t3,
-                timeRange: "\(t2) - \(t3)",
-                isLive: false,
-                progress: 0.0,
-                durationMinutes: 60
+                timeRange: "\(t2) – \(t3)",
+                isLive: false
             ),
-            EpgScheduleItem(
-                id: "\(channel.id)_next2",
-                title: "Soirée Prime Time",
-                description: "Le grand divertissement du soir en haute définition.",
+            VerticalEpgItem(
+                id: "\(channel.id)_next3",
+                title: "Grand Film du Soir",
+                description: "Cinéma en haute définition.",
                 startTime: t3,
                 endTime: t4,
-                timeRange: "\(t3) - \(t4)",
-                isLive: false,
-                progress: 0.0,
-                durationMinutes: 60
+                timeRange: "\(t3) – \(t4)",
+                isLive: false
             )
         ]
     }
@@ -502,12 +509,12 @@ public struct LiveTVView: View {
                 return "\(clock[0]):\(clock[1])"
             }
         }
-        return raw.isEmpty ? "12:00" : raw
+        return raw.isEmpty ? "21:00" : raw
     }
 }
 
-// MARK: - EPG Schedule Item Model
-public struct EpgScheduleItem: Identifiable, Hashable {
+// MARK: - Vertical EPG Item Model
+public struct VerticalEpgItem: Identifiable, Hashable {
     public let id: String
     public let title: String
     public let description: String
@@ -515,19 +522,16 @@ public struct EpgScheduleItem: Identifiable, Hashable {
     public let endTime: String
     public let timeRange: String
     public let isLive: Bool
-    public let progress: Double
-    public let durationMinutes: Int
 }
 
-// MARK: - Enhanced Channel Row (Matching Image 1)
-struct EnhancedChannelRow: View {
+// MARK: - Compact Channel Row (68pt Height)
+struct CompactChannelRow: View {
     @ObservedObject var appState = AppState.shared
     let channel: MediaItem
     let index: Int
     let isSelected: Bool
     let onSelect: () -> Void
     let onPlayFullscreen: () -> Void
-    let onShowInfo: () -> Void
 
     var body: some View {
         Button(action: {
@@ -537,8 +541,8 @@ struct EnhancedChannelRow: View {
                 onSelect()
             }
         }) {
-            HStack(spacing: 10) {
-                // Channel Logo or Index Badge
+            HStack(spacing: 12) {
+                // Crisp channel logo inside neutral dark squircle (44pt x 44pt)
                 ZStack {
                     if let logo = channel.logoUrl, let url = URL(string: logo) {
                         AsyncImage(url: url) { phase in
@@ -546,91 +550,74 @@ struct EnhancedChannelRow: View {
                                 img.resizable().scaledToFit()
                             } else {
                                 Text("\(index)")
-                                    .font(.system(size: 12, weight: .bold))
+                                    .font(.system(size: 13, weight: .bold, design: .monospaced))
                                     .foregroundColor(.white.opacity(0.8))
                             }
                         }
                     } else {
                         Text("\(index)")
-                            .font(.system(size: 12, weight: .bold))
+                            .font(.system(size: 13, weight: .bold, design: .monospaced))
                             .foregroundColor(.white.opacity(0.8))
                     }
                 }
-                .frame(width: 40, height: 40)
-                .background(Color.white.opacity(0.08))
-                .cornerRadius(8)
+                .frame(width: 44, height: 44)
+                .background(Color.white.opacity(0.06))
+                .cornerRadius(10)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                )
 
-                // Channel Name + Program Title + Progress Bar (Image 1 layout)
+                // Title + Current Program + Thin 2pt Monochrome Progress Bar
                 let curProg = appState.epgCache[channel.id]?.first
-                let progTitle = curProg?.title ?? channel.categoryName ?? "Live"
-                let sTime = curProg?.start.split(separator: " ").dropFirst().first?.prefix(5) ?? "16:20"
-                let eTime = curProg?.end.split(separator: " ").dropFirst().first?.prefix(5) ?? "17:00"
+                let progTitle = curProg?.title ?? channel.categoryName ?? "En direct"
                 let progress = curProg?.progress ?? 0.45
 
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(channel.title)
-                        .font(.system(size: 13, weight: .bold))
+                    Text(channel.title.cleanedIptvTitle)
+                        .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.white)
                         .lineLimit(1)
 
                     Text(progTitle)
                         .font(.system(size: 11))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.white.opacity(0.6))
                         .lineLimit(1)
 
-                    // Real-Time Progress Bar with Start & End Time (16:20 [====] 17:01)
-                    HStack(spacing: 6) {
-                        Text("\(sTime)")
-                            .font(.system(size: 9, design: .monospaced))
-                            .foregroundColor(.secondary)
-
-                        GeometryReader { g in
-                            ZStack(alignment: .leading) {
-                                Capsule().fill(Color.white.opacity(0.15))
-                                Capsule().fill(Color(red: 0.25, green: 0.65, blue: 1.0))
-                                    .frame(width: max(0, min(g.size.width, g.size.width * CGFloat(progress))))
-                            }
+                    // Thin 2pt Monochrome White/Silver Progress Bar
+                    GeometryReader { g in
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(Color.white.opacity(0.12))
+                            Capsule().fill(Color.white.opacity(0.85))
+                                .frame(width: max(0, min(g.size.width, g.size.width * CGFloat(progress))))
                         }
-                        .frame(height: 3)
-
-                        Text("\(eTime)")
-                            .font(.system(size: 9, design: .monospaced))
-                            .foregroundColor(.secondary)
                     }
+                    .frame(height: 2)
+                    .padding(.top, 2)
                 }
 
                 Spacer()
 
-                // Actions: Heart Favorite (♡ / ♥) and Info (ⓘ)
-                HStack(spacing: 8) {
-                    Button(action: {
-                        appState.toggleFavorite(channel)
-                    }) {
-                        Image(systemName: appState.isFavorite(channel) ? "heart.fill" : "heart")
-                            .foregroundColor(appState.isFavorite(channel) ? .red : .white.opacity(0.45))
-                            .font(.system(size: 13))
-                    }
-                    .buttonStyle(.plain)
-
-                    Button(action: {
-                        onShowInfo()
-                    }) {
-                        Image(systemName: "info.circle")
-                            .foregroundColor(.white.opacity(0.45))
-                            .font(.system(size: 13))
-                    }
-                    .buttonStyle(.plain)
+                // Subtle Favorite Heart Icon
+                Button(action: {
+                    appState.toggleFavorite(channel)
+                }) {
+                    Image(systemName: appState.isFavorite(channel) ? "heart.fill" : "heart")
+                        .foregroundColor(appState.isFavorite(channel) ? .red : .white.opacity(0.35))
+                        .font(.system(size: 13))
+                        .padding(6)
                 }
+                .buttonStyle(.plain)
             }
             .padding(.horizontal, 10)
-            .padding(.vertical, 6)
+            .frame(height: 68)
             .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(isSelected ? Color(red: 0.1, green: 0.25, blue: 0.5).opacity(0.4) : Color.clear)
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(isSelected ? Color.white.opacity(0.12) : Color.clear)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(isSelected ? Color(red: 0.25, green: 0.65, blue: 1.0) : Color.clear, lineWidth: 1.5)
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(isSelected ? Color.white.opacity(0.3) : Color.clear, lineWidth: 1)
             )
         }
         .buttonStyle(.card)
@@ -640,138 +627,49 @@ struct EnhancedChannelRow: View {
     }
 }
 
-// MARK: - Horizontal EPG Timeline Card (Matching Image 1)
-struct EpgTimelineCard: View {
-    let item: EpgScheduleItem
-    let onSelect: () -> Void
-
-    var cardWidth: CGFloat {
-        let base = CGFloat(item.durationMinutes) * 3.2
-        return max(150, min(320, base))
-    }
+// MARK: - Vertical EPG Timeline Row (With Connecting Line)
+struct VerticalTimelineRow: View {
+    let item: VerticalEpgItem
+    let isLast: Bool
 
     var body: some View {
-        Button(action: {
-            onSelect()
-        }) {
-            VStack(alignment: .leading, spacing: 6) {
-                // Header: Time Range & Live Tag
-                HStack {
-                    Text(item.timeRange)
-                        .font(.system(size: 11, weight: .bold, design: .monospaced))
-                        .foregroundColor(item.isLive ? Color(red: 0.35, green: 0.75, blue: 1.0) : .secondary)
+        HStack(alignment: .top, spacing: 14) {
+            // Time Pin (21:00, 22:45...)
+            Text(item.startTime)
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .foregroundColor(.white.opacity(0.8))
+                .frame(width: 48, alignment: .trailing)
 
-                    Spacer()
+            // Vertical Connecting Line with Circle Node
+            VStack(spacing: 0) {
+                Circle()
+                    .fill(Color.white.opacity(0.5))
+                    .frame(width: 8, height: 8)
+                    .padding(.top, 4)
 
-                    if item.isLive {
-                        HStack(spacing: 3) {
-                            Circle().fill(Color.red).frame(width: 5, height: 5)
-                            Text("En cours")
-                                .font(.system(size: 9, weight: .black))
-                                .foregroundColor(.red)
-                        }
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color.red.opacity(0.15))
-                        .cornerRadius(4)
-                    }
+                if !isLast {
+                    Rectangle()
+                        .fill(Color.white.opacity(0.15))
+                        .frame(width: 2)
+                        .frame(minHeight: 38)
                 }
+            }
 
-                // Title
+            // Show Title & Description
+            VStack(alignment: .leading, spacing: 2) {
                 Text(item.title)
-                    .font(.system(size: 13, weight: item.isLive ? .bold : .semibold))
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(.white)
-                    .lineLimit(2)
+                    .lineLimit(1)
 
-                // Subtitle / Snippet
-                if !item.description.isEmpty && item.description != item.title {
-                    Text(item.description)
-                        .font(.system(size: 10))
-                        .foregroundColor(.white.opacity(0.65))
-                        .lineLimit(2)
-                }
-
-                Spacer()
-
-                // Progress Bar if Live
-                if item.isLive {
-                    GeometryReader { g in
-                        ZStack(alignment: .leading) {
-                            Capsule().fill(Color.white.opacity(0.15))
-                            Capsule().fill(Color.blue)
-                                .frame(width: max(0, min(g.size.width, g.size.width * CGFloat(item.progress))))
-                        }
-                    }
-                    .frame(height: 3)
-                }
+                Text(item.timeRange)
+                    .font(.system(size: 10, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.5))
             }
-            .padding(10)
-            .frame(width: cardWidth, height: 135)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(item.isLive ? Color(red: 0.12, green: 0.28, blue: 0.55).opacity(0.4) : Color.white.opacity(0.05))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(item.isLive ? Color(red: 0.3, green: 0.65, blue: 1.0) : Color.white.opacity(0.1), lineWidth: item.isLive ? 1.5 : 1)
-            )
-        }
-        .buttonStyle(.card)
-    }
-}
-
-// MARK: - Program Detail Modal
-struct ProgramDetailModal: View {
-    let item: EpgScheduleItem
-    let channelTitle: String
-    @Environment(\.dismiss) var dismiss
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(channelTitle)
-                        .font(.caption)
-                        .foregroundColor(.blue)
-                        .fontWeight(.bold)
-                    Text(item.title)
-                        .font(.title2)
-                        .fontWeight(.heavy)
-                }
-                Spacer()
-                Button("Done") {
-                    dismiss()
-                }
-                .buttonStyle(.borderedProminent)
-            }
-
-            HStack(spacing: 12) {
-                Label(item.timeRange, systemImage: "clock")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                if item.isLive {
-                    Text("• DIFFUSION EN DIRECT")
-                        .font(.caption)
-                        .fontWeight(.black)
-                        .foregroundColor(.red)
-                }
-            }
-
-            Divider()
-
-            ScrollView {
-                Text(item.description.isEmpty ? "Aucune description détaillée fournie pour ce programme." : item.description)
-                    .font(.body)
-                    .foregroundColor(.white.opacity(0.9))
-                    .lineSpacing(4)
-            }
+            .padding(.bottom, 12)
 
             Spacer()
         }
-        .padding(32)
-        .frame(maxWidth: 700, maxHeight: 460)
-        .background(Color.black.opacity(0.95))
-        .cornerRadius(16)
     }
 }
 
