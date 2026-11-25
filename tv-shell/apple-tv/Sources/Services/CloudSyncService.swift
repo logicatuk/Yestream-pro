@@ -211,9 +211,16 @@ public class CloudSyncService: ObservableObject {
             if let httpRes = response as? HTTPURLResponse {
                 print("[CloudSync] DELETE playlist \(id) status: \(httpRes.statusCode)")
                 if !(200...299).contains(httpRes.statusCode) {
-                    if let errStr = String(data: data, encoding: .utf8) {
-                        print("[CloudSync] DELETE error response: \(errStr)")
+                    if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                       let err = json["error"] as? String {
+                        print("[CloudSync] DELETE error body: \(err)")
+                        self.syncMessage = "Cloud notice: \(err)"
+                    } else if let errStr = String(data: data, encoding: .utf8) {
+                        print("[CloudSync] DELETE error body: \(errStr)")
+                        self.syncMessage = "Cloud delete failed: \(httpRes.statusCode)"
                     }
+                    try? await Task.sleep(nanoseconds: 4_000_000_000)
+                    self.syncMessage = ""
                 }
             }
         } catch {
