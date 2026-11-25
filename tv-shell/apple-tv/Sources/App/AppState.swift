@@ -1,9 +1,28 @@
 import Foundation
 import SwiftUI
 
+public struct CachedPlaylistCatalog: Codable {
+    public let playlistId: String
+    public let timestamp: Date
+    public let categories: [XtreamCategory]
+    public let channels: [MediaItem]
+    public let vodCategories: [XtreamCategory]
+    public let vodMovies: [MediaItem]
+    public let seriesCategories: [XtreamCategory]
+    public let seriesList: [SeriesItem]
+}
+
 @MainActor
 public class AppState: ObservableObject {
     public static let shared = AppState()
+
+    // Navigation
+    @Published public var selectedTab: Int = 0
+
+    // Catalog Synchronization & Caching HUD
+    @Published public var isSyncingCatalog: Bool = false
+    @Published public var catalogSyncStatus: String = ""
+    @Published public var catalogSyncDetail: String = ""
 
     // Playlists
     @Published public var playlists: [Playlist] = []
@@ -12,19 +31,19 @@ public class AppState: ObservableObject {
     // Live Channels
     @Published public var channels: [MediaItem] = []
     @Published public var categories: [XtreamCategory] = []
-    @Published public var selectedCategory: String = ""
+    @Published public var selectedCategory: String = "ALL"
     @Published public var isLoadingChannels: Bool = false
 
     // Movies VOD
     @Published public var vodMovies: [MediaItem] = []
     @Published public var vodCategories: [XtreamCategory] = []
-    @Published public var selectedVodCategory: String = ""
+    @Published public var selectedVodCategory: String = "ALL"
     @Published public var isLoadingVod: Bool = false
 
     // Series
     @Published public var seriesList: [SeriesItem] = []
     @Published public var seriesCategories: [XtreamCategory] = []
-    @Published public var selectedSeriesCategory: String = ""
+    @Published public var selectedSeriesCategory: String = "ALL"
     @Published public var isLoadingSeries: Bool = false
 
     // Favorites & History
@@ -38,6 +57,12 @@ public class AppState: ObservableObject {
     public init() {
         loadLocalPlaylists()
         loadFavoritesAndHistory()
+    }
+
+    private func cacheFileUrl(for playlistId: String) -> URL? {
+        let safeId = playlistId.replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: ":", with: "_")
+        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?
+            .appendingPathComponent("catalog_\(safeId).json")
     }
 
     public func loadLocalPlaylists() {
@@ -62,9 +87,7 @@ public class AppState: ObservableObject {
         }
         savePlaylists()
         Task {
-            await loadChannelsForActivePlaylist()
-            await loadVodForActivePlaylist()
-            await loadSeriesForActivePlaylist()
+            await loadActivePlaylistCatalog(forceRefresh: true)
         }
     }
 
@@ -74,9 +97,7 @@ public class AppState: ObservableObject {
             savePlaylists()
             if activePlaylistId == p.id {
                 Task {
-                    await loadChannelsForActivePlaylist()
-                    await loadVodForActivePlaylist()
-                    await loadSeriesForActivePlaylist()
+                    await loadActivePlaylistCatalog(forceRefresh: true)
                 }
             }
         }
@@ -84,80 +105,143 @@ public class AppState: ObservableObject {
 
     public func deletePlaylist(id: String) {
         playlists.removeAll(where: { $0.id == id })
+        if let cacheUrl = cacheFileUrl(for: id) {
+            try? FileManager.default.removeItem(at: cacheUrl)
+        }
         if activePlaylistId == id {
             activePlaylistId = playlists.first?.id
             Task {
-                await loadChannelsForActivePlaylist()
-                await loadVodForActivePlaylist()
-                await loadSeriesForActivePlaylist()
+                await loadActivePlaylistCatalog(forceRefresh: false)
             }
         }
         savePlaylists()
     }
 
-    public func selectActivePlaylist(id: String) {
-        guard activePlaylistId != id else { return }
+    public func selectActivePlaylist(id: String, forceRefresh: Bool = false) {
+        let isChangingPlaylist = (activePlaylistId != id)
         activePlaylistId = id
         savePlaylists()
         Task {
-            await loadChannelsForActivePlaylist()
-            await loadVodForActivePlaylist()
-            await loadSeriesForActivePlaylist()
+            await loadActivePlaylistCatalog(forceRefresh: forceRefresh || isChangingPlaylist)
+            self.selectedTab = 0 // Switch to Live TV view
+        }
+    }
+
+    // MARK: - Unified Catalog Loader with Local Cache
+    public func loadActivePlaylistCatalog(forceRefresh: Bool = false) async {
+        guard let active = playlists.first(where: { $0.id == activePlaylistId }) else { return }
+
+        let (user, pass) = XtreamService.extractCredentials(from: active.url, user: active.username, pass: active.password)
+        guard !user.isEmpty && !pass.isEmpty else { return }
+
+        let cacheUrl = cacheFileUrl(for: active.id)
+
+        // 1. FAST PATH: Check Local Device Library Cache
+        if !forceRefresh, let cUrl = cacheUrl, FileManager.default.fileExists(atPath: cUrl.path) {
+            self.isSyncingCatalog = true
+            self.catalogSyncStatus = "Synchronisation de la liste de lecture"
+            self.catalogSyncDetail = "Chargement du catalogue sauvegardé de cet appareil…\nLecture de la bibliothèque locale ; aucune donnée n'est téléchargée depuis le fournisseur."
+
+            if let data = try? Data(contentsOf: cUrl),
+               let cached = try? JSONDecoder().decode(CachedPlaylistCatalog.self, from: data) {
+                self.categories = cached.categories
+                self.channels = cached.channels
+                self.vodCategories = cached.vodCategories
+                self.vodMovies = cached.vodMovies
+                self.seriesCategories = cached.seriesCategories
+                self.seriesList = cached.seriesList
+
+                if self.selectedCategory == "ALL" || !cached.categories.contains(where: { $0.category_id == self.selectedCategory }) {
+                    self.selectedCategory = "ALL"
+                }
+                if self.selectedVodCategory == "ALL" || !cached.vodCategories.contains(where: { $0.category_id == self.selectedVodCategory }) {
+                    self.selectedVodCategory = "ALL"
+                }
+                if self.selectedSeriesCategory == "ALL" || !cached.seriesCategories.contains(where: { $0.category_id == self.selectedSeriesCategory }) {
+                    self.selectedSeriesCategory = "ALL"
+                }
+
+                print("Instantly loaded from local library cache: \(cached.channels.count) channels, \(cached.vodMovies.count) movies, \(cached.seriesList.count) series.")
+                try? await Task.sleep(nanoseconds: 350_000_000) // Brief smooth HUD transition
+                self.isSyncingCatalog = false
+                return
+            }
+        }
+
+        // 2. REMOTE PATH: Download from Provider Source
+        self.isSyncingCatalog = true
+        self.catalogSyncStatus = "Synchronisation de la liste de lecture"
+        self.catalogSyncDetail = "Récupération des données de la liste depuis la source…"
+        self.isLoadingChannels = true
+        self.isLoadingVod = true
+        self.isLoadingSeries = true
+
+        do {
+            // First load Live Channels and Categories so user gets instant TV
+            let (liveCats, liveChannels) = try await XtreamService.fetchLiveStreams(serverUrl: active.url, user: user, pass: pass)
+            self.categories = liveCats
+            self.channels = liveChannels
+            self.isLoadingChannels = false
+
+            self.catalogSyncDetail = "Enregistrement des données de la liste localement… (\(liveChannels.count) chaînes)"
+
+            // Concurrently fetch VOD and Series in background
+            async let vodAsync = XtreamService.fetchVodStreams(serverUrl: active.url, user: user, pass: pass)
+            async let seriesAsync = XtreamService.fetchSeries(serverUrl: active.url, user: user, pass: pass)
+
+            let (vodCats, vodItems) = (try? await vodAsync) ?? ([], [])
+            let (seriesCats, seriesItems) = (try? await seriesAsync) ?? ([], [])
+
+            self.vodCategories = vodCats
+            self.vodMovies = vodItems
+            self.isLoadingVod = false
+
+            self.seriesCategories = seriesCats
+            self.seriesList = seriesItems
+            self.isLoadingSeries = false
+
+            // Save complete catalog to local disk cache for instant fast launch next time
+            let catalog = CachedPlaylistCatalog(
+                playlistId: active.id,
+                timestamp: Date(),
+                categories: liveCats,
+                channels: liveChannels,
+                vodCategories: vodCats,
+                vodMovies: vodItems,
+                seriesCategories: seriesCats,
+                seriesList: seriesItems
+            )
+            if let data = try? JSONEncoder().encode(catalog), let cUrl = cacheUrl {
+                try? data.write(to: cUrl, options: .atomic)
+                print("Saved \(liveChannels.count) channels, \(vodItems.count) movies, \(seriesItems.count) series to disk cache.")
+            }
+
+            self.isSyncingCatalog = false
+        } catch {
+            print("Failed to sync catalog from provider: \(error)")
+            self.catalogSyncDetail = "Erreur de connexion au fournisseur: \(error.localizedDescription)"
+            self.isLoadingChannels = false
+            self.isLoadingVod = false
+            self.isLoadingSeries = false
+            try? await Task.sleep(nanoseconds: 1_200_000_000)
+            self.isSyncingCatalog = false
         }
     }
 
     public func loadChannelsForActivePlaylist() async {
-        guard let active = playlists.first(where: { $0.id == activePlaylistId }) else { return }
-        self.isLoadingChannels = true
-        if active.type == .xtream, let user = active.username, let pass = active.password {
-            do {
-                let (cats, items) = try await XtreamService.fetchLiveStreams(serverUrl: active.url, user: user, pass: pass)
-                self.categories = cats
-                self.channels = items
-                if let firstCat = cats.first, self.selectedCategory.isEmpty {
-                    self.selectedCategory = firstCat.category_id
-                }
-            } catch {
-                print("Failed to load Xtream channels: \(error)")
-            }
-        }
-        self.isLoadingChannels = false
+        await loadActivePlaylistCatalog(forceRefresh: false)
     }
 
     public func loadVodForActivePlaylist() async {
-        guard let active = playlists.first(where: { $0.id == activePlaylistId }) else { return }
-        self.isLoadingVod = true
-        if active.type == .xtream, let user = active.username, let pass = active.password {
-            do {
-                let (cats, items) = try await XtreamService.fetchVodStreams(serverUrl: active.url, user: user, pass: pass)
-                self.vodCategories = cats
-                self.vodMovies = items
-                if let firstCat = cats.first, self.selectedVodCategory.isEmpty {
-                    self.selectedVodCategory = firstCat.category_id
-                }
-            } catch {
-                print("Failed to load Xtream VOD: \(error)")
-            }
+        if vodMovies.isEmpty {
+            await loadActivePlaylistCatalog(forceRefresh: false)
         }
-        self.isLoadingVod = false
     }
 
     public func loadSeriesForActivePlaylist() async {
-        guard let active = playlists.first(where: { $0.id == activePlaylistId }) else { return }
-        self.isLoadingSeries = true
-        if active.type == .xtream, let user = active.username, let pass = active.password {
-            do {
-                let (cats, items) = try await XtreamService.fetchSeries(serverUrl: active.url, user: user, pass: pass)
-                self.seriesCategories = cats
-                self.seriesList = items
-                if let firstCat = cats.first, self.selectedSeriesCategory.isEmpty {
-                    self.selectedSeriesCategory = firstCat.category_id
-                }
-            } catch {
-                print("Failed to load Xtream Series: \(error)")
-            }
+        if seriesList.isEmpty {
+            await loadActivePlaylistCatalog(forceRefresh: false)
         }
-        self.isLoadingSeries = false
     }
 
     // MARK: - Favorites & History

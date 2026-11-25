@@ -160,9 +160,7 @@ public class CloudSyncService: ObservableObject {
                         AppState.shared.savePlaylists()
 
                         Task {
-                            await AppState.shared.loadChannelsForActivePlaylist()
-                            await AppState.shared.loadVodForActivePlaylist()
-                            await AppState.shared.loadSeriesForActivePlaylist()
+                            await AppState.shared.loadActivePlaylistCatalog(forceRefresh: false)
                         }
 
                         self.syncMessage = "Synced! \(localPlaylists.count) playlist(s) connected."

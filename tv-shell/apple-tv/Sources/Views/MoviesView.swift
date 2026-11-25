@@ -5,7 +5,7 @@ public struct MoviesView: View {
     @State private var selectedMovie: MediaItem?
 
     public var filteredMovies: [MediaItem] {
-        if appState.selectedVodCategory.isEmpty {
+        if appState.selectedVodCategory.isEmpty || appState.selectedVodCategory == "ALL" {
             return appState.vodMovies
         }
         return appState.vodMovies.filter { $0.categoryId == appState.selectedVodCategory }
@@ -16,6 +16,29 @@ public struct MoviesView: View {
             // CATEGORIES SIDEBAR
             ScrollView(.vertical) {
                 VStack(alignment: .leading, spacing: 6) {
+                    // ALL MOVIES
+                    Button(action: {
+                        appState.selectedVodCategory = "ALL"
+                    }) {
+                        HStack {
+                            Text("All Movies")
+                                .fontWeight(.semibold)
+                                .lineLimit(1)
+                            Spacer()
+                            if !appState.vodMovies.isEmpty {
+                                Text("\(appState.vodMovies.count)")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                            if appState.selectedVodCategory == "ALL" || appState.selectedVodCategory.isEmpty {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                    }
+                    .buttonStyle(.card)
+
                     ForEach(appState.vodCategories) { cat in
                         Button(action: {
                             appState.selectedVodCategory = cat.category_id
@@ -108,6 +131,11 @@ public struct MoviesView: View {
         }
         .fullScreenCover(item: $selectedMovie) { movie in
             PlayerView(item: movie)
+        }
+        .task {
+            if appState.vodMovies.isEmpty && appState.activePlaylistId != nil {
+                await appState.loadVodForActivePlaylist()
+            }
         }
     }
 }

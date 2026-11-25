@@ -5,7 +5,7 @@ public struct LiveTVView: View {
     @State private var selectedChannel: MediaItem?
 
     public var filteredChannels: [MediaItem] {
-        if appState.selectedCategory.isEmpty {
+        if appState.selectedCategory.isEmpty || appState.selectedCategory == "ALL" {
             return appState.channels
         }
         return appState.channels.filter { $0.categoryId == appState.selectedCategory }
@@ -16,6 +16,29 @@ public struct LiveTVView: View {
             // CATEGORIES SIDEBAR
             ScrollView(.vertical) {
                 VStack(alignment: .leading, spacing: 6) {
+                    // ALL CHANNELS ITEM
+                    Button(action: {
+                        appState.selectedCategory = "ALL"
+                    }) {
+                        HStack {
+                            Text("All Channels")
+                                .fontWeight(.semibold)
+                                .lineLimit(1)
+                            Spacer()
+                            if !appState.channels.isEmpty {
+                                Text("\(appState.channels.count)")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                            if appState.selectedCategory == "ALL" || appState.selectedCategory.isEmpty {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                    }
+                    .buttonStyle(.card)
+
                     ForEach(appState.categories) { cat in
                         Button(action: {
                             appState.selectedCategory = cat.category_id
@@ -110,6 +133,11 @@ public struct LiveTVView: View {
         }
         .fullScreenCover(item: $selectedChannel) { channel in
             PlayerView(item: channel)
+        }
+        .task {
+            if appState.channels.isEmpty && appState.activePlaylistId != nil {
+                await appState.loadActivePlaylistCatalog(forceRefresh: false)
+            }
         }
     }
 }

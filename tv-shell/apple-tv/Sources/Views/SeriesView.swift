@@ -5,7 +5,7 @@ public struct SeriesView: View {
     @State private var selectedSeries: SeriesItem?
 
     public var filteredSeries: [SeriesItem] {
-        if appState.selectedSeriesCategory.isEmpty {
+        if appState.selectedSeriesCategory.isEmpty || appState.selectedSeriesCategory == "ALL" {
             return appState.seriesList
         }
         return appState.seriesList.filter { $0.categoryId == appState.selectedSeriesCategory }
@@ -16,6 +16,29 @@ public struct SeriesView: View {
             // CATEGORIES SIDEBAR
             ScrollView(.vertical) {
                 VStack(alignment: .leading, spacing: 6) {
+                    // ALL SERIES
+                    Button(action: {
+                        appState.selectedSeriesCategory = "ALL"
+                    }) {
+                        HStack {
+                            Text("All Series")
+                                .fontWeight(.semibold)
+                                .lineLimit(1)
+                            Spacer()
+                            if !appState.seriesList.isEmpty {
+                                Text("\(appState.seriesList.count)")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                            if appState.selectedSeriesCategory == "ALL" || appState.selectedSeriesCategory.isEmpty {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                    }
+                    .buttonStyle(.card)
+
                     ForEach(appState.seriesCategories) { cat in
                         Button(action: {
                             appState.selectedSeriesCategory = cat.category_id
@@ -102,6 +125,11 @@ public struct SeriesView: View {
         }
         .sheet(item: $selectedSeries) { series in
             SeriesDetailView(series: series)
+        }
+        .task {
+            if appState.seriesList.isEmpty && appState.activePlaylistId != nil {
+                await appState.loadSeriesForActivePlaylist()
+            }
         }
     }
 }
@@ -217,8 +245,9 @@ public struct SeriesDetailView: View {
         }
         .padding(40)
         .task {
-            guard let active = appState.playlists.first(where: { $0.id == appState.activePlaylistId }),
-                  let user = active.username, let pass = active.password else { return }
+            guard let active = appState.playlists.first(where: { $0.id == appState.activePlaylistId }) else { return }
+            let (user, pass) = XtreamService.extractCredentials(from: active.url, user: active.username, pass: active.password)
+            guard !user.isEmpty && !pass.isEmpty else { return }
             do {
                 let eps = try await XtreamService.fetchSeriesEpisodes(serverUrl: active.url, user: user, pass: pass, seriesId: series.seriesId)
                 self.episodes = eps

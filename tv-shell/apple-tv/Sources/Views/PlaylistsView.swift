@@ -235,9 +235,16 @@ public struct PlaylistsView: View {
                             HStack(spacing: 12) {
                                 if p.id != appState.activePlaylistId {
                                     Button("Connect") {
-                                        appState.selectActivePlaylist(id: p.id)
+                                        appState.selectActivePlaylist(id: p.id, forceRefresh: false)
                                     }
                                     .buttonStyle(.borderedProminent)
+                                } else {
+                                    Button(action: {
+                                        appState.selectActivePlaylist(id: p.id, forceRefresh: true)
+                                    }) {
+                                        Label("Re-sync", systemImage: "arrow.clockwise")
+                                    }
+                                    .buttonStyle(.bordered)
                                 }
 
                                 Button(action: {
