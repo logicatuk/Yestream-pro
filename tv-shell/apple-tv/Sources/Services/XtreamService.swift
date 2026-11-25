@@ -6,6 +6,21 @@ public struct XtreamCategory: Identifiable, Codable {
     public var id: String { category_id }
 }
 
+public struct VodDetail: Codable {
+    public let tmdbId: String?
+    public let name: String?
+    public let backdropUrl: String?
+    public let posterUrl: String?
+    public let releaseDate: String?
+    public let durationMinutes: String?
+    public let director: String?
+    public let cast: String?
+    public let plot: String?
+    public let genre: String?
+    public let rating: String?
+    public let streamUrl: String
+}
+
 public struct EpgProgram: Identifiable, Codable, Hashable {
     public let id: String
     public let title: String
@@ -314,5 +329,52 @@ public class XtreamService {
             return decoded
         }
         return text
+    }
+
+    public static func fetchVodDetails(serverUrl: String, user: String, pass: String, streamId: String) async -> VodDetail? {
+        let base = normalizeServerUrl(serverUrl)
+        let (u, p) = extractCredentials(from: serverUrl, user: user, pass: pass)
+        guard let url = URL(string: "\(base)/player_api.php?username=\(u)&password=\(p)&action=get_vod_info&vod_id=\(streamId)") else {
+            return nil
+        }
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let info = json["info"] as? [String: Any] else {
+                return nil
+            }
+            let movieData = json["movie_data"] as? [String: Any]
+            let ext = (movieData?["container_extension"] as? String) ?? "mp4"
+            let playUrl = "\(base)/movie/\(u)/\(p)/\(streamId).\(ext)"
+
+            let tmdbId = String(describing: info["tmdb_id"] ?? "")
+            let name = info["name"] as? String ?? info["o_name"] as? String
+            let poster = info["movie_image"] as? String ?? info["cover_big"] as? String
+            let backdrop = (info["backdrop_path"] as? [String])?.first ?? info["cover_big"] as? String
+            let releaseDate = info["releasedate"] as? String
+            let duration = String(describing: info["episode_run_time"] ?? "")
+            let director = info["director"] as? String
+            let cast = info["cast"] as? String ?? info["actors"] as? String
+            let plot = info["plot"] as? String ?? info["description"] as? String
+            let genre = info["genre"] as? String
+            let rating = String(describing: info["rating"] ?? "")
+
+            return VodDetail(
+                tmdbId: tmdbId.isEmpty ? nil : tmdbId,
+                name: name,
+                backdropUrl: backdrop,
+                posterUrl: poster,
+                releaseDate: releaseDate,
+                durationMinutes: duration.isEmpty ? nil : duration,
+                director: director,
+                cast: cast,
+                plot: plot,
+                genre: genre,
+                rating: rating.isEmpty ? nil : rating,
+                streamUrl: playUrl
+            )
+        } catch {
+            return nil
+        }
     }
 }

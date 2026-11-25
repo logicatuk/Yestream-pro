@@ -168,20 +168,51 @@ public struct SeriesDetailView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text(series.title)
-                        .font(.title2)
-                        .fontWeight(.bold)
+                    HStack {
+                        Text(series.title)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .lineLimit(1)
+
+                        Spacer()
+
+                        Button(action: {
+                            let media = MediaItem(id: "\(series.seriesId)", title: series.title, kind: .series, streamUrl: "", logoUrl: series.coverUrl)
+                            appState.toggleFavorite(media)
+                        }) {
+                            let media = MediaItem(id: "\(series.seriesId)", title: series.title, kind: .series, streamUrl: "", logoUrl: series.coverUrl)
+                            Image(systemName: appState.isFavorite(media) ? "heart.fill" : "heart")
+                                .foregroundColor(appState.isFavorite(media) ? .red : .white)
+                                .font(.headline)
+                        }
+                        .buttonStyle(.plain)
+
+                        Button("Close") {
+                            dismiss()
+                        }
+                        .buttonStyle(.bordered)
+                    }
+
+                    if let rating = series.rating, !rating.isEmpty, rating != "0" {
+                        HStack(spacing: 4) {
+                            Image(systemName: "star.fill").foregroundColor(.yellow)
+                            Text(rating)
+                        }
+                        .font(.system(size: 13, weight: .bold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(Color.yellow.opacity(0.2))
+                        .foregroundColor(.yellow)
+                        .cornerRadius(6)
+                    }
+
                     if let plot = series.plot, !plot.isEmpty {
                         Text(plot)
                             .font(.body)
                             .foregroundColor(.secondary)
-                            .lineLimit(4)
+                            .lineLimit(3)
                     }
                     Spacer()
-                    Button("Close") {
-                        dismiss()
-                    }
-                    .buttonStyle(.bordered)
                 }
                 Spacer()
             }
