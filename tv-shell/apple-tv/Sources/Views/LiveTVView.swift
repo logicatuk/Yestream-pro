@@ -23,7 +23,7 @@ public struct LiveTVView: View {
     public var body: some View {
         HStack(spacing: 0) {
             // ==========================================
-            // COLUMN 1: CATEGORIES SIDEBAR (Width: 350)
+            // COLUMN 1: CATEGORIES SIDEBAR (Width: 320)
             // ==========================================
             ScrollView(.vertical) {
                 VStack(alignment: .leading, spacing: 6) {
@@ -31,18 +31,17 @@ public struct LiveTVView: View {
                     Button(action: {
                         appState.selectedCategory = "FAVORITES"
                     }) {
-                        HStack {
+                        HStack(spacing: 8) {
                             Image(systemName: "star.fill")
                                 .foregroundColor(.yellow)
-                                .font(.system(size: 14))
+                                .font(.system(size: 13))
                             Text("Favorites")
-                                .fontWeight(.semibold)
+                                .font(.system(size: 14, weight: .semibold))
                                 .lineLimit(1)
-                                .minimumScaleFactor(0.8)
                             Spacer()
                             let favCount = appState.channelCount(for: "FAVORITES")
                             Text("\(favCount)")
-                                .font(.caption2)
+                                .font(.system(size: 11, weight: .bold))
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
                                 .background(Color.yellow.opacity(0.2))
@@ -50,10 +49,11 @@ public struct LiveTVView: View {
                                 .cornerRadius(6)
                             if appState.selectedCategory == "FAVORITES" {
                                 Image(systemName: "checkmark")
+                                    .font(.system(size: 12))
                             }
                         }
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 10)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
                     }
                     .buttonStyle(.card)
 
@@ -61,25 +61,25 @@ public struct LiveTVView: View {
                     Button(action: {
                         appState.selectedCategory = "ALL"
                     }) {
-                        HStack {
+                        HStack(spacing: 8) {
                             Text("All Channels")
-                                .fontWeight(.semibold)
+                                .font(.system(size: 14, weight: .semibold))
                                 .lineLimit(1)
-                                .minimumScaleFactor(0.8)
                             Spacer()
                             Text("\(appState.channelCount(for: "ALL"))")
-                                .font(.caption2)
+                                .font(.system(size: 11, weight: .bold))
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
-                                .background(Color.white.opacity(0.1))
-                                .foregroundColor(.secondary)
+                                .background(Color.white.opacity(0.12))
+                                .foregroundColor(.white.opacity(0.8))
                                 .cornerRadius(6)
                             if appState.selectedCategory == "ALL" || appState.selectedCategory.isEmpty {
                                 Image(systemName: "checkmark")
+                                    .font(.system(size: 12))
                             }
                         }
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 10)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
                     }
                     .buttonStyle(.card)
 
@@ -90,32 +90,33 @@ public struct LiveTVView: View {
                         Button(action: {
                             appState.selectedCategory = cat.category_id
                         }) {
-                            HStack {
+                            HStack(spacing: 8) {
                                 Text(cat.category_name)
+                                    .font(.system(size: 13, weight: .medium))
                                     .lineLimit(1)
-                                    .minimumScaleFactor(0.85)
                                 Spacer()
                                 let count = appState.channelCount(for: cat.category_id)
                                 Text("\(count)")
-                                    .font(.caption2)
+                                    .font(.system(size: 11, weight: .semibold))
                                     .padding(.horizontal, 6)
                                     .padding(.vertical, 2)
-                                    .background(Color.white.opacity(0.1))
+                                    .background(Color.white.opacity(0.08))
                                     .foregroundColor(.secondary)
                                     .cornerRadius(6)
                                 if cat.category_id == appState.selectedCategory {
                                     Image(systemName: "checkmark")
+                                        .font(.system(size: 12))
                                 }
                             }
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 10)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
                         }
                         .buttonStyle(.card)
                     }
                 }
-                .padding(.trailing, 12)
+                .padding(.trailing, 10)
             }
-            .frame(width: 350)
+            .frame(width: 310)
 
             Divider()
 
@@ -202,45 +203,56 @@ public struct LiveTVView: View {
                     }
 
                     // BOTTOM: Channel Details & EPG Guide Timeline
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 10) {
                         // Channel Header
-                        HStack(spacing: 14) {
+                        HStack(spacing: 12) {
                             if let logo = ch.logoUrl, let url = URL(string: logo) {
                                 AsyncImage(url: url) { phase in
                                     if let img = phase.image {
                                         img.resizable().scaledToFit()
                                     } else {
-                                        Image(systemName: "tv").font(.title2)
+                                        Image(systemName: "tv").font(.headline)
                                     }
                                 }
-                                .frame(width: 44, height: 44)
+                                .frame(width: 38, height: 38)
                                 .background(Color.white.opacity(0.1))
-                                .cornerRadius(8)
+                                .cornerRadius(6)
                             }
 
                             VStack(alignment: .leading, spacing: 2) {
-                                HStack(spacing: 8) {
-                                    Circle().fill(Color.red).frame(width: 8, height: 8)
+                                HStack(spacing: 6) {
+                                    Circle().fill(Color.red).frame(width: 6, height: 6)
                                     Text("LIVE NOW")
-                                        .font(.system(size: 11, weight: .black))
+                                        .font(.system(size: 10, weight: .black))
                                         .foregroundColor(.red)
+                                    if let catName = ch.categoryName {
+                                        Text("•")
+                                            .foregroundColor(.secondary)
+                                            .font(.caption2)
+                                        Text(catName)
+                                            .font(.caption2)
+                                            .foregroundColor(.secondary)
+                                    }
                                 }
                                 Text(ch.title)
-                                    .font(.title3)
-                                    .fontWeight(.heavy)
+                                    .font(.system(size: 17, weight: .bold))
                                     .lineLimit(1)
                             }
 
                             Spacer()
 
+                            // Compact Circular Heart Button
                             Button(action: {
                                 appState.toggleFavorite(ch)
                             }) {
                                 Image(systemName: appState.isFavorite(ch) ? "heart.fill" : "heart")
-                                    .foregroundColor(appState.isFavorite(ch) ? .red : .white)
-                                    .font(.title3)
+                                    .foregroundColor(appState.isFavorite(ch) ? .red : .white.opacity(0.75))
+                                    .font(.system(size: 15))
+                                    .frame(width: 34, height: 34)
+                                    .background(Color.white.opacity(0.12))
+                                    .clipShape(Circle())
                             }
-                            .buttonStyle(.bordered)
+                            .buttonStyle(.plain)
                         }
 
                         // Current Program EPG Card
@@ -359,36 +371,38 @@ struct ChannelRowItem: View {
                 onSelect()
             }
         }) {
-            HStack(spacing: 12) {
-                // Channel Logo
+            HStack(spacing: 10) {
+                // Channel Logo or Index
                 if let logo = channel.logoUrl, let url = URL(string: logo) {
                     AsyncImage(url: url) { phase in
                         if let img = phase.image {
                             img.resizable().scaledToFit()
                         } else {
-                            Image(systemName: "tv").font(.system(size: 16))
+                            Text("\(index)")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundColor(.secondary)
                         }
                     }
-                    .frame(width: 44, height: 44)
-                    .background(Color.black.opacity(0.3))
-                    .cornerRadius(8)
+                    .frame(width: 36, height: 36)
+                    .background(Color.black.opacity(0.35))
+                    .cornerRadius(6)
                 } else {
-                    Image(systemName: "tv")
-                        .font(.system(size: 16))
-                        .frame(width: 44, height: 44)
+                    Text("\(index)")
+                        .font(.system(size: 11, weight: .bold))
+                        .frame(width: 36, height: 36)
                         .background(Color.white.opacity(0.08))
-                        .cornerRadius(8)
+                        .cornerRadius(6)
                 }
 
                 // Title + EPG show + Progress
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text(channel.title)
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: 13, weight: .bold))
                         .lineLimit(1)
 
                     let epg = appState.epgCache[channel.id]?.first
                     Text(epg?.title ?? channel.categoryName ?? "Live")
-                        .font(.system(size: 12))
+                        .font(.system(size: 11))
                         .foregroundColor(.secondary)
                         .lineLimit(1)
 
@@ -405,26 +419,27 @@ struct ChannelRowItem: View {
                                         .frame(width: max(0, min(g.size.width, g.size.width * CGFloat(p.progress))))
                                 }
                             }
-                            .frame(width: 70, height: 3)
+                            .frame(width: 60, height: 3)
                         }
                     }
                 }
 
                 Spacer()
 
-                // Heart Favorite Button
+                // Compact Heart Favorite Button
                 Button(action: {
                     appState.toggleFavorite(channel)
                 }) {
                     Image(systemName: appState.isFavorite(channel) ? "heart.fill" : "heart")
                         .foregroundColor(appState.isFavorite(channel) ? .red : .white.opacity(0.35))
-                        .font(.system(size: 15))
+                        .font(.system(size: 14))
+                        .padding(4)
                 }
                 .buttonStyle(.plain)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .frame(height: 64)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .frame(height: 52)
         }
         .buttonStyle(.card)
     }
@@ -434,36 +449,79 @@ struct ChannelRowItem: View {
 struct MiniPlayerView: View {
     let streamUrl: String
     @State private var player: AVPlayer?
+    @State private var playbackError: String?
+    @State private var isConnecting: Bool = false
 
     var body: some View {
         ZStack {
-            if let p = player {
+            Color.black
+
+            if let p = player, playbackError == nil {
                 VideoPlayer(player: p)
                     .disabled(true)
-            } else {
-                Color.black
-                ProgressView()
+            }
+
+            if isConnecting {
+                ProgressView("Connecting…")
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+            } else if let err = playbackError {
+                VStack(spacing: 8) {
+                    Image(systemName: "exclamationmark.triangle")
+                        .foregroundColor(.yellow)
+                        .font(.title3)
+                    Text(err)
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.85))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 16)
+                    Button("Retry") {
+                        setup()
+                    }
+                    .font(.caption2)
+                    .buttonStyle(.bordered)
+                }
             }
         }
         .onAppear {
             setup()
         }
         .onDisappear {
-            player?.pause()
-            player = nil
+            stopPlayer()
         }
         .onChange(of: streamUrl) { _ in
             setup()
         }
     }
 
-    private func setup() {
+    private func stopPlayer() {
         player?.pause()
+        player?.replaceCurrentItem(with: nil)
+        player = nil
+    }
+
+    private func setup() {
+        stopPlayer()
+        playbackError = nil
+        isConnecting = true
+
         guard let url = URL(string: streamUrl) else {
-            player = nil
+            playbackError = "Invalid stream URL"
+            isConnecting = false
             return
         }
-        player = AVPlayer(url: url)
-        player?.play()
+
+        let asset = AVURLAsset(url: url)
+        let item = AVPlayerItem(asset: asset)
+        let p = AVPlayer(playerItem: item)
+        self.player = p
+        p.play()
+
+        Task {
+            try? await Task.sleep(nanoseconds: 2_000_000_000)
+            if item.status == .failed {
+                self.playbackError = "Stream unavailable or connection limit reached (1/1).\nEnsure no other device is active on this line."
+            }
+            self.isConnecting = false
+        }
     }
 }
