@@ -5,425 +5,448 @@ public struct LiveTVView: View {
     @ObservedObject var appState = AppState.shared
     @State private var selectedChannel: MediaItem?
     @State private var fullscreenChannel: MediaItem?
+    @State private var currentTime: String = ""
 
-    // Filter states
-    @State private var categoryFilterText: String = ""
-    @State private var categoryQuickPill: CategoryQuickPill = .all
-    @State private var channelFilterText: String = ""
-    @State private var qualityFilterOnlyHD: Bool = false
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
-    enum CategoryQuickPill: String, CaseIterable {
-        case all = "All"
-        case favorites = "Favorites"
-        case recent = "Recent"
-    }
-
-    // Cleaned & Filtered Categories
     public var displayedCategories: [XtreamCategory] {
-        var list = appState.categories.filter { !$0.category_name.isIptvJunkSeparator }
-        if !categoryFilterText.isEmpty {
-            list = list.filter { $0.category_name.cleanedIptvTitle.localizedCaseInsensitiveContains(categoryFilterText) }
-        }
-        return list
+        appState.categories.filter { !$0.category_name.isIptvJunkSeparator }
     }
 
-    // Cleaned & Filtered Channels
     public var filteredChannels: [MediaItem] {
-        var base: [MediaItem] = []
-
-        if categoryQuickPill == .favorites || appState.selectedCategory == "FAVORITES" {
-            base = appState.favorites.filter { $0.kind == .live }
-        } else if categoryQuickPill == .recent {
-            base = appState.history.filter { $0.kind == .live }
-        } else if appState.selectedCategory.isEmpty || appState.selectedCategory == "ALL" {
-            base = appState.channels
-        } else {
-            base = appState.channels.filter { $0.categoryId == appState.selectedCategory }
+        if appState.selectedCategory == "FAVORITES" {
+            return appState.favorites.filter { $0.kind == .live }
         }
-
-        // Search text filter
-        if !channelFilterText.isEmpty {
-            base = base.filter { $0.title.cleanedIptvTitle.localizedCaseInsensitiveContains(channelFilterText) }
+        if appState.selectedCategory.isEmpty || appState.selectedCategory == "ALL" {
+            return appState.channels
         }
-
-        // Quality HD/4K toggle
-        if qualityFilterOnlyHD {
-            base = base.filter {
-                let t = $0.title.uppercased()
-                return t.contains("4K") || t.contains("FHD") || t.contains("HD") || t.contains("HEVC")
-            }
-        }
-
-        return base
+        return appState.channels.filter { $0.categoryId == appState.selectedCategory }
     }
 
     private var activeChannel: MediaItem? {
         selectedChannel ?? filteredChannels.first
     }
 
+    private var activeCategoryName: String {
+        if appState.selectedCategory == "FAVORITES" {
+            return "Favorites List"
+        }
+        if let cat = displayedCategories.first(where: { $0.category_id == appState.selectedCategory }) {
+            return cat.category_name.cleanedIptvTitle
+        }
+        return activeChannel?.categoryName ?? "Live TV"
+    }
+
     public var body: some View {
         GeometryReader { geo in
-            let col1Width = geo.size.width * 0.30
-            let col2Width = geo.size.width * 0.30
-            let col3Width = geo.size.width * 0.40
+            let col1Width = geo.size.width * 0.25
+            let col2Width = geo.size.width * 0.25
+            let col3Width = geo.size.width * 0.50
 
-            HStack(spacing: 0) {
+            VStack(spacing: 0) {
                 // ==========================================
-                // COLUMN 1: CATEGORIES (30% Width)
+                // TOP BAR: Clock + Hot IPTV Branding + Breadcrumb
                 // ==========================================
-                VStack(spacing: 12) {
-                    // Header Bar with Back to Home Button
-                    HStack(spacing: 8) {
-                        Button(action: {
-                            appState.currentDestination = .home
-                        }) {
-                            HStack(spacing: 6) {
-                                Image(systemName: "chevron.left")
-                                    .font(.system(size: 13, weight: .bold))
-                                Text("Home")
-                                    .font(.system(size: 13, weight: .bold))
-                            }
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 6)
-                            .background(Color.white.opacity(0.08))
-                            .cornerRadius(12)
-                        }
-                        .buttonStyle(.plain)
+                HStack(alignment: .center, spacing: 16) {
+                    // Clock
+                    Text(currentTime)
+                        .font(.system(size: 15, weight: .bold, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.85))
 
-                        Spacer()
-
-                        Text("CATEGORIES")
-                            .font(.system(size: 12, weight: .bold, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.6))
-                    }
-                    .padding(.horizontal, 14)
-                    .padding(.top, 16)
-
-                    // Pinned Top Filter & Siri Search
-                    HStack(spacing: 8) {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundColor(.white.opacity(0.5))
-                            .font(.system(size: 14))
-
-                        TextField("Filter categories...", text: $categoryFilterText)
-                            .font(.system(size: 13))
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(Color.white.opacity(0.06))
-                    .cornerRadius(12)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                    )
-                    .padding(.horizontal, 14)
-
-                    // Quick Pills: All, Favorites, Recent
+                    // Hot IPTV Flame Mark
                     HStack(spacing: 6) {
-                        ForEach(CategoryQuickPill.allCases, id: \.self) { pill in
-                            Button(action: {
-                                categoryQuickPill = pill
-                                if pill == .favorites {
-                                    appState.selectedCategory = "FAVORITES"
-                                } else if pill == .all {
-                                    appState.selectedCategory = "ALL"
-                                }
-                            }) {
-                                Text(pill.rawValue)
-                                    .font(.system(size: 11, weight: .bold))
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(categoryQuickPill == pill ? Color.white.opacity(0.2) : Color.white.opacity(0.05))
-                                    .foregroundColor(categoryQuickPill == pill ? .white : .white.opacity(0.7))
-                                    .cornerRadius(14)
-                            }
-                            .buttonStyle(.plain)
-                        }
-                        Spacer()
+                        Image(systemName: "flame.fill")
+                            .foregroundColor(Color(red: 1.0, green: 0.55, blue: 0.15))
+                            .font(.system(size: 18))
+                        Text("Hot IPTV")
+                            .font(.system(size: 16, weight: .black, design: .rounded))
+                            .foregroundColor(.white)
                     }
-                    .padding(.horizontal, 14)
 
-                    // Clean Category List
+                    // Active Breadcrumb Badge: Live TV / EU | BELGIUM
+                    HStack(spacing: 6) {
+                        Text("Live TV")
+                            .font(.system(size: 11, weight: .bold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(Color(red: 0.9, green: 0.75, blue: 0.15))
+                            .foregroundColor(.black)
+                            .cornerRadius(6)
+
+                        Text(activeCategoryName)
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(.white.opacity(0.9))
+                    }
+
+                    Spacer()
+
+                    // Current list & Activation status
+                    HStack(spacing: 12) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "list.bullet.indent")
+                                .font(.system(size: 11))
+                                .foregroundColor(Color(red: 1.0, green: 0.7, blue: 0.2))
+                            Text("Current list :")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.8))
+                            Text(appState.playlists.first(where: { $0.id == appState.activePlaylistId })?.name.cleanedIptvTitle ?? "List 1")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundColor(Color(red: 1.0, green: 0.75, blue: 0.25))
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(Color.black.opacity(0.4))
+                        .cornerRadius(8)
+
+                        HStack(spacing: 4) {
+                            Image(systemName: "checkmark.shield.fill")
+                                .font(.system(size: 11))
+                                .foregroundColor(Color(red: 1.0, green: 0.7, blue: 0.2))
+                            Text("Activation FOREVER")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundColor(.white)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(Color.black.opacity(0.4))
+                        .cornerRadius(8)
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 12)
+                .padding(.bottom, 8)
+                .background(Color(red: 0.04, green: 0.07, blue: 0.13))
+
+                // ==========================================
+                // 3-COLUMN SPLIT: 25% / 25% / 50%
+                // ==========================================
+                HStack(spacing: 0) {
+                    // ------------------------------------------
+                    // COLUMN 1: CATEGORIES (25% Width)
+                    // ------------------------------------------
                     ScrollView(.vertical) {
                         LazyVStack(spacing: 4) {
+                            // Favorites Category Row
+                            let isFavSel = (appState.selectedCategory == "FAVORITES")
+                            Button(action: {
+                                appState.selectedCategory = "FAVORITES"
+                            }) {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Favorites List")
+                                            .font(.system(size: 13, weight: .bold))
+                                            .foregroundColor(isFavSel ? .black : .white)
+                                            .lineLimit(1)
+                                        Text("Total : \(appState.favorites.filter { $0.kind == .live }.count)")
+                                            .font(.system(size: 10, weight: .medium))
+                                            .foregroundColor(isFavSel ? .black.opacity(0.7) : .white.opacity(0.55))
+                                    }
+                                    Spacer()
+                                    Image(systemName: "heart.fill")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(isFavSel ? .black : .white.opacity(0.6))
+                                }
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .fill(isFavSel ? Color(red: 0.9, green: 0.78, blue: 0.18) : Color.white.opacity(0.04))
+                                )
+                            }
+                            .buttonStyle(.card)
+
+                            // Clean Categories
                             ForEach(displayedCategories) { cat in
                                 let count = appState.channelCount(for: cat.category_id)
-                                let isSel = (appState.selectedCategory == cat.category_id && categoryQuickPill == .all)
+                                let isSel = (appState.selectedCategory == cat.category_id)
 
                                 Button(action: {
-                                    categoryQuickPill = .all
                                     appState.selectedCategory = cat.category_id
                                 }) {
-                                    HStack(spacing: 8) {
-                                        Text(cat.category_name.cleanedIptvTitle)
-                                            .font(.system(size: 13, weight: .medium))
-                                            .foregroundColor(.white)
-                                            .lineLimit(1)
-
-                                        Spacer()
-
-                                        Text("\(count)")
-                                            .font(.system(size: 11, weight: .medium, design: .monospaced))
-                                            .foregroundColor(.white.opacity(0.5))
-                                            .padding(.horizontal, 6)
-                                            .padding(.vertical, 2)
-                                            .background(Color.white.opacity(0.06))
-                                            .cornerRadius(6)
-
-                                        if isSel {
-                                            Image(systemName: "checkmark")
-                                                .font(.system(size: 11, weight: .bold))
-                                                .foregroundColor(.white)
+                                    HStack {
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(cat.category_name.cleanedIptvTitle)
+                                                .font(.system(size: 13, weight: .bold))
+                                                .foregroundColor(isSel ? .black : .white)
+                                                .lineLimit(1)
+                                            Text("Total : \(count)")
+                                                .font(.system(size: 10, weight: .medium))
+                                                .foregroundColor(isSel ? .black.opacity(0.7) : .white.opacity(0.55))
                                         }
+                                        Spacer()
                                     }
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
                                     .background(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .fill(isSel ? Color.white.opacity(0.12) : Color.clear)
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .fill(isSel ? Color(red: 0.9, green: 0.78, blue: 0.18) : Color.white.opacity(0.04))
                                     )
                                 }
                                 .buttonStyle(.card)
                             }
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 4)
-                    }
-                }
-                .frame(width: col1Width)
-                .background(Color(red: 0.05, green: 0.05, blue: 0.07))
-
-                Divider().background(Color.white.opacity(0.08))
-
-                // ==========================================
-                // COLUMN 2: CHANNELS WITH FILTER (30% Width)
-                // ==========================================
-                VStack(spacing: 12) {
-                    // Top Filter Input + HD/4K Quality Toggle
-                    HStack(spacing: 8) {
-                        HStack(spacing: 6) {
-                            Image(systemName: "magnifyingglass")
-                                .foregroundColor(.white.opacity(0.5))
-                                .font(.system(size: 13))
-
-                            TextField("Filter channels...", text: $channelFilterText)
-                                .font(.system(size: 13))
-                        }
                         .padding(.horizontal, 10)
                         .padding(.vertical, 8)
-                        .background(Color.white.opacity(0.06))
-                        .cornerRadius(12)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                        )
+                    }
+                    .frame(width: col1Width)
+                    .background(Color(red: 0.05, green: 0.08, blue: 0.15))
 
-                        // HD/4K Pill Toggle
-                        Button(action: {
-                            qualityFilterOnlyHD.toggle()
-                        }) {
-                            Text("HD/4K")
-                                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    Divider().background(Color.white.opacity(0.08))
+
+                    // ------------------------------------------
+                    // COLUMN 2: CHANNELS (25% Width)
+                    // ------------------------------------------
+                    VStack(spacing: 0) {
+                        if appState.isLoadingChannels {
+                            Spacer()
+                            ProgressView("Loading channels…")
+                            Spacer()
+                        } else if filteredChannels.isEmpty {
+                            Spacer()
+                            Text("No channels in this category.")
+                                .font(.system(size: 13))
+                                .foregroundColor(.white.opacity(0.5))
+                            Spacer()
+                        } else {
+                            ScrollView(.vertical) {
+                                LazyVStack(spacing: 4) {
+                                    ForEach(Array(filteredChannels.enumerated()), id: \.element.id) { index, ch in
+                                        let isSel = (activeChannel?.id == ch.id)
+
+                                        Button(action: {
+                                            if isSel {
+                                                fullscreenChannel = ch
+                                            } else {
+                                                selectedChannel = ch
+                                            }
+                                        }) {
+                                            HStack(spacing: 10) {
+                                                // Channel Logo or Placeholder
+                                                ZStack {
+                                                    if let logo = ch.logoUrl, let url = URL(string: logo) {
+                                                        AsyncImage(url: url) { phase in
+                                                            if let img = phase.image {
+                                                                img.resizable().scaledToFit()
+                                                            } else {
+                                                                Circle().fill(Color.purple.opacity(0.6))
+                                                            }
+                                                        }
+                                                    } else {
+                                                        Circle().fill(Color.purple.opacity(0.6))
+                                                    }
+                                                }
+                                                .frame(width: 28, height: 28)
+
+                                                // Channel Name (Hot IPTV Style)
+                                                Text(ch.title.cleanedIptvTitle)
+                                                    .font(.system(size: 13, weight: .bold))
+                                                    .foregroundColor(isSel ? .black : .white)
+                                                    .lineLimit(1)
+
+                                                Spacer()
+
+                                                // Cyan Channel Number Badge (e.g. 44, 45, 46)
+                                                Text("\(index + 1)")
+                                                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                                    .foregroundColor(.white)
+                                                    .padding(.horizontal, 8)
+                                                    .padding(.vertical, 3)
+                                                    .background(Color(red: 0.08, green: 0.55, blue: 0.95))
+                                                    .cornerRadius(6)
+                                            }
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 7)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 6)
+                                                    .fill(isSel ? Color(red: 0.9, green: 0.78, blue: 0.18) : Color.white.opacity(0.04))
+                                            )
+                                        }
+                                        .buttonStyle(.card)
+                                        .task {
+                                            await appState.loadEpg(for: ch)
+                                        }
+                                    }
+                                }
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 8)
-                                .background(qualityFilterOnlyHD ? Color.white.opacity(0.25) : Color.white.opacity(0.06))
-                                .foregroundColor(qualityFilterOnlyHD ? .white : .white.opacity(0.6))
-                                .cornerRadius(12)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                                )
-                        }
-                        .buttonStyle(.plain)
-                    }
-                    .padding(.horizontal, 14)
-                    .padding(.top, 16)
-
-                    // Channels List (Compact 68pt Rows)
-                    if appState.isLoadingChannels {
-                        Spacer()
-                        ProgressView("Loading channels…")
-                        Spacer()
-                    } else if filteredChannels.isEmpty {
-                        Spacer()
-                        VStack(spacing: 8) {
-                            Image(systemName: "tv.slash")
-                                .font(.system(size: 36))
-                                .foregroundColor(.white.opacity(0.3))
-                            Text("No channels match filter")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundColor(.white.opacity(0.7))
-                        }
-                        Spacer()
-                    } else {
-                        ScrollView(.vertical) {
-                            LazyVStack(spacing: 6) {
-                                ForEach(Array(filteredChannels.enumerated()), id: \.element.id) { index, ch in
-                                    CompactChannelRow(
-                                        channel: ch,
-                                        index: index + 1,
-                                        isSelected: (activeChannel?.id == ch.id),
-                                        onSelect: {
-                                            selectedChannel = ch
-                                        },
-                                        onPlayFullscreen: {
-                                            fullscreenChannel = ch
-                                        }
-                                    )
-                                    .task {
-                                        await appState.loadEpg(for: ch)
-                                    }
-                                }
                             }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 4)
                         }
                     }
-                }
-                .frame(width: col2Width)
-                .background(Color(red: 0.04, green: 0.04, blue: 0.06))
+                    .frame(width: col2Width)
+                    .background(Color(red: 0.06, green: 0.09, blue: 0.17))
 
-                Divider().background(Color.white.opacity(0.08))
+                    Divider().background(Color.white.opacity(0.08))
 
-                // ==========================================
-                // COLUMN 3: FLOATING PLAYER + VERTICAL EPG (40%)
-                // ==========================================
-                VStack(alignment: .leading, spacing: 14) {
-                    if let ch = activeChannel {
-                        // TOP HALF: 16:9 Borderless Rounded Video Preview (16pt radius)
-                        ZStack(alignment: .bottomTrailing) {
-                            MiniPlayerView(streamUrl: ch.streamUrl)
-                                .frame(height: col3Width * 9.0 / 16.0)
-                                .cornerRadius(16)
-                                .clipped()
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(Color.white.opacity(0.12), lineWidth: 1)
-                                )
+                    // ------------------------------------------
+                    // COLUMN 3: PLAYER + REAL EPG LINE (50% Width)
+                    // ------------------------------------------
+                    VStack(alignment: .leading, spacing: 0) {
+                        if let ch = activeChannel {
+                            // TOP HALF: 16:9 Video Player Preview
+                            ZStack(alignment: .bottom) {
+                                MiniPlayerView(streamUrl: ch.streamUrl)
+                                    .frame(height: col3Width * 9.0 / 16.0)
+                                    .clipped()
 
-                            // Subtle Bottom-Right Full Screen Glass Pill
-                            Button(action: {
-                                fullscreenChannel = ch
-                            }) {
-                                HStack(spacing: 6) {
-                                    Image(systemName: "arrow.up.left.and.arrow.down.right")
-                                        .font(.system(size: 11))
-                                    Text("Full Screen")
-                                        .font(.system(size: 12, weight: .bold))
-                                }
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 7)
-                                .background(Color.black.opacity(0.75))
-                                .foregroundColor(.white)
-                                .cornerRadius(16)
-                                .overlay(
-                                    Capsule().stroke(Color.white.opacity(0.2), lineWidth: 1)
-                                )
-                            }
-                            .buttonStyle(.plain)
-                            .padding(12)
-                        }
+                                // Bottom Video Info Overlay (Hot IPTV Style)
+                                HStack(spacing: 12) {
+                                    Circle().fill(Color.purple.opacity(0.8)).frame(width: 22, height: 22)
 
-                        // BOTTOM HALF: Vertical EPG Timeline Guide
-                        let schedule = buildSchedule(for: ch)
-                        let currentProg = schedule.first(where: { $0.isLive }) ?? schedule.first
-                        let upcomingProgs = Array(schedule.filter { !$0.isLive }.prefix(5))
-
-                        VStack(alignment: .leading, spacing: 12) {
-                            // 1. Now Playing Header Card
-                            VStack(alignment: .leading, spacing: 6) {
-                                HStack(spacing: 8) {
-                                    // Live Badge
-                                    HStack(spacing: 4) {
-                                        Circle().fill(Color.red).frame(width: 5, height: 5)
-                                        Text("EN DIRECT")
-                                            .font(.system(size: 9, weight: .black))
-                                            .foregroundColor(.red)
+                                    VStack(alignment: .leading, spacing: 1) {
+                                        Text(ch.title.cleanedIptvTitle)
+                                            .font(.system(size: 13, weight: .bold))
+                                            .foregroundColor(.white)
+                                            .lineLimit(1)
+                                        Text(activeCategoryName)
+                                            .font(.system(size: 10))
+                                            .foregroundColor(.white.opacity(0.6))
                                     }
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(Color.red.opacity(0.15))
-                                    .cornerRadius(4)
-
-                                    Text(ch.title.cleanedIptvTitle)
-                                        .font(.system(size: 14, weight: .bold))
-                                        .foregroundColor(.white)
-                                        .lineLimit(1)
 
                                     Spacer()
 
-                                    if let p = currentProg {
-                                        Text(p.timeRange)
-                                            .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                                            .foregroundColor(.white.opacity(0.85))
+                                    Text("1920 x 1080")
+                                        .font(.system(size: 10, design: .monospaced))
+                                        .foregroundColor(.white.opacity(0.6))
+
+                                    Button(action: {
+                                        fullscreenChannel = ch
+                                    }) {
+                                        Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                            .font(.system(size: 11))
+                                            .padding(6)
+                                            .background(Color.black.opacity(0.6))
+                                            .foregroundColor(.white)
+                                            .cornerRadius(6)
                                     }
+                                    .buttonStyle(.plain)
                                 }
-
-                                if let p = currentProg {
-                                    Text(p.title)
-                                        .font(.system(size: 15, weight: .bold))
-                                        .foregroundColor(.white)
-                                        .lineLimit(1)
-
-                                    Text(p.description.isEmpty ? "Retrouvez votre émission en direct sur \(ch.title.cleanedIptvTitle)." : p.description)
-                                        .font(.system(size: 11))
-                                        .foregroundColor(.white.opacity(0.65))
-                                        .lineLimit(2)
-                                        .lineSpacing(2)
-                                }
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(Color.black.opacity(0.75))
                             }
-                            .padding(14)
-                            .background(Color.white.opacity(0.05))
-                            .cornerRadius(12)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
-                            )
 
-                            // 2. Up Next Vertical Timeline Header
-                            Text("À SUIVRE / UP NEXT")
-                                .font(.system(size: 11, weight: .bold, design: .monospaced))
-                                .foregroundColor(.white.opacity(0.5))
-                                .tracking(1)
+                            // BOTTOM HALF: Real EPG Line Guide (Matching Image 1)
+                            let schedule = buildEpgSchedule(for: ch)
+                            let currentLive = schedule.first(where: { $0.isLive }) ?? schedule.first
+                            let upcoming = Array(schedule.filter { !$0.isLive }.prefix(5))
 
-                            // 3. Scrollable Vertical Timeline Rows with Left Connecting Line
                             ScrollView(.vertical, showsIndicators: false) {
-                                VStack(alignment: .leading, spacing: 0) {
-                                    ForEach(Array(upcomingProgs.enumerated()), id: \.element.id) { idx, item in
-                                        VerticalTimelineRow(
-                                            item: item,
-                                            isLast: idx == upcomingProgs.count - 1
-                                        )
+                                VStack(alignment: .leading, spacing: 8) {
+                                    // 1. CURRENT AIRING PROGRAM (Bright Yellow Banner - Matching Image 1)
+                                    if let p = currentLive {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            HStack(spacing: 6) {
+                                                Image(systemName: "play.fill")
+                                                    .font(.system(size: 12))
+                                                    .foregroundColor(Color(red: 0.15, green: 0.65, blue: 0.25))
+
+                                                Text(p.title)
+                                                    .font(.system(size: 14, weight: .bold))
+                                                    .foregroundColor(.black)
+                                                    .lineLimit(1)
+                                            }
+
+                                            Text(p.description.isEmpty ? "Programme en cours de diffusion." : p.description)
+                                                .font(.system(size: 11))
+                                                .foregroundColor(.black.opacity(0.75))
+                                                .lineLimit(2)
+
+                                            // Real Progress Line with Start & End Time
+                                            HStack(spacing: 8) {
+                                                Text(p.startTime)
+                                                    .font(.system(size: 10, weight: .bold, design: .monospaced))
+                                                    .foregroundColor(.black)
+
+                                                GeometryReader { g in
+                                                    ZStack(alignment: .leading) {
+                                                        Capsule().fill(Color.black.opacity(0.2))
+                                                        Capsule().fill(Color(red: 0.95, green: 0.35, blue: 0.2))
+                                                            .frame(width: max(0, min(g.size.width, g.size.width * CGFloat(p.progress))))
+                                                    }
+                                                }
+                                                .frame(height: 3)
+
+                                                Text(p.endTime)
+                                                    .font(.system(size: 10, weight: .bold, design: .monospaced))
+                                                    .foregroundColor(.black)
+                                            }
+                                            .padding(.top, 2)
+                                        }
+                                        .padding(10)
+                                        .background(Color(red: 0.9, green: 0.78, blue: 0.18))
+                                        .cornerRadius(6)
+                                    }
+
+                                    // 2. UPCOMING SHOWS WITH REAL EPG PROGRESS LINES (Image 1 Style)
+                                    ForEach(upcoming) { item in
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            HStack(spacing: 6) {
+                                                Image(systemName: "clock")
+                                                    .font(.system(size: 11))
+                                                    .foregroundColor(.white.opacity(0.6))
+
+                                                Text(item.title)
+                                                    .font(.system(size: 13, weight: .semibold))
+                                                    .foregroundColor(.white)
+                                                    .lineLimit(1)
+                                            }
+
+                                            if !item.description.isEmpty && item.description != item.title {
+                                                Text(item.description)
+                                                    .font(.system(size: 10))
+                                                    .foregroundColor(.white.opacity(0.55))
+                                                    .lineLimit(1)
+                                            }
+
+                                            // EPG Line with Start & End Time
+                                            HStack(spacing: 8) {
+                                                Text(item.startTime)
+                                                    .font(.system(size: 10, design: .monospaced))
+                                                    .foregroundColor(.white.opacity(0.7))
+
+                                                Rectangle()
+                                                    .fill(Color.white.opacity(0.15))
+                                                    .frame(height: 1)
+
+                                                Text(item.endTime)
+                                                    .font(.system(size: 10, design: .monospaced))
+                                                    .foregroundColor(.white.opacity(0.7))
+                                            }
+                                        }
+                                        .padding(.vertical, 4)
+                                        .padding(.horizontal, 6)
+
+                                        Divider().background(Color.white.opacity(0.06))
                                     }
                                 }
-                                .padding(.vertical, 4)
+                                .padding(10)
                             }
+                        } else {
+                            Spacer()
+                            Text("Select a channel to preview")
+                                .foregroundColor(.white.opacity(0.5))
+                            Spacer()
                         }
-                    } else {
-                        Spacer()
-                        Text("Select a channel to preview")
-                            .foregroundColor(.white.opacity(0.5))
-                        Spacer()
                     }
+                    .frame(width: col3Width)
+                    .background(Color(red: 0.04, green: 0.07, blue: 0.13))
                 }
-                .frame(width: col3Width)
-                .padding(.horizontal, 16)
-                .background(Color(red: 0.03, green: 0.03, blue: 0.05))
             }
         }
         .fullScreenCover(item: $fullscreenChannel) { channel in
             PlayerView(item: channel)
         }
-        .onExitCommand {
-            appState.currentDestination = .home
-        }
-        .onChange(of: appState.selectedCategory) { _ in
-            selectedChannel = filteredChannels.first
-        }
         .onAppear {
+            updateClock()
             if selectedChannel == nil {
                 selectedChannel = filteredChannels.first
             }
+        }
+        .onReceive(timer) { _ in
+            updateClock()
+        }
+        .onChange(of: appState.selectedCategory) { _ in
+            selectedChannel = filteredChannels.first
         }
         .task {
             if appState.channels.isEmpty && appState.activePlaylistId != nil {
@@ -432,70 +455,79 @@ public struct LiveTVView: View {
         }
     }
 
-    // MARK: - Schedule Builder (Xtream EPG + Fallback)
-    private func buildSchedule(for channel: MediaItem) -> [VerticalEpgItem] {
+    private func updateClock() {
+        let df = DateFormatter()
+        df.dateFormat = "HH:mm"
+        currentTime = df.string(from: Date())
+    }
+
+    // MARK: - EPG Schedule Parser
+    private func buildEpgSchedule(for channel: MediaItem) -> [HotEpgItem] {
         let cached = appState.epgCache[channel.id] ?? []
         if !cached.isEmpty {
-            return cached.enumerated().map { index, p in
+            return cached.enumerated().map { idx, p in
                 let sClock = extractClock(p.start)
                 let eClock = extractClock(p.end)
-                return VerticalEpgItem(
+                return HotEpgItem(
                     id: p.id,
                     title: p.title.isEmpty ? channel.title.cleanedIptvTitle : p.title,
                     description: p.description,
                     startTime: sClock,
                     endTime: eClock,
-                    timeRange: "\(sClock) – \(eClock)",
-                    isLive: (index == 0)
+                    progress: p.progress,
+                    isLive: (idx == 0)
                 )
             }
         }
 
-        // Realistic Fallback
+        // Fallback realistic EPG lines
         let now = Date()
         let cal = Calendar.current
         let hour = cal.component(.hour, from: now)
+        let min = cal.component(.minute, from: now)
+        let fraction = Double(min) / 60.0
+
         let t0 = String(format: "%02d:00", hour)
-        let t1 = String(format: "%02d:45", hour)
-        let t2 = String(format: "%02d:30", (hour + 1) % 24)
-        let t3 = String(format: "%02d:00", (hour + 2) % 24)
-        let t4 = String(format: "%02d:30", (hour + 3) % 24)
+        let t1 = String(format: "%02d:00", (hour + 1) % 24)
+        let t2 = String(format: "%02d:00", (hour + 2) % 24)
+        let t3 = String(format: "%02d:00", (hour + 3) % 24)
+        let t4 = String(format: "%02d:00", (hour + 4) % 24)
 
         return [
-            VerticalEpgItem(
-                id: "\(channel.id)_live",
+            HotEpgItem(
+                id: "\(channel.id)_cur",
                 title: channel.title.cleanedIptvTitle,
-                description: "Émission diffusée en continu.",
+                description: "Émission diffusée en direct sur la chaîne.",
                 startTime: t0,
                 endTime: t1,
-                timeRange: "\(t0) – \(t1)",
+                progress: fraction,
                 isLive: true
             ),
-            VerticalEpgItem(
-                id: "\(channel.id)_next1",
-                title: "Journal & Magazine d'information",
-                description: "Le point complet sur l'actualité nationale et internationale.",
+            HotEpgItem(
+                id: "\(channel.id)_u1",
+                title: "Journal & Information en continu",
+                description: "Le point sur l'actualité avec la rédaction.",
                 startTime: t1,
                 endTime: t2,
-                timeRange: "\(t1) – \(t2)",
+                progress: 0.0,
                 isLive: false
             ),
-            VerticalEpgItem(
-                id: "\(channel.id)_next2",
-                title: "Soirée Divertissement & Débat",
-                description: "Grand format avec les invités de la rédaction.",
+            HotEpgItem(
+                id: "\(channel.id)_u2",
+                title: "Magazine de société & Débats",
+                description: "Les grands thèmes de société décryptés par nos experts.",
                 startTime: t2,
                 endTime: t3,
-                timeRange: "\(t2) – \(t3)",
+                progress: 0.0,
                 isLive: false
             ),
-            VerticalEpgItem(
-                id: "\(channel.id)_next3",
+            HotEpgItem(
+                id: "\(channel.id)_u3",
                 title: "Grand Film du Soir",
-                description: "Cinéma en haute définition.",
+                description: "Cinéma grand spectacle en haute définition.",
                 startTime: t3,
                 endTime: t4,
-                timeRange: "\(t3) – \(t4)",
+                progress: 0.0,
                 isLive: false
             )
         ]
@@ -509,168 +541,19 @@ public struct LiveTVView: View {
                 return "\(clock[0]):\(clock[1])"
             }
         }
-        return raw.isEmpty ? "21:00" : raw
+        return raw.isEmpty ? "20:00" : raw
     }
 }
 
-// MARK: - Vertical EPG Item Model
-public struct VerticalEpgItem: Identifiable, Hashable {
-    public let id: String
-    public let title: String
-    public let description: String
-    public let startTime: String
-    public let endTime: String
-    public let timeRange: String
-    public let isLive: Bool
-}
-
-// MARK: - Compact Channel Row (68pt Height)
-struct CompactChannelRow: View {
-    @ObservedObject var appState = AppState.shared
-    let channel: MediaItem
-    let index: Int
-    let isSelected: Bool
-    let onSelect: () -> Void
-    let onPlayFullscreen: () -> Void
-
-    var body: some View {
-        Button(action: {
-            if isSelected {
-                onPlayFullscreen()
-            } else {
-                onSelect()
-            }
-        }) {
-            HStack(spacing: 12) {
-                // Crisp channel logo inside neutral dark squircle (44pt x 44pt)
-                ZStack {
-                    if let logo = channel.logoUrl, let url = URL(string: logo) {
-                        AsyncImage(url: url) { phase in
-                            if let img = phase.image {
-                                img.resizable().scaledToFit()
-                            } else {
-                                Text("\(index)")
-                                    .font(.system(size: 13, weight: .bold, design: .monospaced))
-                                    .foregroundColor(.white.opacity(0.8))
-                            }
-                        }
-                    } else {
-                        Text("\(index)")
-                            .font(.system(size: 13, weight: .bold, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.8))
-                    }
-                }
-                .frame(width: 44, height: 44)
-                .background(Color.white.opacity(0.06))
-                .cornerRadius(10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.white.opacity(0.08), lineWidth: 1)
-                )
-
-                // Title + Current Program + Thin 2pt Monochrome Progress Bar
-                let curProg = appState.epgCache[channel.id]?.first
-                let progTitle = curProg?.title ?? channel.categoryName ?? "En direct"
-                let progress = curProg?.progress ?? 0.45
-
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(channel.title.cleanedIptvTitle)
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.white)
-                        .lineLimit(1)
-
-                    Text(progTitle)
-                        .font(.system(size: 11))
-                        .foregroundColor(.white.opacity(0.6))
-                        .lineLimit(1)
-
-                    // Thin 2pt Monochrome White/Silver Progress Bar
-                    GeometryReader { g in
-                        ZStack(alignment: .leading) {
-                            Capsule().fill(Color.white.opacity(0.12))
-                            Capsule().fill(Color.white.opacity(0.85))
-                                .frame(width: max(0, min(g.size.width, g.size.width * CGFloat(progress))))
-                        }
-                    }
-                    .frame(height: 2)
-                    .padding(.top, 2)
-                }
-
-                Spacer()
-
-                // Subtle Favorite Heart Icon
-                Button(action: {
-                    appState.toggleFavorite(channel)
-                }) {
-                    Image(systemName: appState.isFavorite(channel) ? "heart.fill" : "heart")
-                        .foregroundColor(appState.isFavorite(channel) ? .red : .white.opacity(0.35))
-                        .font(.system(size: 13))
-                        .padding(6)
-                }
-                .buttonStyle(.plain)
-            }
-            .padding(.horizontal, 10)
-            .frame(height: 68)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(isSelected ? Color.white.opacity(0.12) : Color.clear)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? Color.white.opacity(0.3) : Color.clear, lineWidth: 1)
-            )
-        }
-        .buttonStyle(.card)
-        .onPlayPauseCommand {
-            appState.toggleFavorite(channel)
-        }
-    }
-}
-
-// MARK: - Vertical EPG Timeline Row (With Connecting Line)
-struct VerticalTimelineRow: View {
-    let item: VerticalEpgItem
-    let isLast: Bool
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 14) {
-            // Time Pin (21:00, 22:45...)
-            Text(item.startTime)
-                .font(.system(size: 12, weight: .bold, design: .monospaced))
-                .foregroundColor(.white.opacity(0.8))
-                .frame(width: 48, alignment: .trailing)
-
-            // Vertical Connecting Line with Circle Node
-            VStack(spacing: 0) {
-                Circle()
-                    .fill(Color.white.opacity(0.5))
-                    .frame(width: 8, height: 8)
-                    .padding(.top, 4)
-
-                if !isLast {
-                    Rectangle()
-                        .fill(Color.white.opacity(0.15))
-                        .frame(width: 2)
-                        .frame(minHeight: 38)
-                }
-            }
-
-            // Show Title & Description
-            VStack(alignment: .leading, spacing: 2) {
-                Text(item.title)
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(.white)
-                    .lineLimit(1)
-
-                Text(item.timeRange)
-                    .font(.system(size: 10, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.5))
-            }
-            .padding(.bottom, 12)
-
-            Spacer()
-        }
-    }
+// MARK: - Hot EPG Item Model
+struct HotEpgItem: Identifiable, Hashable {
+    let id: String
+    let title: String
+    let description: String
+    let startTime: String
+    let endTime: String
+    let progress: Double
+    let isLive: Bool
 }
 
 // MARK: - Mini Embedded Player View

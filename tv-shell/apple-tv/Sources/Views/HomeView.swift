@@ -4,255 +4,239 @@ public struct HomeView: View {
     @ObservedObject var appState = AppState.shared
     @ObservedObject var cloud = CloudSyncService.shared
 
-    @State private var currentTime: String = ""
-    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-
     private var activePlaylist: Playlist? {
         appState.playlists.first(where: { $0.id == appState.activePlaylistId }) ?? appState.playlists.first
     }
 
+    private var macAddress: String {
+        cloud.registration?.mac ?? "DA:E5:4A:7C:18:3F"
+    }
+
+    private var expirationString: String {
+        if let exp = cloud.registration?.expiresAt {
+            let iso = ISO8601DateFormatter()
+            if let date = iso.date(from: exp) {
+                let df = DateFormatter()
+                df.dateFormat = "dd/MM/yyyy HH:mm"
+                return df.string(from: date)
+            }
+        }
+        return "14/12/2027 17:59"
+    }
+
     public var body: some View {
         ZStack {
-            // Background: Deep Obsidian / Charcoal (#0A0B0E)
-            Color(red: 0.04, green: 0.04, blue: 0.06)
+            // Deep Navy Blue Background (Hot IPTV / IBO Ice UI: #08101E)
+            Color(red: 0.035, green: 0.065, blue: 0.12)
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
+                Spacer().frame(height: 36)
+
                 // ==========================================
-                // TOP BAR: Minimal Monochrome Brand + Status
+                // 1. BRAND HEADER (Hot IPTV / IBO Player Style)
                 // ==========================================
-                HStack(alignment: .center) {
-                    // Minimal Monochrome Logo
-                    HStack(spacing: 10) {
-                        Image(systemName: "play.rectangle.on.rectangle")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(.white)
-                        Text("YESXTREAM")
-                            .font(.system(size: 20, weight: .black, design: .monospaced))
-                            .tracking(2.5)
-                            .foregroundColor(.white)
+                VStack(spacing: 8) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "flame.fill")
+                            .font(.system(size: 38))
+                            .foregroundColor(Color(red: 1.0, green: 0.55, blue: 0.15))
+
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("Xtream Code")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundColor(.white.opacity(0.7))
+                            Text("Hot IPTV")
+                                .font(.system(size: 34, weight: .black, design: .rounded))
+                                .foregroundColor(.white)
+                        }
                     }
 
-                    Spacer()
+                    // Current list label
+                    HStack(spacing: 6) {
+                        Image(systemName: "list.bullet.indent")
+                            .font(.system(size: 12))
+                            .foregroundColor(Color(red: 1.0, green: 0.7, blue: 0.2))
+                        Text("Current list :")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.85))
+                        Text(activePlaylist?.name.cleanedIptvTitle ?? "List 1")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(Color(red: 1.0, green: 0.75, blue: 0.25))
+                    }
+                    .padding(.top, 4)
 
-                    // Active Playlist Pill + Clock
-                    HStack(spacing: 16) {
-                        if let pl = activePlaylist {
-                            HStack(spacing: 8) {
-                                // Tiny Apple System Green #30D158 Active Status Dot
-                                Circle()
-                                    .fill(Color(red: 0.188, green: 0.820, blue: 0.345))
-                                    .frame(width: 8, height: 8)
+                    // Active & Expiration Status Pill
+                    HStack(spacing: 12) {
+                        HStack(spacing: 6) {
+                            Text("😊")
+                            Text("Active")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundColor(.white)
+                        }
 
-                                Text("\(pl.name.cleanedIptvTitle) • \(pl.type == .xtream ? "XTREAM" : "M3U")")
-                                    .font(.system(size: 13, weight: .bold, design: .monospaced))
-                                    .foregroundColor(.white.opacity(0.9))
-                            }
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 7)
-                            .background(Color.white.opacity(0.06))
-                            .cornerRadius(20)
+                        HStack(spacing: 6) {
+                            Text("⏳")
+                            Text("Expires on \(expirationString)")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundColor(.white.opacity(0.9))
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 6)
+                    .background(Color.black.opacity(0.55))
+                    .cornerRadius(16)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                    )
+                    .padding(.top, 4)
+                }
+
+                Spacer()
+
+                // ==========================================
+                // 2. MAIN 3 CARDS: Live TV, Movies, Series
+                // ==========================================
+                HStack(spacing: 36) {
+                    HotIptvCard(
+                        title: "Live TV",
+                        systemIcon: "tv",
+                        action: {
+                            appState.selectedTab = 1
+                        }
+                    )
+
+                    HotIptvCard(
+                        title: "Movies",
+                        systemIcon: "film",
+                        action: {
+                            appState.selectedTab = 2
+                        }
+                    )
+
+                    HotIptvCard(
+                        title: "Series",
+                        systemIcon: "play.tv",
+                        action: {
+                            appState.selectedTab = 3
+                        }
+                    )
+                }
+                .padding(.horizontal, 80)
+
+                Spacer()
+
+                // ==========================================
+                // 3. BOTTOM UTILITY PILL BUTTONS
+                // ==========================================
+                HStack(spacing: 24) {
+                    Button(action: {
+                        Task {
+                            await cloud.syncDevice()
+                            await appState.loadActivePlaylistCatalog(forceRefresh: true)
+                        }
+                    }) {
+                        Text("Refresh")
+                            .font(.system(size: 14, weight: .bold))
+                            .padding(.horizontal, 28)
+                            .padding(.vertical, 10)
+                            .background(Color.white.opacity(0.08))
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 20)
+                                RoundedRectangle(cornerRadius: 12)
                                     .stroke(Color.white.opacity(0.12), lineWidth: 1)
                             )
-                        }
-
-                        // Live Clock
-                        Text(currentTime)
-                            .font(.system(size: 15, weight: .bold, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.85))
                     }
+                    .buttonStyle(.plain)
+
+                    Button(action: {
+                        appState.selectedTab = 4
+                    }) {
+                        Text("Change Playlist")
+                            .font(.system(size: 14, weight: .bold))
+                            .padding(.horizontal, 28)
+                            .padding(.vertical, 10)
+                            .background(Color.white.opacity(0.08))
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(.plain)
+
+                    Button(action: {
+                        appState.selectedTab = 6
+                    }) {
+                        Text("Settings")
+                            .font(.system(size: 14, weight: .bold))
+                            .padding(.horizontal, 28)
+                            .padding(.vertical, 10)
+                            .background(Color.white.opacity(0.08))
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(.plain)
                 }
-                .padding(.horizontal, 50)
-                .padding(.top, 40)
-                .padding(.bottom, 20)
 
-                Spacer()
+                Spacer().frame(height: 32)
 
                 // ==========================================
-                // CENTER ROW: 4 Monochrome Glass Cards
+                // 4. FOOTER: MAC & DISCLAIMER
                 // ==========================================
-                HStack(spacing: 28) {
-                    HomeHeroCard(
-                        title: "Live TV",
-                        subtitle: "\(appState.channels.count) Channels",
-                        icon: "tv",
-                        badge: appState.channels.isEmpty ? nil : "\(appState.channels.count)",
-                        action: {
-                            appState.currentDestination = .liveTV
-                        }
-                    )
+                VStack(spacing: 4) {
+                    Text("Your MAC : \(macAddress)")
+                        .font(.system(size: 12, weight: .medium, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.7))
 
-                    HomeHeroCard(
-                        title: "Movies",
-                        subtitle: "\(appState.vodMovies.count) Films",
-                        icon: "film",
-                        badge: appState.vodMovies.isEmpty ? nil : "\(appState.vodMovies.count)",
-                        action: {
-                            appState.currentDestination = .movies
-                        }
-                    )
-
-                    HomeHeroCard(
-                        title: "Series",
-                        subtitle: "\(appState.seriesList.count) Series",
-                        icon: "play.tv",
-                        badge: appState.seriesList.isEmpty ? nil : "\(appState.seriesList.count)",
-                        action: {
-                            appState.currentDestination = .series
-                        }
-                    )
-
-                    HomeHeroCard(
-                        title: "Playlists",
-                        subtitle: "\(appState.playlists.count) Configured",
-                        icon: "list.bullet.rectangle",
-                        badge: "\(appState.playlists.count)",
-                        action: {
-                            appState.currentDestination = .playlists
-                        }
-                    )
+                    Text("HotIPTV.app © is just a media player, No channels included")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(Color(red: 0.9, green: 0.45, blue: 0.2))
                 }
-                .padding(.horizontal, 50)
-
-                Spacer()
-
-                // ==========================================
-                // BOTTOM UTILITY ROW: 3 Small Glass Circles
-                // ==========================================
-                HStack(spacing: 32) {
-                    HomeUtilityCircleButton(
-                        icon: "arrow.clockwise",
-                        label: "Sync",
-                        action: {
-                            Task {
-                                await cloud.syncDevice()
-                                await appState.loadActivePlaylistCatalog(forceRefresh: true)
-                            }
-                        }
-                    )
-
-                    HomeUtilityCircleButton(
-                        icon: "magnifyingglass",
-                        label: "Search",
-                        action: {
-                            appState.currentDestination = .search
-                        }
-                    )
-
-                    HomeUtilityCircleButton(
-                        icon: "gearshape",
-                        label: "Settings",
-                        action: {
-                            appState.currentDestination = .settings
-                        }
-                    )
-                }
-                .padding(.bottom, 48)
+                .padding(.bottom, 24)
             }
         }
-        .onAppear {
-            updateClock()
-        }
-        .onReceive(timer) { _ in
-            updateClock()
-        }
-    }
-
-    private func updateClock() {
-        let df = DateFormatter()
-        df.dateFormat = "HH:mm"
-        currentTime = df.string(from: Date())
     }
 }
 
-// MARK: - Monochrome Glass Hero Card (tvOS Spec)
-struct HomeHeroCard: View {
+// MARK: - Hot IPTV Card Component
+struct HotIptvCard: View {
     let title: String
-    let subtitle: String
-    let icon: String
-    var badge: String? = nil
+    let systemIcon: String
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 18) {
-                HStack {
-                    // Crisp pure white SF Symbol icon at 80% opacity
-                    Image(systemName: icon)
-                        .font(.system(size: 42, weight: .medium))
-                        .foregroundColor(.white.opacity(0.85))
-
-                    Spacer()
-
-                    if let b = badge {
-                        Text(b)
-                            .font(.system(size: 12, weight: .bold, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.65))
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
-                            .background(Color.white.opacity(0.08))
-                            .cornerRadius(10)
-                    }
-                }
-
+            VStack(spacing: 20) {
                 Spacer()
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(title)
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.white)
+                Image(systemName: systemIcon)
+                    .font(.system(size: 64, weight: .semibold))
+                    .foregroundColor(.white)
 
-                    Text(subtitle)
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.white.opacity(0.65))
-                }
+                Text(title)
+                    .font(.system(size: 26, weight: .bold))
+                    .foregroundColor(.white)
+
+                Spacer()
             }
-            .padding(26)
-            .frame(maxWidth: .infinity)
-            .frame(height: 260)
+            .frame(width: 280, height: 230)
             .background(
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(Color.white.opacity(0.05))
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color(red: 0.08, green: 0.13, blue: 0.22).opacity(0.95))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 24)
-                    .stroke(Color.white.opacity(0.10), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Color.white.opacity(0.15), lineWidth: 1.5)
             )
         }
         .buttonStyle(.card)
-    }
-}
-
-// MARK: - Home Utility Circle Button (58pt x 58pt)
-struct HomeUtilityCircleButton: View {
-    let icon: String
-    let label: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 8) {
-                ZStack {
-                    Circle()
-                        .fill(Color.white.opacity(0.06))
-                        .frame(width: 58, height: 58)
-                        .overlay(
-                            Circle()
-                                .stroke(Color.white.opacity(0.12), lineWidth: 1)
-                        )
-
-                    Image(systemName: icon)
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(.white.opacity(0.85))
-                }
-
-                Text(label)
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.6))
-            }
-        }
-        .buttonStyle(.plain)
     }
 }
