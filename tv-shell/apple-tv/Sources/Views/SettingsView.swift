@@ -41,7 +41,7 @@ public struct SettingsView: View {
                 HStack {
                     Text("Subscription Status")
                     Spacer()
-                    Text(cloud.registration?.status.uppercased() ?? "ACTIVE")
+                    Text(cloud.registration?.status?.uppercased() ?? "ACTIVE")
                         .foregroundColor(cloud.registration?.isExpired == true ? .red : .green)
                 }
                 HStack {

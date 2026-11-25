@@ -45,7 +45,7 @@ public struct PlaylistsView: View {
                             Circle()
                                 .fill(reg.isExpired ? Color.red : Color.green)
                                 .frame(width: 8, height: 8)
-                            Text(reg.status.uppercased())
+                            Text((reg.status ?? "trial").uppercased())
                                 .font(.system(size: 12, weight: .bold))
                                 .foregroundColor(reg.isExpired ? .red : .green)
                         }
