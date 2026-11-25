@@ -5,6 +5,8 @@ public struct PlaylistsView: View {
     @ObservedObject var appState = AppState.shared
 
     @State private var showAddModal = false
+    @State private var showEditModal = false
+    @State private var editingPlaylistId: String?
     @State private var playlistName = ""
     @State private var serverUrl = ""
     @State private var username = ""
@@ -197,14 +199,22 @@ public struct PlaylistsView: View {
                     .frame(maxWidth: .infinity)
                 } else {
                     List(appState.playlists) { p in
-                        HStack {
+                        HStack(spacing: 16) {
+                            Image(systemName: p.id == appState.activePlaylistId ? "checkmark.circle.fill" : "circle")
+                                .foregroundColor(p.id == appState.activePlaylistId ? .green : .secondary)
+                                .font(.title3)
+
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack {
                                     if p.id == appState.activePlaylistId {
-                                        Text("● ACTIVE")
+                                        Text("CONNECTED")
                                             .font(.caption2)
-                                            .fontWeight(.bold)
+                                            .fontWeight(.heavy)
+                                            .padding(.horizontal, 6)
+                                            .padding(.vertical, 2)
+                                            .background(Color.green.opacity(0.2))
                                             .foregroundColor(.green)
+                                            .cornerRadius(4)
                                     }
                                     Text(p.name)
                                         .font(.headline)
@@ -218,18 +228,40 @@ public struct PlaylistsView: View {
                                 Text(p.url)
                                     .font(.caption)
                                     .foregroundColor(.secondary)
+                                    .lineLimit(1)
                             }
                             Spacer()
-                            if p.id != appState.activePlaylistId {
-                                Button("Select") {
-                                    appState.activePlaylistId = p.id
-                                    appState.savePlaylists()
-                                    Task {
-                                        await appState.loadChannelsForActivePlaylist()
+
+                            HStack(spacing: 12) {
+                                if p.id != appState.activePlaylistId {
+                                    Button("Connect") {
+                                        appState.selectActivePlaylist(id: p.id)
                                     }
+                                    .buttonStyle(.borderedProminent)
                                 }
+
+                                Button(action: {
+                                    editingPlaylistId = p.id
+                                    playlistName = p.name
+                                    serverUrl = p.url
+                                    username = p.username ?? ""
+                                    password = p.password ?? ""
+                                    showEditModal = true
+                                }) {
+                                    Image(systemName: "pencil")
+                                }
+                                .buttonStyle(.bordered)
+
+                                Button(action: {
+                                    appState.deletePlaylist(id: p.id)
+                                }) {
+                                    Image(systemName: "trash")
+                                }
+                                .buttonStyle(.bordered)
+                                .foregroundColor(.red)
                             }
                         }
+                        .padding(.vertical, 6)
                     }
                 }
             }
@@ -238,6 +270,41 @@ public struct PlaylistsView: View {
         }
         .padding(.horizontal, 30)
         .padding(.vertical, 10)
+        .sheet(isPresented: $showEditModal) {
+            VStack(spacing: 20) {
+                Text("Edit Playlist")
+                    .font(.title2)
+                    .fontWeight(.bold)
+
+                TextField("Playlist Name", text: $playlistName)
+                TextField("Server URL (http://example.com:80)", text: $serverUrl)
+                TextField("Username", text: $username)
+                SecureField("Password", text: $password)
+
+                HStack(spacing: 20) {
+                    Button("Cancel") {
+                        showEditModal = false
+                    }
+                    Button("Save Changes") {
+                        if let id = editingPlaylistId {
+                            let updated = Playlist(
+                                id: id,
+                                name: playlistName.isEmpty ? "Xtream Service" : playlistName,
+                                type: .xtream,
+                                url: serverUrl,
+                                username: username,
+                                password: password
+                            )
+                            appState.updatePlaylist(updated)
+                        }
+                        showEditModal = false
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+            }
+            .padding(40)
+            .frame(width: 600)
+        }
         .sheet(isPresented: $showAddModal) {
             VStack(spacing: 20) {
                 Text("Add Xtream Playlist")

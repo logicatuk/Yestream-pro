@@ -68,6 +68,44 @@ public class AppState: ObservableObject {
         }
     }
 
+    public func updatePlaylist(_ p: Playlist) {
+        if let idx = playlists.firstIndex(where: { $0.id == p.id }) {
+            playlists[idx] = p
+            savePlaylists()
+            if activePlaylistId == p.id {
+                Task {
+                    await loadChannelsForActivePlaylist()
+                    await loadVodForActivePlaylist()
+                    await loadSeriesForActivePlaylist()
+                }
+            }
+        }
+    }
+
+    public func deletePlaylist(id: String) {
+        playlists.removeAll(where: { $0.id == id })
+        if activePlaylistId == id {
+            activePlaylistId = playlists.first?.id
+            Task {
+                await loadChannelsForActivePlaylist()
+                await loadVodForActivePlaylist()
+                await loadSeriesForActivePlaylist()
+            }
+        }
+        savePlaylists()
+    }
+
+    public func selectActivePlaylist(id: String) {
+        guard activePlaylistId != id else { return }
+        activePlaylistId = id
+        savePlaylists()
+        Task {
+            await loadChannelsForActivePlaylist()
+            await loadVodForActivePlaylist()
+            await loadSeriesForActivePlaylist()
+        }
+    }
+
     public func loadChannelsForActivePlaylist() async {
         guard let active = playlists.first(where: { $0.id == activePlaylistId }) else { return }
         self.isLoadingChannels = true
