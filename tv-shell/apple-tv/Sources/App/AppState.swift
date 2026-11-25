@@ -119,7 +119,7 @@ public class AppState: ObservableObject {
             playlists[idx] = p
             savePlaylists()
             Task {
-                await CloudSyncService.shared.pushPlaylistToCloud(p)
+                await CloudSyncService.shared.updatePlaylistOnCloud(p)
             }
             if activePlaylistId == p.id {
                 Task {

@@ -264,12 +264,57 @@ public class CloudSyncService: ObservableObject {
 
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: payload)
-            let (data, response) = try await session.data(for: request)
+            let (_, response) = try await session.data(for: request)
             if let httpRes = response as? HTTPURLResponse {
                 print("[CloudSync] POST playlist status: \(httpRes.statusCode)")
             }
         } catch {
             print("[CloudSync] Push playlist error: \(error)")
+        }
+    }
+
+    public func updatePlaylistOnCloud(_ playlist: Playlist) async {
+        guard let reg = registration, let credential = reg.credential, !credential.isEmpty else {
+            return
+        }
+        guard let url = URL(string: "\(Self.endpoint)/api/v1/device/playlists/\(playlist.id)") else {
+            return
+        }
+
+        var payload: [String: Any] = [
+            "name": playlist.name,
+            "type": playlist.type == .xtream ? "xtream" : "m3u"
+        ]
+        if playlist.type == .xtream {
+            payload["host"] = playlist.url
+            payload["xtreamHost"] = playlist.url
+            payload["username"] = playlist.username ?? ""
+            payload["xtreamUser"] = playlist.username ?? ""
+            payload["password"] = playlist.password ?? ""
+            payload["xtreamPass"] = playlist.password ?? ""
+            if let u = playlist.username, let p = playlist.password {
+                payload["url"] = "\(playlist.url)/get.php?username=\(u)&password=\(p)&type=m3u_plus"
+            }
+        } else {
+            payload["url"] = playlist.url
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
+        request.setValue("Bearer \(credential)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let devId = reg.deviceId {
+            request.setValue(devId, forHTTPHeaderField: "x-device-id")
+        }
+
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+            let (_, response) = try await session.data(for: request)
+            if let httpRes = response as? HTTPURLResponse {
+                print("[CloudSync] PATCH playlist status: \(httpRes.statusCode)")
+            }
+        } catch {
+            print("[CloudSync] PATCH playlist error: \(error)")
         }
     }
 }

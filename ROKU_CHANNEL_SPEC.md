@@ -1378,12 +1378,16 @@ Application settings including connectivity, parental lock, and about.
 |----------|--------|---------|---------------|
 | `/api/v1/devices/register` | POST | Device registration | No (first time) / Yes (re-register) |
 | `/api/v1/device/entitlement` | GET | Check license status | Yes (Bearer token) |
-| `/api/v1/device/sync` | GET | Sync playlists | Yes (Bearer token) |
+| `/api/v1/device/sync` | GET | Sync playlists & entitlement | Yes (Bearer token) |
 | `/api/v1/device/configuration` | GET | Get configuration | Yes (Bearer token) |
-| `/api/v1/device/playlists` | POST | Create/update playlist | Yes (Bearer token) |
-| `/api/v1/device/playlists/:id` | DELETE | Delete playlist | Yes (Bearer token) |
-| `/api/v1/device/events` | GET | SSE stream (not implemented) | Yes (Bearer token) |
+| `/api/v1/device/playlists` | POST | Create/upsert playlist | Yes (Bearer token) |
+| `/api/v1/device/playlists/:id` | PATCH / PUT | Edit playlist (partial/full) | Yes (Bearer token) |
+| `/api/v1/device/playlists/:id` | DELETE | Delete playlist (all sources) | Yes (Bearer token) |
+| `/api/v1/device/playlists/sync` | POST | Bulk two-way playlist sync | Yes (Bearer token) |
+| `/api/v1/device/events` | GET | SSE stream (optional real-time) | Yes (Bearer token) |
 | `/api/v1/device/heartbeat` | POST | Heartbeat | Yes (Bearer token) |
+
+> **Note on Permissions**: All playlist locking and reseller delete/edit restrictions have been removed. Any playlist (customer or reseller-managed) can be edited or deleted freely via `/api/v1/device/playlists/:id`.
 
 ### Authentication Flow
 1. App launches → `registerDevice()` called
