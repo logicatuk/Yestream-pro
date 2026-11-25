@@ -109,6 +109,7 @@ public class AppState: ObservableObject {
         }
         savePlaylists()
         Task {
+            await CloudSyncService.shared.pushPlaylistToCloud(p)
             await loadActivePlaylistCatalog(forceRefresh: true)
         }
     }
@@ -117,6 +118,9 @@ public class AppState: ObservableObject {
         if let idx = playlists.firstIndex(where: { $0.id == p.id }) {
             playlists[idx] = p
             savePlaylists()
+            Task {
+                await CloudSyncService.shared.pushPlaylistToCloud(p)
+            }
             if activePlaylistId == p.id {
                 Task {
                     await loadActivePlaylistCatalog(forceRefresh: true)
@@ -137,6 +141,9 @@ public class AppState: ObservableObject {
             }
         }
         savePlaylists()
+        Task {
+            await CloudSyncService.shared.deletePlaylistFromCloud(id: id)
+        }
     }
 
     public func selectActivePlaylist(id: String, forceRefresh: Bool = false) {

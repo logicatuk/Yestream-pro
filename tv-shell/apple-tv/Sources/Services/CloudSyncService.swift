@@ -190,4 +190,79 @@ public class CloudSyncService: ObservableObject {
         try? await Task.sleep(nanoseconds: 3_500_000_000)
         self.syncMessage = ""
     }
+
+    public func deletePlaylistFromCloud(id: String) async {
+        guard let reg = registration, let credential = reg.credential, !credential.isEmpty else {
+            return
+        }
+        guard let url = URL(string: "\(Self.endpoint)/api/v1/device/playlists/\(id)") else {
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.setValue("Bearer \(credential)", forHTTPHeaderField: "Authorization")
+        if let devId = reg.deviceId {
+            request.setValue(devId, forHTTPHeaderField: "x-device-id")
+        }
+
+        do {
+            let (data, response) = try await session.data(for: request)
+            if let httpRes = response as? HTTPURLResponse {
+                print("[CloudSync] DELETE playlist \(id) status: \(httpRes.statusCode)")
+                if !(200...299).contains(httpRes.statusCode) {
+                    if let errStr = String(data: data, encoding: .utf8) {
+                        print("[CloudSync] DELETE error response: \(errStr)")
+                    }
+                }
+            }
+        } catch {
+            print("[CloudSync] DELETE playlist error: \(error)")
+        }
+    }
+
+    public func pushPlaylistToCloud(_ playlist: Playlist) async {
+        guard let reg = registration, let credential = reg.credential, !credential.isEmpty else {
+            return
+        }
+        guard let url = URL(string: "\(Self.endpoint)/api/v1/device/playlists") else {
+            return
+        }
+
+        var payload: [String: Any] = [
+            "name": playlist.name,
+            "type": playlist.type == .xtream ? "xtream" : "m3u"
+        ]
+        if playlist.id.starts(with: "pl_") {
+            payload["id"] = playlist.id
+        }
+        if playlist.type == .xtream {
+            payload["host"] = playlist.url
+            payload["username"] = playlist.username ?? ""
+            payload["password"] = playlist.password ?? ""
+            if let u = playlist.username, let p = playlist.password {
+                payload["url"] = "\(playlist.url)/get.php?username=\(u)&password=\(p)&type=m3u_plus"
+            }
+        } else {
+            payload["url"] = playlist.url
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(credential)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let devId = reg.deviceId {
+            request.setValue(devId, forHTTPHeaderField: "x-device-id")
+        }
+
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+            let (data, response) = try await session.data(for: request)
+            if let httpRes = response as? HTTPURLResponse {
+                print("[CloudSync] POST playlist status: \(httpRes.statusCode)")
+            }
+        } catch {
+            print("[CloudSync] Push playlist error: \(error)")
+        }
+    }
 }
