@@ -141,14 +141,21 @@ public class CloudSyncService: ObservableObject {
                     if let cloudLists = syncResp.playlists, !cloudLists.isEmpty {
                         var localPlaylists: [Playlist] = []
                         for cp in cloudLists {
-                            let type: PlaylistType = cp.type.lowercased() == "m3u" ? .m3u : .xtream
+                            let rawUrl = cp.url ?? cp.host ?? ""
+                            let (u, pass) = XtreamService.extractCredentials(from: rawUrl, user: cp.username, pass: cp.password)
+                            
+                            // If credentials exist (either in URL or fields), treat as Xtream with clean host URL
+                            let isXtream = !u.isEmpty || cp.type.lowercased() == "xtream"
+                            let cleanUrl = isXtream ? XtreamService.normalizeServerUrl(rawUrl) : rawUrl
+                            let type: PlaylistType = isXtream ? .xtream : .m3u
+
                             let p = Playlist(
                                 id: cp.id,
-                                name: cp.name.isEmpty ? "Cloud Playlist" : cp.name,
+                                name: cp.name.isEmpty ? (isXtream ? "Xtream Service" : "Cloud Playlist") : cp.name,
                                 type: type,
-                                url: cp.url ?? cp.host ?? "",
-                                username: cp.username,
-                                password: cp.password
+                                url: cleanUrl,
+                                username: isXtream ? (u.isEmpty ? nil : u) : nil,
+                                password: isXtream ? (pass.isEmpty ? nil : pass) : nil
                             )
                             localPlaylists.append(p)
                         }

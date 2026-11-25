@@ -146,6 +146,14 @@ public struct MovieDetailView: View {
     @ObservedObject var appState = AppState.shared
     @Environment(\.dismiss) var dismiss
 
+    enum MovieDetailFocus: Hashable {
+        case back
+        case favorite
+        case watch
+        case subtitles
+    }
+
+    @FocusState private var focusedField: MovieDetailFocus?
     @State private var detail: VodDetail?
     @State private var isLoading: Bool = true
     @State private var isPlaying: Bool = false
@@ -190,6 +198,7 @@ public struct MovieDetailView: View {
                             .padding(.vertical, 8)
                         }
                         .buttonStyle(.bordered)
+                        .focused($focusedField, equals: .back)
 
                         Spacer()
 
@@ -206,8 +215,10 @@ public struct MovieDetailView: View {
                             .padding(.vertical, 8)
                         }
                         .buttonStyle(.bordered)
+                        .focused($focusedField, equals: .favorite)
                     }
                     .padding(.top, 10)
+                    .focusSection()
 
                     // Hero Content
                     HStack(alignment: .top, spacing: 36) {
@@ -290,6 +301,7 @@ public struct MovieDetailView: View {
                                     .padding(.vertical, 12)
                                 }
                                 .buttonStyle(.borderedProminent)
+                                .focused($focusedField, equals: .watch)
 
                                 Button(action: {
                                     showSubtitles.toggle()
@@ -307,6 +319,7 @@ public struct MovieDetailView: View {
                                     .padding(.vertical, 12)
                                 }
                                 .buttonStyle(.bordered)
+                                .focused($focusedField, equals: .subtitles)
                             }
                             .padding(.vertical, 4)
 
@@ -340,6 +353,7 @@ public struct MovieDetailView: View {
                                 .font(.footnote)
                             }
                         }
+                        .focusSection()
                     }
 
                     // SUBDL SUBTITLES DRAWER
@@ -392,11 +406,13 @@ public struct MovieDetailView: View {
                         .padding(20)
                         .background(Color.white.opacity(0.06))
                         .cornerRadius(16)
+                        .focusSection()
                     }
                 }
                 .padding(40)
             }
         }
+        .defaultFocus($focusedField, .watch)
         .task {
             await loadMovieDetails()
         }

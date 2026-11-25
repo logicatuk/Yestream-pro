@@ -7,6 +7,7 @@ public struct PlaylistsView: View {
     @State private var showAddModal = false
     @State private var showEditModal = false
     @State private var editingPlaylistId: String?
+    @State private var playlistType: PlaylistType = .xtream
     @State private var playlistName = ""
     @State private var serverUrl = ""
     @State private var username = ""
@@ -250,9 +251,17 @@ public struct PlaylistsView: View {
                                 Button(action: {
                                     editingPlaylistId = p.id
                                     playlistName = p.name
-                                    serverUrl = p.url
-                                    username = p.username ?? ""
-                                    password = p.password ?? ""
+                                    let (u, pass) = XtreamService.extractCredentials(from: p.url, user: p.username, pass: p.password)
+                                    username = u
+                                    password = pass
+
+                                    if !u.isEmpty || p.type == .xtream {
+                                        playlistType = .xtream
+                                        serverUrl = XtreamService.normalizeServerUrl(p.url)
+                                    } else {
+                                        playlistType = .m3u
+                                        serverUrl = p.url
+                                    }
                                     showEditModal = true
                                 }) {
                                     Image(systemName: "pencil")
@@ -261,7 +270,7 @@ public struct PlaylistsView: View {
 
                                 Button(action: {
                                     appState.deletePlaylist(id: p.id)
-                                }) {
+                                } ) {
                                     Image(systemName: "trash")
                                 }
                                 .buttonStyle(.bordered)
@@ -283,10 +292,22 @@ public struct PlaylistsView: View {
                     .font(.title2)
                     .fontWeight(.bold)
 
+                Picker("Playlist Type", selection: $playlistType) {
+                    Text("Xtream Codes API").tag(PlaylistType.xtream)
+                    Text("M3U Playlist").tag(PlaylistType.m3u)
+                }
+                .pickerStyle(.segmented)
+                .padding(.bottom, 6)
+
                 TextField("Playlist Name", text: $playlistName)
-                TextField("Server URL (http://example.com:80)", text: $serverUrl)
-                TextField("Username", text: $username)
-                SecureField("Password", text: $password)
+
+                if playlistType == .xtream {
+                    TextField("Server URL (http://example.com:80)", text: $serverUrl)
+                    TextField("Username", text: $username)
+                    SecureField("Password", text: $password)
+                } else {
+                    TextField("M3U Playlist URL (http://.../playlist.m3u8)", text: $serverUrl)
+                }
 
                 HStack(spacing: 20) {
                     Button("Cancel") {
@@ -294,13 +315,18 @@ public struct PlaylistsView: View {
                     }
                     Button("Save Changes") {
                         if let id = editingPlaylistId {
+                            let (u, pass) = XtreamService.extractCredentials(from: serverUrl, user: username, pass: password)
+                            let finalUser = playlistType == .xtream ? (username.isEmpty ? u : username) : nil
+                            let finalPass = playlistType == .xtream ? (password.isEmpty ? pass : password) : nil
+                            let cleanUrl = (playlistType == .xtream) ? XtreamService.normalizeServerUrl(serverUrl) : serverUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+
                             let updated = Playlist(
                                 id: id,
-                                name: playlistName.isEmpty ? "Xtream Service" : playlistName,
-                                type: .xtream,
-                                url: serverUrl,
-                                username: username,
-                                password: password
+                                name: playlistName.isEmpty ? (playlistType == .xtream ? "Xtream Service" : "M3U Playlist") : playlistName,
+                                type: playlistType,
+                                url: cleanUrl,
+                                username: finalUser,
+                                password: finalPass
                             )
                             appState.updatePlaylist(updated)
                         }
@@ -314,21 +340,44 @@ public struct PlaylistsView: View {
         }
         .sheet(isPresented: $showAddModal) {
             VStack(spacing: 20) {
-                Text("Add Xtream Playlist")
+                Text("Add Playlist")
                     .font(.title2)
                     .fontWeight(.bold)
 
+                Picker("Playlist Type", selection: $playlistType) {
+                    Text("Xtream Codes API").tag(PlaylistType.xtream)
+                    Text("M3U Playlist").tag(PlaylistType.m3u)
+                }
+                .pickerStyle(.segmented)
+                .padding(.bottom, 6)
+
                 TextField("Playlist Name", text: $playlistName)
-                TextField("Server URL (http://example.com:80)", text: $serverUrl)
-                TextField("Username", text: $username)
-                SecureField("Password", text: $password)
+
+                if playlistType == .xtream {
+                    TextField("Server URL (http://example.com:80)", text: $serverUrl)
+                    TextField("Username", text: $username)
+                    SecureField("Password", text: $password)
+                } else {
+                    TextField("M3U Playlist URL (http://.../playlist.m3u8)", text: $serverUrl)
+                }
 
                 HStack {
                     Button("Cancel") {
                         showAddModal = false
                     }
                     Button("Save Playlist") {
-                        let p = Playlist(name: playlistName.isEmpty ? "Xtream Service" : playlistName, type: .xtream, url: serverUrl, username: username, password: password)
+                        let (u, pass) = XtreamService.extractCredentials(from: serverUrl, user: username, pass: password)
+                        let finalUser = playlistType == .xtream ? (username.isEmpty ? u : username) : nil
+                        let finalPass = playlistType == .xtream ? (password.isEmpty ? pass : password) : nil
+                        let cleanUrl = (playlistType == .xtream) ? XtreamService.normalizeServerUrl(serverUrl) : serverUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+
+                        let p = Playlist(
+                            name: playlistName.isEmpty ? (playlistType == .xtream ? "Xtream Service" : "M3U Playlist") : playlistName,
+                            type: playlistType,
+                            url: cleanUrl,
+                            username: finalUser,
+                            password: finalPass
+                        )
                         appState.addPlaylist(p)
                         showAddModal = false
                     }
