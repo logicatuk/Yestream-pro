@@ -196,9 +196,11 @@ export class ProviderTransport {
             }
             return route === 'parse' ? result : (result?.payload !== undefined ? result.payload : result);
         } catch (error) {
-            // If backend is unreachable or dead, seamlessly fallback to direct provider fetch
+            // If backend is unreachable or dead (fetch failed), seamlessly fallback to direct provider fetch
             if (!signal.aborted && (route === 'xtream' || route === 'parse')) {
-                return this.directRequest(source, route, params, signal, endpoint);
+                if (!(error instanceof ProviderRequestError)) {
+                    return this.directRequest(source, route, params, signal, endpoint);
+                }
             }
             throw error;
         }
