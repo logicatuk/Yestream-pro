@@ -6,6 +6,44 @@ public struct XtreamCategory: Identifiable, Codable {
     public var id: String { category_id }
 }
 
+public struct EpgProgram: Identifiable, Codable, Hashable {
+    public let id: String
+    public let title: String
+    public let description: String
+    public let start: String
+    public let end: String
+    public let startTimestamp: Double?
+    public let stopTimestamp: Double?
+
+    public var progress: Double {
+        guard let s = startTimestamp, let e = stopTimestamp, e > s else { return 0.0 }
+        let now = Date().timeIntervalSince1970
+        if now <= s { return 0.0 }
+        if now >= e { return 1.0 }
+        return (now - s) / (e - s)
+    }
+
+    public var formattedTimeRange: String {
+        let sTime = formatTime(start)
+        let eTime = formatTime(end)
+        if !sTime.isEmpty && !eTime.isEmpty {
+            return "\(sTime) - \(eTime)"
+        }
+        return ""
+    }
+
+    private func formatTime(_ raw: String) -> String {
+        let parts = raw.split(separator: " ")
+        if parts.count >= 2 {
+            let timeParts = parts[1].split(separator: ":")
+            if timeParts.count >= 2 {
+                return "\(timeParts[0]):\(timeParts[1])"
+            }
+        }
+        return raw
+    }
+}
+
 public class XtreamService {
     /// Normalizes server URL by extracting scheme + host + port and stripping /get.php, /player_api.php, etc.
     public static func normalizeServerUrl(_ raw: String) -> String {
@@ -230,5 +268,51 @@ public class XtreamService {
         }
 
         return episodes.sorted { ($0.seasonNum, $0.episodeNum) < ($1.seasonNum, $1.episodeNum) }
+    }
+
+    public static func fetchChannelEpg(serverUrl: String, user: String, pass: String, streamId: String) async -> [EpgProgram] {
+        let base = normalizeServerUrl(serverUrl)
+        let (u, p) = extractCredentials(from: serverUrl, user: user, pass: pass)
+        guard let url = URL(string: "\(base)/player_api.php?username=\(u)&password=\(p)&action=get_short_epg&stream_id=\(streamId)") else {
+            return []
+        }
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let listings = json["epg_listings"] as? [[String: Any]] else {
+                return []
+            }
+            return listings.compactMap { dict in
+                let rawTitle = dict["title"] as? String ?? ""
+                let rawDesc = dict["description"] as? String ?? ""
+                let id = dict["id"] as? String ?? UUID().uuidString
+                let start = dict["start"] as? String ?? ""
+                let end = dict["end"] as? String ?? ""
+                let sTs = (dict["start_timestamp"] as? String).flatMap(Double.init) ?? (dict["start_timestamp"] as? Double)
+                let eTs = (dict["stop_timestamp"] as? String).flatMap(Double.init) ?? (dict["stop_timestamp"] as? Double)
+
+                let title = decodeBase64OrPlain(rawTitle)
+                let desc = decodeBase64OrPlain(rawDesc)
+
+                return EpgProgram(
+                    id: id,
+                    title: title,
+                    description: desc,
+                    start: start,
+                    end: end,
+                    startTimestamp: sTs,
+                    stopTimestamp: eTs
+                )
+            }
+        } catch {
+            return []
+        }
+    }
+
+    public static func decodeBase64OrPlain(_ text: String) -> String {
+        if let data = Data(base64Encoded: text), let decoded = String(data: data, encoding: .utf8), !decoded.isEmpty {
+            return decoded
+        }
+        return text
     }
 }

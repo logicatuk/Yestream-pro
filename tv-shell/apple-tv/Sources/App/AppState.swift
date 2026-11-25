@@ -50,9 +50,31 @@ public class AppState: ObservableObject {
     @Published public var favorites: [MediaItem] = []
     @Published public var history: [MediaItem] = []
 
+    // EPG Cache
+    @Published public var epgCache: [String: [EpgProgram]] = [:]
+
     // Player & Search
     @Published public var currentlyPlaying: MediaItem?
     @Published public var searchQuery: String = ""
+
+    public func channelCount(for categoryId: String) -> Int {
+        if categoryId == "FAVORITES" {
+            return favorites.filter { $0.kind == .live }.count
+        }
+        if categoryId == "ALL" {
+            return channels.count
+        }
+        return channels.filter { $0.categoryId == categoryId }.count
+    }
+
+    public func loadEpg(for channel: MediaItem) async {
+        guard epgCache[channel.id] == nil else { return }
+        guard let active = playlists.first(where: { $0.id == activePlaylistId }) else { return }
+        let (u, p) = XtreamService.extractCredentials(from: active.url, user: active.username, pass: active.password)
+        guard !u.isEmpty && !p.isEmpty else { return }
+        let programs = await XtreamService.fetchChannelEpg(serverUrl: active.url, user: u, pass: p, streamId: channel.id)
+        self.epgCache[channel.id] = programs
+    }
 
     public init() {
         loadLocalPlaylists()
