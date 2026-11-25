@@ -77,3 +77,207 @@
         min-width: 360px;
     }
 }
+
+/* =========================================================
+   SUBTITLES DRAWER FOR TV VOD PLAYER (Glassmorphic)
+   Chromium-68 Safe
+   ========================================================= */
+
+.player-subtitles-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 480px;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.96) 0%, rgba(8, 12, 22, 0.98) 100%);
+    border-left: 2px solid rgba(56, 189, 248, 0.3);
+    box-shadow: -15px 0 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(56, 189, 248, 0.1);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    padding: 36px 30px;
+    box-sizing: border-box;
+}
+
+.subtitles-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.subtitles-badge {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #38bdf8;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.subtitles-title-box h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    color: #f8fafc;
+}
+
+.subtitles-close-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #94a3b8;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.subtitles-close-btn:focus,
+.subtitles-close-btn:hover {
+    outline: 3px solid #38bdf8;
+    background: rgba(239, 68, 68, 0.3);
+    color: #ffffff;
+}
+
+.subtitles-sync-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1e293b;
+    padding: 12px 18px;
+    border-radius: 14px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sync-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #94a3b8;
+}
+
+.sync-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    border-radius: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.sync-btn:focus,
+.sync-btn:hover {
+    outline: 2px solid #38bdf8;
+    background: #0284c7;
+}
+
+.sync-value {
+    font-size: 15px;
+    font-weight: 800;
+    color: #38bdf8;
+    font-family: monospace;
+}
+
+.subtitles-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.subtitle-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 10px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.15s ease;
+}
+
+.subtitle-item:focus,
+.subtitle-item:hover {
+    outline: 3px solid #38bdf8;
+    background: rgba(56, 189, 248, 0.15);
+    border-color: #38bdf8;
+}
+
+.subtitle-item.selected {
+    border-color: #38bdf8;
+    background: rgba(2, 132, 199, 0.25);
+}
+
+.sub-radio {
+    font-size: 18px;
+    color: #38bdf8;
+    margin-right: 14px;
+}
+
+.sub-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.sub-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+.sub-lang-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.sub-lang {
+    font-size: 16px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-right: 10px;
+}
+
+.sub-tag {
+    font-size: 10px;
+    font-weight: 800;
+    background: rgba(56, 189, 248, 0.2);
+    border: 1px solid rgba(56, 189, 248, 0.5);
+    color: #38bdf8;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.sub-release {
+    font-size: 12px;
+    color: #94a3b8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.subtitles-loading,
+.subtitles-empty {
+    padding: 24px 16px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+}
+
+.subtitles-loading.downloading {
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+}

@@ -1,0 +1,112 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const title = 'Terms of Service';
+const description = 'Yestream Terms of Service';
+const type = 'article';
+const keywords = ['terms', 'service', 'Yestream'];
+const publishedTime = '2026-11-24';
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  type={type}
+  keywords={['terms', 'service', 'Yestream']}
+  publishedTime={'2026-11-24'}
+>
+  <main class="min-h-screen bg-gray-950 text-gray-100 py-16 px-6 md:px-12 lg:px-24">
+    <div class="max-w-3xl mx-auto">
+      <header class="mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4">Terms of Service</h1>
+        <p class="text-gray-400 text-lg">Last updated: November 2026</p>
+      </header>
+
+      <article class="prose prose-invert text-gray-300 leading-relaxed">
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">1. Acceptance of Terms</h2>
+          <p>By accessing or using the Yestream application ("the Application"), you agree to be bound by these Terms of Service. If you disagree with any part of these terms, you may not access or use the Application.</p>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">2. The Application</h2>
+          <p>Yestream is a cross-platform IPTV player that supports M3U, Xtream Codes API, and Stalker portals. The Application includes the desktop (Electron), mobile (PWA), and Smart TV variants (webOS, Tizen, Vega, Android TV/Fire TV).</p>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">3. License</h2>
+          <p>The core Yestream application is provided as open source software under the MIT License. The cloud backend services (yestream.ai.studio) are proprietary. Use of the cloud backend is governed by these Terms of Service.</p>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">3. Free Trial</h2>
+          <p>Upon first launch, users receive a 7-day free trial. Trial activation requires a deterministic device identity (MAC + 6-digit key) and registration with the Yestream backend. The trial may not be bypassed by uninstalling and reinstalling the application.</p>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">4. Subscription</h2>
+          <p>After the trial period, users must activate a paid subscription or the Application will enter a restricted mode. Subscription is managed through the Yestream backend (yestream.ai.studio).</p>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">5. User Conduct</h2>
+          <ol class="list-decimal list-inside space-y-2">
+            <li>Do not reverse engineer, decompile, or disassemble the Application.</li>
+            <li>Do not modify or circumscribe any protection mechanism of the Application.</li>
+            <li>Do not use the Application for illegal purposes or to access content without proper authorization.</li>
+            <li>Do not share your device credentials or trial access with third parties.</li>
+            <li>Do not attempt to circumvent the reseller lock mechanism.</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">6. Cloud Sync & Cloud Data</h2>
+          <p>Users who enable cloud sync consent to the storage of their playlists, favorites, watch progress, and device identity on Yestream's cloud infrastructure. This data is protected by the bearer token authentication described in the Application's privacy policy.</p>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">7. Reseller Conduct</h2>
+          <ol class="list-decimal list-inside space-y-2">
+            <li>Resellers must not misrepresent the Application's capabilities.</li>
+            <li>Resellers must not charge fees for features that are part of the free trial.</li>
+            <li>Resellers must honor the reseller lock mechanism and not charge to unlock devices that are not theirs.</li>
+            <li>Resellers must provide support contact information.</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">8. Intellectual Property</h2>
+          <p>The Yestream name and logo are trademarks of Yestream. The MIT License covers the core Application code. Third-party components are covered by their respective licenses (MPV, Shaka Player, etc.).</p>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">9. Disclaimer of Warranty</h2>
+          <p>The Application is provided "as is" without warranty of any kind, either express or implied, including but not limited to the implied warranties of merchantability and fitness for a particular purpose. Some jurisdictions do not allow the exclusion of implied warranties, so this disclaimer may not apply to you.</p>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">10. Limitation of Liability</h2>
+          <p>To the maximum extent permitted by applicable law, Yestream shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of profits, data, or other commercial damages, arising out of or in connection with your use of the Application.</p>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">10. Governing Law</h2>
+          <p>These Terms of Service and any dispute arising out of or relating to these Terms of Service shall be governed by the laws of the State of California, without regard to its conflict of law principles.</p>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">11. Miscellaneous</h2>
+          <ol class="list-decimal list-inside space-y-2">
+            <li>If any provision of these Terms is found to be invalid or unenforceable, the remaining provisions will remain in effect.</li>
+            <li>These Terms constitute the entire agreement between you and Yestream regarding the Application.</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">12. Contact</h2>
+          <p>Questions about these Terms? Email <a href="mailto:support@yestream.ai.studio" class="text-blue-400 hover:underline">support@yestream.ai.studio</a>.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+</BaseLayout>

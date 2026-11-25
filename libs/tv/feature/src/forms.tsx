@@ -380,89 +380,108 @@ export function Sources({ tv }: { tv: TvModel }) {
                 </div>
             </div>
 
-            {/* ADD / EDIT PLAYLIST MODAL WITH 2 TABS */}
+            {/* ADD / EDIT PLAYLIST MODAL WITH PREMIUM GLASSMORPHIC DESIGN */}
             {showDialog ? (
                 <div class="modal-backdrop">
                     <div class="playlist-modal">
                         <div class="modal-header">
-                            <h3>
-                                {editing ? 'Edit Playlist' : 'Add New Playlist'}
-                            </h3>
+                            <div class="modal-title-box">
+                                <span class="modal-supertitle">PLAYLIST CONFIGURATION</span>
+                                <h3>
+                                    {editing ? 'Edit Playlist Settings' : 'Add New Streaming Source'}
+                                </h3>
+                            </div>
                             <button
                                 class="close-btn"
                                 onClick={() => setShowDialog(false)}
+                                title="Close dialog"
                             >
                                 ✕
                             </button>
                         </div>
 
-                        {/* 2 Tabs: Xtream vs M3U */}
-                        <div class="modal-tabs">
-                            <button
-                                type="button"
-                                class={`tab-btn ${
-                                    type === 'xtream' ? 'active' : ''
-                                }`}
+                        {/* Interactive Mode Cards: Xtream vs M3U */}
+                        <div class="provider-type-selector">
+                            <div
+                                class={`provider-card-btn ${type === 'xtream' ? 'selected' : ''}`}
                                 onClick={() => setType('xtream')}
+                                tabIndex={0}
+                                onKeyDown={(e: any) => { if (e.key === 'Enter') setType('xtream'); }}
                             >
-                                Xtream Codes API
-                            </button>
-                            <button
-                                type="button"
-                                class={`tab-btn ${
-                                    type === 'm3u' ? 'active' : ''
-                                }`}
+                                <div class="provider-card-icon">⚡</div>
+                                <div class="provider-card-content">
+                                    <div class="provider-card-title">Xtream Codes API</div>
+                                    <div class="provider-card-desc">Server URL + Username + Password (Fast & EPG ready)</div>
+                                </div>
+                                <div class="provider-card-radio">{type === 'xtream' ? '●' : '○'}</div>
+                            </div>
+
+                            <div
+                                class={`provider-card-btn ${type === 'm3u' ? 'selected' : ''}`}
                                 onClick={() => setType('m3u')}
+                                tabIndex={0}
+                                onKeyDown={(e: any) => { if (e.key === 'Enter') setType('m3u'); }}
                             >
-                                M3U Playlist
-                            </button>
+                                <div class="provider-card-icon">📁</div>
+                                <div class="provider-card-content">
+                                    <div class="provider-card-title">M3U Playlist URL</div>
+                                    <div class="provider-card-desc">Direct .m3u or .m3u8 link from any provider</div>
+                                </div>
+                                <div class="provider-card-radio">{type === 'm3u' ? '●' : '○'}</div>
+                            </div>
                         </div>
 
                         <form class="modal-form" onSubmit={submit}>
-                            <label class="form-label">
-                                Playlist Name
-                                <input
-                                    name="name"
-                                    class="tv-input"
-                                    required
-                                    placeholder="e.g. My Premium IPTV"
-                                    defaultValue={editing?.name}
-                                />
-                            </label>
+                            <div class="form-field-group">
+                                <label class="form-label">
+                                    <span class="label-heading">PLAYLIST NICKNAME</span>
+                                    <input
+                                        name="name"
+                                        class="tv-input"
+                                        required
+                                        placeholder="e.g. My Premium VIP"
+                                        defaultValue={editing?.name}
+                                    />
+                                </label>
+                            </div>
 
-                            <label class="form-label">
-                                {type === 'm3u'
-                                    ? 'M3U Playlist URL'
-                                    : 'Server URL'}
-                                <input
-                                    name="url"
-                                    class="tv-input"
-                                    type="url"
-                                    required
-                                    defaultValue={editing?.url}
-                                    placeholder={
-                                        type === 'm3u'
-                                            ? 'http://provider.link:8080/get.php?…'
-                                            : 'http://provider.link:8080'
-                                    }
-                                />
-                            </label>
+                            <div class="form-field-group">
+                                <label class="form-label">
+                                    <span class="label-heading">
+                                        {type === 'm3u'
+                                            ? 'M3U PLAYLIST WEB LINK'
+                                            : 'XTREAM SERVER ADDRESS'}
+                                    </span>
+                                    <input
+                                        name="url"
+                                        class="tv-input"
+                                        type="url"
+                                        required
+                                        defaultValue={editing?.url}
+                                        placeholder={
+                                            type === 'm3u'
+                                                ? 'http://example.com/get.php?username=...&password=...'
+                                                : 'http://example.com:8080'
+                                        }
+                                    />
+                                </label>
+                            </div>
 
                             {type === 'xtream' ? (
                                 <div class="form-row-dual">
                                     <label class="form-label">
-                                        Username
+                                        <span class="label-heading">USERNAME</span>
                                         <input
                                             name="username"
                                             class="tv-input"
                                             required
                                             defaultValue={editing?.username}
                                             autoComplete="off"
-                                            placeholder="Username"
+                                            placeholder="Account username"
                                         />
                                     </label>
                                     <label class="form-label">
-                                        Password
+                                        <span class="label-heading">PASSWORD</span>
                                         <input
                                             name="password"
                                             class="tv-input"
@@ -470,16 +489,17 @@ export function Sources({ tv }: { tv: TvModel }) {
                                             required
                                             defaultValue={editing?.password}
                                             autoComplete="off"
-                                            placeholder="Password"
+                                            placeholder="Account password"
                                         />
                                     </label>
                                 </div>
                             ) : null}
 
                             {failure ? (
-                                <p class="form-error" role="alert">
-                                    {failure}
-                                </p>
+                                <div class="form-error-banner" role="alert">
+                                    <span class="error-icon">⚠️</span>
+                                    <span class="error-text">{failure}</span>
+                                </div>
                             ) : null}
 
                             <div class="modal-actions">
@@ -496,8 +516,8 @@ export function Sources({ tv }: { tv: TvModel }) {
                                     disabled={saving}
                                 >
                                     {saving
-                                        ? 'Saving…'
-                                        : 'Save & Connect'}
+                                        ? 'Testing & Saving…'
+                                        : 'Connect & Save Playlist'}
                                 </button>
                             </div>
                         </form>

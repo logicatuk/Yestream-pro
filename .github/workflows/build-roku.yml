@@ -1,0 +1,45 @@
+name: Roku Channel Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-roku:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install brighterscript
+        run: npm install -g brighterscript
+
+      - name: Lint BrightScript files
+        run: |
+          find ./roku/source -name "*.brs" -exec brighterscript-lint {} \;
+
+      - name: Verify Roku channel structure
+        run: |
+          ls -R roku/
+
+      - name: Verify Roku channel files exist
+        run: |
+          ls roku/manifest.manifest
+          ls roku/source/*.brs
+          ls roku/components/*.xml
+
+      - name: Upload Roku channel package
+        uses: actions/upload-artifact@v3
+        with:
+          name: roku-channel
+          path: roku/**
+          retention-days: 30
+
+      - name: Setup Roku device
+        run: |
+          echo "Roku device setup requires manual configuration"
+          echo "IP address of Roku device: 192.168.1.1"
+          echo "Use roku-deploy to sideload the channel"

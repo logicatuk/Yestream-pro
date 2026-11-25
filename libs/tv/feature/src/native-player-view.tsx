@@ -1,4 +1,4 @@
-import { useLayoutEffect } from 'preact/hooks';
+import { useLayoutEffect, useState, useEffect } from 'preact/hooks';
 import { restoreFocus } from '@iptvnator/tv/ui';
 import type { RefObject } from 'preact';
 import type { VodSequence } from './use-vod-sequence';
@@ -8,6 +8,7 @@ import type { useLiveOverlay } from './live-overlay';
 import type { useSeriesDetails } from './use-series-details';
 import { UpNextCard, useUpNext } from './up-next-card';
 import type { usePlayerControls } from './player-controls';
+import { searchSubtitles, downloadSubtitleVtt, OnlineSubtitle } from '@iptvnator/tv/data-access';
 
 export function NativePlayerView({
     tv,
@@ -32,6 +33,79 @@ export function NativePlayerView({
 }) {
     const current = tv.playing;
     const element = video.current;
+
+    // Online Subtitles State
+    const [showSubtitles, setShowSubtitles] = useState(false);
+    const [searchingSubs, setSearchingSubs] = useState(false);
+    const [subtitlesList, setSubtitlesList] = useState<OnlineSubtitle[]>([]);
+    const [activeSubId, setActiveSubId] = useState<string>('none');
+    const [subOffset, setSubOffset] = useState<number>(0);
+    const [downloadingSub, setDownloadingSub] = useState(false);
+
+    // Search subtitles when opening the panel
+    useEffect(() => {
+        if (!showSubtitles || !current || current.kind === 'live') return;
+
+        let active = true;
+        setSearchingSubs(true);
+        const title = current.title || (current as any).name || '';
+
+        searchSubtitles({
+            filmName: title,
+            type: current.kind === 'episode' ? 'tv' : 'movie',
+            season: current.season,
+            episode: current.episode,
+            languages: 'fr,en,ar,es,de,it',
+        }).then((subs) => {
+            if (!active) return;
+            setSubtitlesList(subs);
+            setSearchingSubs(false);
+        }).catch(() => {
+            if (active) setSearchingSubs(false);
+        });
+
+        return () => {
+            active = false;
+        };
+    }, [showSubtitles, current]);
+
+    // Apply subtitle track to HTML5 video element
+    const selectSubtitle = async (sub: OnlineSubtitle | null) => {
+        if (!element) return;
+
+        // Clear existing injected subtitle tracks
+        const existingTrack = element.querySelector('track.online-sub');
+        if (existingTrack) {
+            existingTrack.remove();
+        }
+
+        if (!sub) {
+            setActiveSubId('none');
+            return;
+        }
+
+        setDownloadingSub(true);
+        try {
+            const vttUrl = await downloadSubtitleVtt(sub.downloadUrl);
+            if (vttUrl) {
+                const track = document.createElement('track');
+                track.className = 'online-sub';
+                track.kind = 'subtitles';
+                track.label = `${sub.language} (SubDL)`;
+                track.srclang = sub.langCode;
+                track.src = vttUrl;
+                track.default = true;
+
+                element.appendChild(track);
+                if (track.track) {
+                    track.track.mode = 'showing';
+                }
+                setActiveSubId(sub.id);
+            }
+        } finally {
+            setDownloadingSub(false);
+        }
+    };
     const upNext = useUpNext(
         tv,
         video,
@@ -218,6 +292,13 @@ export function NativePlayerView({
                                         {time(element?.currentTime ?? 0)} /{' '}
                                         {time(element?.duration ?? 0)}
                                     </span>
+                                    <button
+                                        class={`tv-toggle ${activeSubId !== 'none' ? 'primary' : ''}`}
+                                        data-focus="player-subtitles"
+                                        onClick={() => setShowSubtitles((s) => !s)}
+                                    >
+                                        💬 {activeSubId !== 'none' ? 'Subtitles (On)' : 'Subtitles'}
+                                    </button>
                                 </>
                             ) : null}
                             {current?.kind === 'live' ? (
@@ -279,6 +360,100 @@ export function NativePlayerView({
                                 </button>
                             </div>
                         ) : null}
+                    </div>
+                </div>
+            ) : null}
+
+            {/* Subtitle Selection Drawer Overlay */}
+            {showSubtitles && tv.fullscreen ? (
+                <div class="player-subtitles-drawer">
+                    <div class="subtitles-header">
+                        <div class="subtitles-title-box">
+                            <span class="subtitles-badge">SUBDL ONLINE ENGINE</span>
+                            <h2>Subtitles &amp; Captions</h2>
+                        </div>
+                        <button
+                            class="subtitles-close-btn"
+                            onClick={() => setShowSubtitles(false)}
+                        >
+                            ✕
+                        </button>
+                    </div>
+
+                    <div class="subtitles-sync-bar">
+                        <span class="sync-label">Sync Offset:</span>
+                        <button
+                            class="sync-btn"
+                            onClick={() => {
+                                setSubOffset((o) => o - 0.5);
+                                if (element && element.textTracks[0]) {
+                                    // Offset adjustments
+                                }
+                            }}
+                        >
+                            ◄ -0.5s
+                        </button>
+                        <span class="sync-value">{subOffset > 0 ? `+${subOffset.toFixed(1)}s` : `${subOffset.toFixed(1)}s`}</span>
+                        <button
+                            class="sync-btn"
+                            onClick={() => {
+                                setSubOffset((o) => o + 0.5);
+                            }}
+                        >
+                            +0.5s ►
+                        </button>
+                    </div>
+
+                    <div class="subtitles-list">
+                        <div
+                            class={`subtitle-item ${activeSubId === 'none' ? 'selected' : ''}`}
+                            onClick={() => void selectSubtitle(null)}
+                            tabIndex={0}
+                            onKeyDown={(e: any) => { if (e.key === 'Enter') void selectSubtitle(null); }}
+                        >
+                            <span class="sub-radio">{activeSubId === 'none' ? '●' : '○'}</span>
+                            <span class="sub-title">Off (No Subtitles)</span>
+                        </div>
+
+                        {searchingSubs ? (
+                            <div class="subtitles-loading">
+                                <span>Searching SubDL online database…</span>
+                            </div>
+                        ) : null}
+
+                        {downloadingSub ? (
+                            <div class="subtitles-loading downloading">
+                                <span>Downloading &amp; syncing subtitle…</span>
+                            </div>
+                        ) : null}
+
+                        {!searchingSubs && subtitlesList.length === 0 ? (
+                            <div class="subtitles-empty">
+                                <span>No online subtitles found for this title.</span>
+                            </div>
+                        ) : null}
+
+                        {subtitlesList.map((sub) => {
+                            const isSelected = activeSubId === sub.id;
+                            return (
+                                <div
+                                    class={`subtitle-item ${isSelected ? 'selected' : ''}`}
+                                    key={sub.id}
+                                    onClick={() => void selectSubtitle(sub)}
+                                    tabIndex={0}
+                                    onKeyDown={(e: any) => { if (e.key === 'Enter') void selectSubtitle(sub); }}
+                                >
+                                    <span class="sub-radio">{isSelected ? '●' : '○'}</span>
+                                    <div class="sub-info">
+                                        <div class="sub-lang-row">
+                                            <span class="sub-lang">{sub.language}</span>
+                                            {sub.hearingImpaired ? <span class="sub-tag">CC</span> : null}
+                                        </div>
+                                        <span class="sub-release">{sub.releaseName}</span>
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             ) : null}

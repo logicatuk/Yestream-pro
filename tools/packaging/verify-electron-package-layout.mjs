@@ -51,7 +51,7 @@ const flatpakMetainfoPath = path.join(
     'apps',
     'electron-backend',
     'linux',
-    'com.fourgray.iptvnator.metainfo.xml'
+    'com.yestream.app.metainfo.xml'
 );
 const packageMetadata = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
 const electronBuilderConfig = JSON.parse(

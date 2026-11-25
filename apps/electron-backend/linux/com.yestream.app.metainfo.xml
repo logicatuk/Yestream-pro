@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.yestream.app</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>Yestream</name>
+  <developer_name>Yestream</developer_name>
+  <update_contact>support@yestream.ai.studio</update_contact>
+  <summary>IPTV player for M3U, Xtream Codes, and Stalker portals</summary>
+  <launchable type="desktop-id">yestream.desktop</launchable>
+
+  <description>
+    <p>Yestream is a cross-platform IPTV player for user-supplied playlists and portal connections.</p>
+    <p>It supports M3U and M3U8 playlists, Xtream Codes API, and Stalker portals with EPG, catch-up, favorites, and external player integration.</p>
+    <p>The app does not include channels, playlists, or media catalogs. Any IPTV sources, logos, metadata, and programme information come from services the user configures.</p>
+  </description>
+
+  <categories>
+    <category>AudioVideo</category>
+    <category>Player</category>
+    <category>Video</category>
+  </categories>
+
+  <keywords>
+    <keyword>IPTV</keyword>
+    <keyword>M3U</keyword>
+    <keyword>M3U8</keyword>
+    <keyword>EPG</keyword>
+    <keyword>Xtream</keyword>
+    <keyword>Stalker</keyword>
+  </keywords>
+
+  <url type="homepage">https://yestream.ai.studio/downloads</url>
+  <url type="bugtracker">https://github.com/logicatuk/Yestream-pro/issues</url>
+  <url type="help">https://yestream.ai.studio/blog/</url>
+  <url type="donation">https://github.com/sponsors/4gray</url>
+
+  <content_rating type="oars-1.0"/>
+
+  <releases>
+    <release version="0.25.1" type="stable" date="2026-11-23"/>
+    <release version="0.25.0" type="stable" date="2026-11-21"/>
+  </releases>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>Browse channels and watch live IPTV streams</caption>
+      <image type="source">https://yestream.ai.studio/appstream/player.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Manage playlists and switch between sources</caption>
+      <image type="source">https://yestream.ai.studio/appstream/playlists.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>View programme schedules in the integrated EPG</caption>
+      <image type="source">https://yestream.ai.studio/appstream/epg.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Adjust playback, interface, and provider settings</caption>
+      <image type="source">https://yestream.ai.studio/appstream/settings.png</image>
+    </screenshot>
+  </screenshots>
+
+  <provides>
+    <binary>yestream</binary>
+  </provides>
+</component>

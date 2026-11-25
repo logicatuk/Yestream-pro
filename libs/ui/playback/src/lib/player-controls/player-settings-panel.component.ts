@@ -149,6 +149,96 @@ export class PlayerSettingsPanelComponent implements OnDestroy {
         return `${this.idPrefix}-${name}`;
     }
 
+    searchingSubdl = false;
+    subdlSearched = false;
+    subdlResults: Array<{ id: string; releaseName: string; language: string; downloadUrl: string }> = [];
+
+    async searchOnlineSubtitles(): Promise<void> {
+        this.searchingSubdl = true;
+        this.subdlSearched = true;
+        this.subdlResults = [];
+
+        // Try to get title from document heading or current media title
+        let title = '';
+        const titleEl = document.querySelector('.portal-inline-player__title, .portal-detail-header__title, h1, .video-title');
+        if (titleEl && titleEl.textContent) {
+            title = titleEl.textContent.trim();
+        }
+        if (!title) {
+            // Clean up common IPTV tags: DE ★ Movie Name - 2026 [FHD] -> Movie Name
+            title = document.title || 'Movie';
+        }
+        // Remove prefixes like "DE ★", "EN ★", and trailing "[FHD]"
+        const cleanTitle = title.replace(/^[A-Z]{2}\s*★\s*/i, '').replace(/\[.*?\]/g, '').replace(/\(.*?\)/g, '').split('-')[0].trim();
+
+        try {
+            const apiKey = 'subdl_Gb_Ujrf8yZqzgDmbnB4rD-ouf4BkMX5OWIFDWn4FzyQ';
+            const url = `https://api.subdl.com/api/v1/subtitles?api_key=${apiKey}&film_name=${encodeURIComponent(cleanTitle || title)}&languages=en,fr,ar,es,de,it`;
+            const res = await fetch(url);
+            const data = await res.json();
+            if (data.status && Array.isArray(data.subtitles)) {
+                this.subdlResults = data.subtitles.slice(0, 10).map((s: any, idx: number) => ({
+                    id: `sub-${idx}`,
+                    releaseName: s.release_name || s.name || 'Subtitle',
+                    language: s.lang || s.language || 'Unknown',
+                    downloadUrl: s.url?.startsWith('http') ? s.url : `https://dl.subdl.com${s.url}`,
+                }));
+            }
+        } catch {
+            // Ignore fetch error
+        } finally {
+            this.searchingSubdl = false;
+        }
+    }
+
+    async loadSubdlSubtitle(sub: { downloadUrl: string; language: string; releaseName: string }): Promise<void> {
+        try {
+            // Use fflate to unzip in-memory
+            const { unzipSync, strFromU8 } = await import('fflate');
+            const res = await fetch(sub.downloadUrl);
+            const buffer = await res.arrayBuffer();
+            const unzipped = unzipSync(new Uint8Array(buffer));
+
+            let srtText = '';
+            for (const filename of Object.keys(unzipped)) {
+                if (filename.toLowerCase().endsWith('.srt') || filename.toLowerCase().endsWith('.vtt')) {
+                    srtText = strFromU8(unzipped[filename]);
+                    break;
+                }
+            }
+
+            if (srtText) {
+                // Find active video element in the document
+                const video = document.querySelector('video');
+                if (video) {
+                    let vtt = srtText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+                    vtt = vtt.replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, '$1.$2');
+                    const vttUrl = URL.createObjectURL(new Blob([`WEBVTT\n\n${vtt.trim()}`], { type: 'text/vtt' }));
+
+                    // Remove previous injected tracks
+                    const existing = video.querySelectorAll('track.subdl-track');
+                    existing.forEach((t) => t.remove());
+
+                    const track = document.createElement('track');
+                    track.className = 'subdl-track';
+                    track.kind = 'subtitles';
+                    track.label = `${sub.language} (SubDL)`;
+                    track.srclang = sub.language.toLowerCase().slice(0, 2);
+                    track.src = vttUrl;
+                    track.default = true;
+
+                    video.appendChild(track);
+                    if (track.track) {
+                        track.track.mode = 'showing';
+                    }
+                    this.closeRequested.emit();
+                }
+            }
+        } catch (e) {
+            console.error('Failed to load SubDL subtitle', e);
+        }
+    }
+
     loadExternalSubtitle(): void {
         if (!this.capabilities().externalSubtitles) {
             return;

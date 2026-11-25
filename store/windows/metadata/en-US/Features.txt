@@ -1,0 +1,8 @@
+Features:
+- M3U/M3U8 playlist support (URL, file, text paste)
+- Xtream Codes API integration (live, VOD, series, catch-up)
+- Stalker/Ministra portal support
+- Full EPG guide with 7-day schedule
+- Movies & Series catalog with categories
+- Cloud sync across devices
+- Reseller lock protection

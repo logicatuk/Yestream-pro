@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<component name="AccountScreen" extends="Group">
+    <interface>
+        <field id="deviceIdentity" type="assocarray" value="" />
+        <field id="entitlement" type="assocarray" value="" />
+        <field id="onRefresh" type="boolean" value="false" />
+        <field id="onBack" type="boolean" value="false" />
+    </interface>
+
+    <children>
+        <Rectangle width="1920" height="1080" color="#0A0A0A" />
+        <Label id="headerTitle" text="Account & Device" font="font:LargeBoldSystemFont" color="#FFFFFF" translation="[40, 40]" />
+
+        <Group id="deviceCard" translation="[40, 120]" width="1840" height="220">
+            <Rectangle width="1840" height="220" color="#1A1A2E" />
+            <Label text="MAC Address:" font="font:MediumSystemFont" color="#94A3B8" translation="[40, 30]" />
+            <Label id="macValue" font="font:MediumBoldSystemFont" color="#FFFFFF" translation="[40, 60]" />
+            <Button id="copyMacBtn" translation="[1550, 30]" width="220" height="50">
+                <Label text="Copy MAC" font="font:SmallSystemFont" />
+            </Button>
+
+            <Label text="Device Key:" font="font:MediumSystemFont" color="#94A3B8" translation="[40, 110]" />
+            <Label id="keyValue" font="font:MediumBoldSystemFont" color="#38BDF8" translation="[40, 140]" />
+            <Button id="copyKeyBtn" translation="[1550, 110]" width="220" height="50">
+                <Label text="Copy Key" font="font:SmallSystemFont" />
+            </Button>
+        </Group>
+
+        <Group id="licenseCard" translation="[40, 360]" width="1840" height="220">
+            <Rectangle width="1840" height="220" color="#1A1A2E" />
+            <Label text="Plan:" font="font:MediumSystemFont" color="#94A3B8" translation="[40, 30]" />
+            <Label id="planValue" font="font:MediumBoldSystemFont" color="#FFFFFF" translation="[40, 60]" />
+            <Label text="Status:" font="font:MediumSystemFont" color="#94A3B8" translation="[40, 110]" />
+            <Label id="statusValue" font="font:MediumBoldSystemFont" color="#FFFFFF" translation="[40, 140]" />
+            <Label text="Expires:" font="font:MediumSystemFont" color="#94A3B8" translation="[600, 30]" />
+            <Label id="expiryValue" font="font:MediumBoldSystemFont" color="#FFFFFF" translation="[600, 60]" />
+            <Label text="Playlists:" font="font:MediumSystemFont" color="#94A3B8" translation="[600, 110]" />
+            <Label id="playlistCountValue" font="font:MediumBoldSystemFont" color="#FFFFFF" translation="[600, 140]" />
+        </Group>
+
+        <Button id="refreshBtn" translation="[40, 600]" width="220" height="60">
+            <Label text="Refresh Status" font="font:MediumSystemFont" />
+        </Button>
+        <Button id="backBtn" translation="[1700, 40]" width="180" height="50">
+            <Label text="Back" font="font:MediumSystemFont" />
+        </Button>
+    </children>
+
+    <script type="text/brightscript">
+    <![CDATA[
+    sub init()
+        m.top.deviceIdentity = invalid
+        m.top.entitlement = invalid
+        m.top.onRefresh = false
+        m.top.onBack = false
+        m.macValue = m.top.findNode("macValue")
+        m.keyValue = m.top.findNode("keyValue")
+        m.planValue = m.top.findNode("planValue")
+        m.statusValue = m.top.findNode("statusValue")
+        m.expiryValue = m.top.findNode("expiryValue")
+        m.playlistCountValue = m.top.findNode("playlistCountValue")
+    end sub
+
+    sub setAccountInfo(identity as object, entitlement as object)
+        m.top.deviceIdentity = identity
+        m.top.entitlement = entitlement
+        m.macValue.text = identity.mac ? identity.mac : ""
+        m.keyValue.text = identity.key6 ? identity.key6 : ""
+        m.planValue.text = entitlement.plan ? entitlement.plan : "TRIAL"
+        m.statusValue.text = entitlement.status ? entitlement.status : "trial"
+        m.expiryValue.text = formatExpirationDate(entitlement.expiresAt ? entitlement.expiresAt : "")
+        m.playlistCountValue.text = (entitlement.playlistCount ? entitlement.playlistCount : 0) + " / 5"
+    end sub
+
+    sub onKeyDown(key as Integer)
+        if key = 283
+            m.top.onBack = true
+        end if
+    end sub
+
+    sub formatExpirationDate(expiresAt as string) as string
+        if expiresAt = "" return "Never" end if
+        dt = createObject("roDateTime")
+        dt.fromISO8601String(expiresAt)
+        if dt.isValid()
+            monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+            return monthNames[dt.getMonth()-1] + " " + dt.getDayOfMonth().toStr() + ", " + dt.getYear().toStr()
+        end if
+        return expiresAt
+    end sub
+    ]]>
+    </script>
+</component>

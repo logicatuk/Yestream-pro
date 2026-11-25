@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<component name="PlaylistManager" extends="Group">
+    <interface>
+        <field id="onAdd" type="boolean" value="false" />
+        <field id="onDelete" type="string" value="" />
+        <field id="onSync" type="boolean" value="false" />
+        <field id="onBack" type="boolean" value="false" />
+        <field id="cloud" type="assocarray" value="" />
+    </interface>
+
+    <children>
+        <Rectangle width="1920" height="1080" color="#0A0A0A" />
+        <Label id="headerTitle" text="Manage Playlists" font="font:LargeBoldSystemFont" color="#FFFFFF" translation="[40, 40]" />
+
+        <!-- Left: Quick Connect QR card -->
+        <Group id="qrCard" translation="[40, 120]" width="440" height="700">
+            <Rectangle width="440" height="700" color="#1A1A2E" />
+            <Label text="Connect via Phone" font="font:MediumBoldSystemFont" color="#FFFFFF" translation="[30, 30]" />
+            <ImageCanvas id="qrCanvas" translation="[80, 90]" width="280" height="280" />
+            <Label text="Scan to add playlists" font="font:SmallSystemFont" color="#94A3B8" translation="[100, 390]" />
+            <Label id="macLabel" font="font:SmallBoldSystemFont" color="#E2E8F0" translation="[30, 440]" />
+            <Label id="keyLabel" font="font:SmallBoldSystemFont" color="#38BDF8" translation="[30, 480]" />
+        </Group>
+
+        <!-- Right: Playlist list -->
+        <Group id="listGroup" translation="[520, 120]" width="1360" height="800">
+            <Label text="My Playlists" font="font:MediumBoldSystemFont" color="#FFFFFF" translation="[0, 0]" />
+            <List id="playlistList" translation="[0, 50]" width="1360" height="640" itemSize="[1360, 90]" />
+            <Button id="addBtn" translation="[0, 710]" width="200" height="60">
+                <Label text="Add Playlist" font="font:MediumSystemFont" />
+            </Button>
+            <Button id="syncBtn" translation="[220, 710]" width="200" height="60">
+                <Label text="Sync Now" font="font:MediumSystemFont" />
+            </Button>
+        </Group>
+
+        <Button id="backBtn" translation="[1700, 40]" width="180" height="50">
+            <Label text="Back" font="font:MediumSystemFont" />
+        </Button>
+    </children>
+
+    <script type="text/brightscript">
+    <![CDATA[
+    sub init()
+        m.top.onAdd = false
+        m.top.onDelete = ""
+        m.top.onSync = false
+        m.top.onBack = false
+        m.playlistList = m.top.findNode("playlistList")
+        m.qrCanvas = m.top.findNode("qrCanvas")
+        m.macLabel = m.top.findNode("macLabel")
+        m.keyLabel = m.top.findNode("keyLabel")
+    end sub
+
+    sub setCloud(cloud as object)
+        m.top.cloud = cloud
+        m.macLabel.text = "MAC: " + (cloud.mac ? cloud.mac : "")
+        m.keyLabel.text = "KEY: " + (cloud.key6 ? cloud.key6 : "")
+        if cloud.portalLoginUrl <> ""
+            renderQrCode(m.qrCanvas, cloud.portalLoginUrl, 0, 0, 280, 280)
+        end if
+        void loadPlaylists()
+    end sub
+
+    sub loadPlaylists()
+        result = syncPlaylists(0)
+        if result.ok
+            m.top.cloud = { playlists: result.data.playlists }
+            items = []
+            for each pl in result.data.playlists
+                items.push({
+                    title: pl.name,
+                    subtitle: pl.type + " · " + (pl.lockedByReseller ? "Reseller managed" : "Editable")
+                })
+            end for
+            m.playlistList.content = buildListContent(items)
+        end if
+    end sub
+    ]]>
+    </script>
+</component>

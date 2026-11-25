@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<component name="PlaylistsScreen" extends="Group">
+    <interface>
+        <field id="macAddress" type="string" value="" />
+        <field id="deviceKey" type="string" value="" />
+        <field id="portalUrl" type="string" value="" />
+        <field id="qrCodeUrl" type="string" value="" />
+        <field id="syncStatus" type="string" value="" />
+        <field id="playlists" type="array" value="[]" />
+        <function name="refreshPlaylists" />
+    </interface>
+
+    <children>
+        <Rectangle width="1920" height="1080" color="#080C14" />
+        
+        <!-- Header -->
+        <Group translation="[80, 50]">
+            <Label text="Playlists &amp; Cloud Connection" font="font:LargeBoldSystemFont" color="#FFFFFF" />
+            <Label text="Manage and sync your playlists seamlessly" font="font:SmallSystemFont" color="#64748B" translation="[0, 45]" />
+        </Group>
+
+        <!-- Left: Quick Connect Card (Split-screen) -->
+        <Group id="quickConnectCard" translation="[80, 150]">
+            <!-- Card Background -->
+            <Rectangle width="600" height="820" color="#0F172A" />
+
+            <Label text="QUICK CONNECT" font="font:SmallBoldSystemFont" color="#38BDF8" translation="[40, 35]" />
+            <Label id="trialBadge" text="● TRIAL ACTIVE" font="font:SmallBoldSystemFont" color="#10B981" translation="[420, 35]" />
+
+            <!-- QR Code Poster -->
+            <Poster id="qrImage" width="300" height="300" translation="[150, 85]" />
+
+            <Label text="Scan with your smartphone camera to add playlists instantly without remote typing." 
+                   width="520" wrap="true" font="font:SmallSystemFont" color="#94A3B8" translation="[40, 410]" />
+
+            <!-- Device MAC -->
+            <Label text="MAC ADDRESS" font="font:SmallBoldSystemFont" color="#64748B" translation="[40, 490]" />
+            <Rectangle width="520" height="50" color="#1E293B" translation="[40, 520]" />
+            <Label id="macDisplay" text="B6:92:CC:66:7E:37" font="font:MediumBoldSystemFont" color="#38BDF8" translation="[60, 532]" />
+
+            <!-- Device Key -->
+            <Label text="DEVICE KEY (6-DIGIT)" font="font:SmallBoldSystemFont" color="#64748B" translation="[40, 590]" />
+            <Rectangle width="520" height="50" color="#1E293B" translation="[40, 620]" />
+            <Label id="keyDisplay" text="466761" font="font:MediumBoldSystemFont" color="#FFFFFF" translation="[60, 632]" />
+
+            <!-- Web Portal Link -->
+            <Label id="portalLink" text="Web Portal: https://yestream.ai.studio/customer/login" 
+                   font="font:SmallSystemFont" color="#94A3B8" translation="[40, 690]" />
+
+            <!-- Sync Cloud Button -->
+            <Button id="syncButton" text="Sync Cloud Playlists" minWidth="520" height="55" translation="[40, 730]" />
+        </Group>
+
+        <!-- Right: Active Playlists / Empty State -->
+        <Group id="playlistsListPanel" translation="[740, 150]">
+            <Label text="Active Playlists" font="font:MediumBoldSystemFont" color="#FFFFFF" translation="[0, 0]" />
+            <Label id="syncNotice" text="" font="font:SmallBoldSystemFont" color="#38BDF8" translation="[300, 5]" />
+
+            <LabelList id="playlistList" translation="[0, 50]" itemSize="[1080, 75]" numRows="8" />
+
+            <!-- Empty State -->
+            <Group id="emptyState" visible="true" translation="[0, 80]">
+                <Rectangle width="1100" height="400" color="#0F172A" />
+                <Label text="No Playlists Configured" font="font:MediumBoldSystemFont" color="#E2E8F0" translation="[40, 40]" />
+                <Label text="Use the Quick Connect QR code on the left to upload an M3U URL or Xtream account from your phone."
+                       font="font:SmallSystemFont" color="#94A3B8" width="1020" wrap="true" translation="[40, 90]" />
+                <Label text="Alternatively, hit 'Sync Cloud Playlists' after managing devices from the web portal."
+                       font="font:SmallSystemFont" color="#64748B" width="1020" wrap="true" translation="[40, 150]" />
+            </Group>
+        </Group>
+    </children>
+
+    <script type="text/brightscript" uri="pkg:/source/config.brs" />
+    <script type="text/brightscript" uri="pkg:/source/device-identity.brs" />
+    <script type="text/brightscript" uri="pkg:/source/cloud-api.brs" />
+    <script type="text/brightscript">
+    <![CDATA[
+    sub init()
+        m.macDisplay = m.top.findNode("macDisplay")
+        m.keyDisplay = m.top.findNode("keyDisplay")
+        m.qrImage = m.top.findNode("qrImage")
+        m.syncButton = m.top.findNode("syncButton")
+        m.syncNotice = m.top.findNode("syncNotice")
+        m.emptyState = m.top.findNode("emptyState")
+        m.playlistList = m.top.findNode("playlistList")
+
+        m.syncButton.observeField("buttonSelected", "onSyncSelected")
+
+        setupIdentity()
+    end sub
+
+    sub setupIdentity()
+        id = loadStoredIdentity()
+        m.top.macAddress = id.mac
+        m.top.deviceKey = id.key6
+        m.macDisplay.text = id.mac
+        m.keyDisplay.text = id.key6
+
+        cfg = getYestreamConfig()
+        ' Exact customer login QR endpoint
+        loginUrl = cfg.portalOrigin + "/customer/login?mac=" + id.mac + "&key=" + id.key6 + "&redirect=/me/playlists"
+        m.top.portalUrl = loginUrl
+        
+        ' Render QR via online service
+        m.qrImage.uri = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + loginUrl
+    end sub
+
+    sub onSyncSelected()
+        m.syncNotice.text = "Syncing with Yestream Cloud..."
+        id = loadStoredIdentity()
+        res = syncPlaylists(id.credential)
+
+        if res.ok and res.data <> invalid
+            m.syncNotice.text = "✓ Playlists synchronized"
+            if res.data.playlists <> invalid and res.data.playlists.count() > 0
+                m.emptyState.visible = false
+            end if
+        else
+            m.syncNotice.text = "Sync failed: check internet or portal"
+        end if
+    end sub
+    ]]>
+    </script>
+</component>

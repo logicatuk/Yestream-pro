@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<component name="TopNavigationBar" extends="Group">
+    <interface>
+        <field id="activeTabIndex" type="integer" value="0" />
+        <field id="tabTitles" type="array" value='["Home", "Live TV", "Playlists", "Settings"]' />
+    </interface>
+
+    <children>
+        <Rectangle width="1920" height="90" color="#0B101B" />
+        <Label text="YESTREAM" font="font:MediumBoldSystemFont" color="#38BDF8" translation="[80, 30]" />
+        
+        <ButtonGroup id="tabButtons" translation="[360, 22]" layoutDirection="horiz" itemSpacings="[25]">
+            <Button text="Home" minWidth="140" height="46" />
+            <Button text="Live TV" minWidth="140" height="46" />
+            <Button text="Playlists" minWidth="160" height="46" />
+            <Button text="Settings" minWidth="140" height="46" />
+        </ButtonGroup>
+    </children>
+
+    <script type="text/brightscript">
+    <![CDATA[
+    sub init()
+        m.tabButtons = m.top.findNode("tabButtons")
+        m.tabButtons.observeField("buttonSelected", "onTabSelected")
+    end sub
+
+    sub onTabSelected()
+        m.top.activeTabIndex = m.tabButtons.buttonSelected
+    end sub
+    ]]>
+    </script>
+</component>

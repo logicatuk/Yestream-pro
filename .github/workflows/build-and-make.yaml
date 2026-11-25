@@ -818,7 +818,7 @@ jobs:
 
             - name: Validate AppStream metadata
               if: matrix.os == 'linux'
-              run: appstreamcli validate --pedantic --no-net apps/electron-backend/linux/com.fourgray.iptvnator.metainfo.xml
+              run: appstreamcli validate --pedantic --no-net apps/electron-backend/linux/com.yestream.app.metainfo.xml
 
             - name: Build website for AppStream
               if: matrix.os == 'linux'
@@ -1435,10 +1435,10 @@ jobs:
                           --artifact "${FLATPAK_BUNDLE}" --profile flatpak
                   flatpak install --user --noninteractive -y "${FLATPAK_BUNDLE}"
                   xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
-                      flatpak run --command=sh com.fourgray.iptvnator -c '
+                      flatpak run --command=sh com.yestream.app -c '
                       set -euo pipefail
 
-                      test -f /app/share/metainfo/com.fourgray.iptvnator.metainfo.xml
+                      test -f /app/share/metainfo/com.yestream.app.metainfo.xml
                       test -L /app/bin/iptvnator
 
                       LAUNCHER_PATH="$(readlink -f /app/bin/iptvnator)"
@@ -1469,7 +1469,7 @@ jobs:
                       xvfb-run -a dbus-run-session -- timeout --verbose -k 10 300 flatpak run \
                           --env=LIBGL_ALWAYS_SOFTWARE=1 \
                           --env=ELECTRON_ENABLE_LOGGING=1 \
-                          com.fourgray.iptvnator \
+                          com.yestream.app \
                           --embedded-mpv-runtime-probe 2>&1
                   )"
                   PROBE_STATUS=$?

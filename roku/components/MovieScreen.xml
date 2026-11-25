@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<component name="MovieScreen" extends="Group">
+    <interface>
+        <field id="playlistId" type="string" value="" />
+        <field id="onMovieSelect" type="assocarray" value="" />
+        <field id="onBack" type="boolean" value="false" />
+    </interface>
+
+    <children>
+        <Rectangle width="1920" height="1080" color="#0A0A0A" />
+        <Label id="headerTitle" text="Movies" font="font:LargeBoldSystemFont" color="#FFFFFF" translation="[40, 40]" />
+        <Grid id="movieGrid" translation="[40, 120]" width="1840" height="880" numcolumns="4" colwidth="440" colheight="320" />
+        <Button id="backBtn" translation="[1700, 40]" width="180" height="50">
+            <Label text="Back" font="font:MediumSystemFont" color="#FFFFFF" />
+        </Button>
+    </children>
+
+    <script type="text/brightscript">
+    <![CDATA[
+    sub init()
+        m.top.playlistId = ""
+        m.top.onMovieSelect = invalid
+        m.top.onBack = false
+        m.movieGrid = m.top.findNode("movieGrid")
+        m.movieGrid.observeField("itemSelected", "onGridItemSelected")
+    end sub
+
+    sub loadMovies(playlistId as string)
+        m.top.playlistId = playlistId
+        result = syncPlaylists(0)
+        if result.ok
+            items = []
+            for each playlist in result.data.playlists
+                if playlist.id = playlistId or playlistId = ""
+                    for each movie in playlist.movies ? []
+                        items.push({
+                            id: movie.id,
+                            title: movie.title,
+                            poster: movie.posterUrl,
+                            description: movie.description,
+                            streamUrl: movie.streamUrl
+                        })
+                    end for
+                end if
+            end for
+            m.movieGrid.content = buildGridContent(items)
+        end if
+    end sub
+
+    sub onGridItemSelected()
+        idx = m.movieGrid.itemSelected
+        if idx >= 0
+            item = m.movieGrid.content.getChild(idx)
+            m.top.onMovieSelect = {
+                title: item.title,
+                streamUrl: item.streamUrl
+            }
+        end if
+    end sub
+
+    sub onKeyDown(key as Integer)
+        if key = 283
+            m.top.onBack = true
+        end if
+    end sub
+    ]]>
+    </script>
+</component>

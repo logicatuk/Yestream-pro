@@ -1,0 +1,20 @@
+Yestream is a cross-platform IPTV player that brings all your playlists together in one beautiful app.
+
+LIVE TV & EPG
+- M3U/M3U8 playlist support
+- Xtream Codes API integration (live, VOD, series, catch-up)
+- Stalker portal support
+- Full EPG guide with 7-day schedule
+
+MOVIES & SERIES
+- Xtream VOD catalog with categories
+- Series with season/episode browser
+
+CLOUD SYNC & MULTI-DEVICE
+- Free 7-day trial per device
+- Activate via QR code on yestream.ai.studio
+- Playlists sync across devices
+
+REMOTE & ACCESSIBILITY
+- Full remote control support
+- Parental lock (PIN)

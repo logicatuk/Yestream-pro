@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<component name="ExpiryLockScreen" extends="Group">
+    <interface>
+        <field id="entitlement" type="assocarray" value="" />
+        <field id="isLoading" type="boolean" value="false" />
+        <field id="checkNotice" type="string" value="" />
+    </interface>
+
+    <children>
+        <Rectangle width="1920" height="1080" color="#0A0A0A" />
+        <Rectangle id="overlay" width="1920" height="1080" color="#080C16" opacity="0.92" />
+
+        <Group id="lockCard" translation="[480, 180]" width="960" height="720">
+            <Rectangle width="960" height="720" color="#1A2030" />
+
+            <!-- Expiry Badge -->
+            <Group id="badgeGroup" translation="[360, 40]">
+                <Rectangle width="240" height="40" color="#EF4444" opacity="0.15" />
+                <Label id="badgeText" text="SUBSCRIPTION EXPIRED" font="font:SmallBoldSystemFont" color="#F87171" translation="[10, 8]" />
+            </Group>
+
+            <!-- Title -->
+            <Label id="titleLabel" text="Your 7-day free trial has expired" width="800" font="font:LargeBoldSystemFont" color="#FFFFFF" translation="[80, 120]" wrap="true" />
+
+            <!-- Description -->
+            <Label id="descLabel" text="Please activate your device to continue" width="800" font="font:MediumSystemFont" color="#94A3B8" translation="[80, 170]" wrap="true" />
+
+            <!-- MAC + Key Grid -->
+            <Group id="gridGroup" translation="[80, 220]" width="800" height="200">
+                <Group id="macGroup" translation="[0, 0]" width="380" height="100">
+                    <Label text="MAC Address" font="font:SmallBoldSystemFont" color="#94A3B8" translation="[0, 0]" />
+                    <Rectangle width="380" height="50" color="#0F172A" translation="[0, 30]" />
+                    <Label id="macDisplay" font="font:MediumBoldSystemFont" color="#E2E8F0" translation="[20, 38]" />
+                    <Button id="copyMacBtn" translation="[330, 35]" width="40" height="40" >
+                        <Icon source="content_copy" />
+                    </Button>
+                </Group>
+
+                <Group id="keyGroup" translation="[420, 0]" width="380" height="100">
+                    <Label text="Device Key" font="font:SmallBoldSystemFont" color="#94A3B8" translation="[0, 0]" />
+                    <Rectangle width="380" height="50" color="#0F172A" translation="[0, 30]" />
+                    <Label id="keyDisplay" font="font:MediumBoldSystemFont" color="#38BDF8" letter-spacing="0.08em" translation="[20, 38]" />
+                    <Button id="copyKeyBtn" translation="[330, 35]" width="40" height="40" >
+                        <Icon source="content_copy" />
+                    </Button>
+                </Group>
+
+                <Label id="qrHint" text="Scan to renew" font="font:SmallSystemFont" color="#94A3B8" translation="[180, 140]" />
+            </Group>
+
+            <!-- QR Code -->
+            <ImageCanvas id="qrCanvas" translation="[340, 340]" width="280" height="280" />
+
+            <!-- Portal Link -->
+            <Label id="portalLink" text="Or visit: yestream.ai.studio" font="font:SmallSystemFont" color="#38BDF8" translation="[280, 640]" wrap="true" />
+
+            <!-- Actions -->
+            <Button id="refreshBtn" translation="[360, 680]" width="240" height="48">
+                <Label text="Refresh Status" font="font:MediumBoldSystemFont" />
+            </Button>
+
+            <!-- Notice -->
+            <Group id="noticeGroup" translation="[80, 580]" width="800" height="60" visible="false">
+                <Rectangle width="800" height="50" color="#F59E0B" opacity="0.15" />
+                <Label id="noticeText" font="font:SmallSystemFont" color="#FBBF24" translation="[10, 10]" />
+            </Group>
+        </Group>
+    </children>
+
+    <script type="text/brightscript">
+    <![CDATA[
+    sub init()
+        m.top.entitlement = invalid
+        m.top.isLoading = false
+        m.top.checkNotice = ""
+        m.qrCanvas = m.top.findNode("qrCanvas")
+        m.noticeGroup = m.top.findNode("noticeGroup")
+        m.noticeText = m.top.findNode("noticeText")
+        m.macDisplay = m.top.findNode("macDisplay")
+        m.keyDisplay = m.top.findNode("keyDisplay")
+    end sub
+
+    sub onKeyDown(key as Integer)
+        if key = 13 ' OK/Enter
+            refreshStatus()
+        end if
+    end sub
+
+    sub refreshStatus()
+        m.top.isLoading = true
+        ' Trigger entitlement check via parent
+        m.top.notify("onRefreshStatus")
+        m.top.isLoading = false
+    end sub
+
+    sub setEntitlement(entitlement as object)
+        m.top.entitlement = entitlement
+        m.macDisplay.text = entitlement.mac ? entitlement.mac : "Generating..."
+        m.keyDisplay.text = entitlement.key6 ? entitlement.key6 : "Generating..."
+
+        ' Generate QR code
+        if entitlement.mac and entitlement.key6
+            url = "https://yestream.ai.studio/activate?mac=" + escape(entitlement.mac) + "&key=" + entitlement.key6
+            generateQrCode(url)
+        end if
+    end sub
+
+    sub generateQrCode(url as string)
+        ' Draw QR code on ImageCanvas
+        m.qrCanvas.clear()
+        ' In production: use roImageCanvas to draw QR matrix
+    end sub
+
+    sub setCheckNotice(notice as string)
+        m.top.checkNotice = notice
+        m.noticeGroup.visible = true
+        m.noticeText.text = notice
+    end sub
+
+    sub onKeyDown(key as Integer)
+        if key = 13 ' OK/Enter
+            refreshStatus()
+        end if
+    end sub
+    ]]>
+    </script>
+</component>

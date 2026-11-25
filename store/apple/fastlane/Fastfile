@@ -1,0 +1,20 @@
+default_platform(:mac)
+
+platform :mac do
+  desc "Upload metadata and screenshots to App Store Connect"
+  lane :metadata do
+    deliver(
+      skip_screenshots: false,
+      skip_metadata: false,
+      force: true,
+      precheck_include_in_app_purchases: false
+    )
+  end
+
+  desc "Build, notarize and upload to TestFlight"
+  lane :beta do
+    build_app(scheme: "Yestream", export_method: "app-store")
+    notarize(package: "Yestream.dmg")
+    upload_to_testflight
+  end
+end

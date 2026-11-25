@@ -71,7 +71,7 @@ export const DOWNLOAD_OPTIONS: Record<DownloadPlatform, DownloadOption[]> = {
       label: 'Download for Windows',
       detail: 'Windows 10 / 11 · 64-bit installer',
       matcher: /-windows-x64-setup\.exe$/,
-      fallbackName: (v) => `iptvnator-${v}-windows-x64-setup.exe`,
+      fallbackName: (v) => `yestream-${v}-windows-x64-setup.exe`,
       recommended: true,
     },
   ],
@@ -82,7 +82,7 @@ export const DOWNLOAD_OPTIONS: Record<DownloadPlatform, DownloadOption[]> = {
       label: 'Apple Silicon',
       detail: 'M1 – M4 Macs · .dmg',
       matcher: /-mac-arm64\.dmg$/,
-      fallbackName: (v) => `iptvnator-${v}-mac-arm64.dmg`,
+      fallbackName: (v) => `yestream-${v}-mac-arm64.dmg`,
       recommended: true,
     },
     {
@@ -91,7 +91,7 @@ export const DOWNLOAD_OPTIONS: Record<DownloadPlatform, DownloadOption[]> = {
       label: 'Intel',
       detail: 'Intel Macs · .dmg',
       matcher: /-mac-x64\.dmg$/,
-      fallbackName: (v) => `iptvnator-${v}-mac-x64.dmg`,
+      fallbackName: (v) => `yestream-${v}-mac-x64.dmg`,
     },
   ],
   linux: [
@@ -101,7 +101,7 @@ export const DOWNLOAD_OPTIONS: Record<DownloadPlatform, DownloadOption[]> = {
       label: 'AppImage',
       detail: 'Any distribution · x86_64',
       matcher: /-linux-x86_64\.AppImage$/,
-      fallbackName: (v) => `iptvnator-${v}-linux-x86_64.AppImage`,
+      fallbackName: (v) => `yestream-${v}-linux-x86_64.AppImage`,
       recommended: true,
     },
     {
@@ -110,7 +110,7 @@ export const DOWNLOAD_OPTIONS: Record<DownloadPlatform, DownloadOption[]> = {
       label: 'Debian / Ubuntu',
       detail: '.deb · amd64',
       matcher: /-linux-amd64\.deb$/,
-      fallbackName: (v) => `iptvnator-${v}-linux-amd64.deb`,
+      fallbackName: (v) => `yestream-${v}-linux-amd64.deb`,
     },
     {
       id: 'linux-x86_64-rpm',
@@ -118,7 +118,7 @@ export const DOWNLOAD_OPTIONS: Record<DownloadPlatform, DownloadOption[]> = {
       label: 'Fedora / openSUSE',
       detail: '.rpm · x86_64',
       matcher: /-linux-x86_64\.rpm$/,
-      fallbackName: (v) => `iptvnator-${v}-linux-x86_64.rpm`,
+      fallbackName: (v) => `yestream-${v}-linux-x86_64.rpm`,
     },
     {
       id: 'linux-x64-pacman',
@@ -126,7 +126,7 @@ export const DOWNLOAD_OPTIONS: Record<DownloadPlatform, DownloadOption[]> = {
       label: 'Arch / Manjaro',
       detail: '.pacman · x64',
       matcher: /-linux-x64\.pacman$/,
-      fallbackName: (v) => `iptvnator-${v}-linux-x64.pacman`,
+      fallbackName: (v) => `yestream-${v}-linux-x64.pacman`,
     },
     {
       id: 'linux-x86_64-flatpak',
@@ -134,7 +134,7 @@ export const DOWNLOAD_OPTIONS: Record<DownloadPlatform, DownloadOption[]> = {
       label: 'Flatpak bundle',
       detail: '.flatpak · x86_64',
       matcher: /-linux-x86_64\.flatpak$/,
-      fallbackName: (v) => `iptvnator-${v}-linux-x86_64.flatpak`,
+      fallbackName: (v) => `yestream-${v}-linux-x86_64.flatpak`,
     },
     {
       id: 'linux-amd64-snap',
@@ -142,7 +142,7 @@ export const DOWNLOAD_OPTIONS: Record<DownloadPlatform, DownloadOption[]> = {
       label: 'Snap',
       detail: '.snap · amd64',
       matcher: /-linux-amd64\.snap$/,
-      fallbackName: (v) => `iptvnator-${v}-linux-amd64.snap`,
+      fallbackName: (v) => `yestream-${v}-linux-amd64.snap`,
     },
     {
       id: 'linux-arm64-appimage',
@@ -150,7 +150,7 @@ export const DOWNLOAD_OPTIONS: Record<DownloadPlatform, DownloadOption[]> = {
       label: 'AppImage',
       detail: 'arm64 (aarch64)',
       matcher: /-linux-arm64\.AppImage$/,
-      fallbackName: (v) => `iptvnator-${v}-linux-arm64.AppImage`,
+      fallbackName: (v) => `yestream-${v}-linux-arm64.AppImage`,
     },
     {
       id: 'linux-arm64-deb',
@@ -158,7 +158,7 @@ export const DOWNLOAD_OPTIONS: Record<DownloadPlatform, DownloadOption[]> = {
       label: 'Debian / Ubuntu',
       detail: '.deb · arm64',
       matcher: /-linux-arm64\.deb$/,
-      fallbackName: (v) => `iptvnator-${v}-linux-arm64.deb`,
+      fallbackName: (v) => `yestream-${v}-linux-arm64.deb`,
     },
     {
       id: 'linux-armv7l-appimage',
@@ -166,7 +166,7 @@ export const DOWNLOAD_OPTIONS: Record<DownloadPlatform, DownloadOption[]> = {
       label: 'AppImage',
       detail: 'armv7l (32-bit ARM)',
       matcher: /-linux-armv7l\.AppImage$/,
-      fallbackName: (v) => `iptvnator-${v}-linux-armv7l.AppImage`,
+      fallbackName: (v) => `yestream-${v}-linux-armv7l.AppImage`,
     },
     {
       id: 'linux-armv7l-deb',
@@ -174,7 +174,7 @@ export const DOWNLOAD_OPTIONS: Record<DownloadPlatform, DownloadOption[]> = {
       label: 'Debian / Ubuntu',
       detail: '.deb · armv7l',
       matcher: /-linux-armv7l\.deb$/,
-      fallbackName: (v) => `iptvnator-${v}-linux-armv7l.deb`,
+      fallbackName: (v) => `yestream-${v}-linux-armv7l.deb`,
     },
     {
       id: 'linux-armhf-snap',
@@ -182,7 +182,7 @@ export const DOWNLOAD_OPTIONS: Record<DownloadPlatform, DownloadOption[]> = {
       label: 'Snap',
       detail: '.snap · armhf',
       matcher: /-linux-armhf\.snap$/,
-      fallbackName: (v) => `iptvnator-${v}-linux-armhf.snap`,
+      fallbackName: (v) => `yestream-${v}-linux-armhf.snap`,
     },
   ],
 };

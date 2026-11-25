@@ -1,0 +1,148 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const title = 'Privacy Policy';
+const description = 'Yestream Privacy Policy - How we handle your data';
+const type = 'article';
+const keywords = ['privacy', 'policy', 'data protection', 'GDPR', 'Yestream'];
+const publishedTime = '2026-11-24';
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  type={type}
+  keywords={['privacy', 'policy', 'data protection', 'GDPR', 'Yestream']}
+  publishedTime={'2026-11-24'}
+>
+  <main class="min-h-screen bg-gray-950 text-gray-100 py-16 px-6 md:px-12 lg:px-24">
+    <div class="max-w-3xl mx-auto">
+      <header class="mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4">Privacy Policy</h1>
+        <p class="text-gray-400 text-lg">Last updated: November 2026</p>
+      </header>
+
+      <article class="space-y-10 text-gray-300 leading-relaxed">
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">1. Data Controller</h2>
+          <p class="mb-4">
+            Yestream ("we", "our", "us") is the data controller for personal data processed through the Yestream application and services.
+            Contact: <a href="mailto:support@yestream.ai.studio" class="text-blue-400 hover:underline">support@yestream.ai.studio</a>
+          </p>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">2. Information We Collect</h2>
+
+          <h3 class="text-xl font-medium text-white mt-8 mb-3">2.1 Device Identity</h3>
+          <p class="mb-4">
+            To provide the licensing and cloud sync features, Yestream generates a deterministic device identity from stable hardware signals:
+          </p>
+          <ul class="list-disc list-inside space-y-2 mb-6">
+            <li><strong>MAC Address:</strong> Derived from a SHA-256 hash of your device's persistent hardware identifier (MachineGuid on Windows, IOPlatformUUID on macOS, /etc/machine-id on Linux, ANDROID_ID on Android). This is never your actual network MAC.</li>
+            <li><strong>6-Digit Device Key:</strong> First 6 bytes of a separate hash, formatted as a 6-digit number.</li>
+            <li><strong>Hardware Fingerprint:</strong> Full SHA-256 hash used for anti-trial-bypass verification.</li>
+          </ul>
+          <p class="mb-4">These identifiers are generated locally and never include personally identifiable information.</p>
+
+          <h3 class="text-xl font-medium text-white mt-8 mb-3">2.2 Licensing & Subscription Data</h3>
+          <ul class="list-disc list-inside space-y-2 mb-6">
+            <li>Registration timestamp, trial/license status, plan type, expiry date</li>
+            <li>Reseller association (if activated through a reseller)</li>
+            <li>Server-provided timestamps for clock-skew protection</li>
+          </ul>
+
+          <h3 class="text-xl font-medium text-white mt-8 mb-3">2.3 Playlist & Usage Data (Cloud Sync Only)</h3>
+          <p class="mb-3">Only when you enable cloud sync or register a device:</p>
+          <ul class="list-disc list-inside space-y-2 mb-6">
+            <li>Playlist metadata (name, type, URL/host, credentials encrypted)</li>
+            <li>Watch progress, favorites, recently viewed</li>
+            <li>EPG schedule cache</li>
+          </ul>
+          <p class="mb-4">Local-only playback stores nothing on our servers.</p>
+
+          <h3 class="text-xl font-medium text-white mt-8 mb-3">2.4 Technical & Diagnostic Data</h3>
+          <ul class="list-disc list-inside space-y-2 mb-6">
+            <li>App version, platform, OS version</li>
+            <li>Crash reports and performance metrics (opt-in via settings)</li>
+            <li>Network connectivity status for offline detection</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">3. How We Use Your Data</h2>
+          <ul class="list-disc list-inside space-y-3">
+            <li><strong>License enforcement:</strong> Validate trial/license status, enforce trial limits, prevent bypass via reinstall</li>
+            <li><strong>Cloud sync:</strong> Keep playlists, favorites, and progress in sync across your devices</li>
+            <li><strong>Reseller management:</strong> Allow resellers to link devices and push playlists</li>
+            <li><strong>Service improvement:</strong> Aggregate crash/performance data (opt-in)</li>
+            <li><strong>Security:</strong> Detect abuse, enforce rate limits</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">4. Data Sharing</h2>
+          <p class="mb-4">We do not sell your data. We share data only:</p>
+          <ul class="list-disc list-inside space-y-2 mb-4">
+            <li>With your reseller (if you activate through one): device identity, playlists, status</li>
+            <li>With cloud infrastructure providers (Cloud Run, Cloudflare) for hosting</li>
+            <li>When required by law or to protect rights/safety</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">5. Data Retention</h2>
+          <ul class="list-disc list-inside space-y-2">
+            <li>Device identity & licensing: retained while device is active + 2 years after last activity</li>
+            <li>Playlists & progress: retained while cloud sync is enabled + 90 days after disable</li>
+            <li>Crash/performance data: 90 days (opt-in only)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">6. Your Rights</h2>
+          <p class="mb-4">Under GDPR and similar laws, you have the right to:</p>
+          <ul class="list-disc list-inside space-y-2 mb-4">
+            <li>Access your data</li>
+            <li>Rectify inaccurate data</li>
+            <li>Erase your data (deletes cloud sync, reverts to local-only)</li>
+            <li>Restrict processing</li>
+            <li>Data portability (export your playlists/progress)</li>
+            <li>Object to processing</li>
+          </ul>
+          <p class="mb-4">To exercise these rights, email <a href="mailto:support@yestream.ai.studio" class="text-blue-400 hover:underline">support@yestream.ai.studio</a>.</p>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">7. Children's Privacy</h2>
+          <p class="mb-4">Yestream is not directed to children under 16. We do not knowingly collect data from children.</p>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">8. International Transfers</h2>
+          <p class="mb-4">Our backend runs on Google Cloud Run (EU region). Data may be processed in the EU. We rely on Standard Contractual Clauses for any transfers outside the EEA.</p>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">9. Security</h2>
+          <ul class="list-disc list-inside space-y-2">
+            <li>TLS 1.2+ for all API traffic</li>
+            <li>Bearer token authentication with short-lived credentials</li>
+            <li>Credentials encrypted at rest (SQLite encrypted, localStorage on client)</li>
+            <li>Deterministic device identity prevents credential replay across devices</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">10. Changes to This Policy</h2>
+          <p class="mb-4">We may update this policy. Material changes will be notified in-app and via the website. Continued use constitutes acceptance.</p>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">11. Contact</h2>
+          <p>Questions? Contact: <a href="mailto:support@yestream.ai.studio" class="text-blue-400 hover:underline">support@yestream.ai.studio</a></p>
+        </section>
+      </article>
+    </div>
+  </main>
+</BaseLayout>

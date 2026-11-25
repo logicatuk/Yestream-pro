@@ -1,0 +1,99 @@
+Yestream — IPTV Player
+Free trial. Then premium. M3U, Xtream Codes, Stalker portals, EPG, VOD, series, downloads, favorites.
+
+Short Description (80 chars max): Watch live TV, movies & series from M3U/Xtream playlists. Free trial, then premium.
+
+Full Description:
+Yestream is a cross-platform IPTV player that brings all your playlists together in one beautiful app.
+
+📺 LIVE TV & EPG
+- M3U/M3U8 playlist support (URL, file, text paste)
+- Xtream Codes API integration (live, VOD, series, catch-up)
+- Stalker/Ministra portal support
+- Full EPG guide with 7-day schedule, reminders, now/next overlay
+- Channel groups, favorites, recent channels, search
+
+🎬 MOVIES & SERIES
+- Xtream VOD catalog with categories, search, actors
+- Series with season/episode browser, watch progress
+- TMDB metadata enrichment (posters, ratings, trailers)
+- "Up Next" rail for seamless binge-watching
+
+☁️ CLOUD SYNC & MULTI-DEVICE
+- Free 7-day trial per device (MAC + 6-digit key)
+- Activate via QR code on yestream.ai.studio
+- Playlists, favorites, watch progress sync across devices
+- Reseller-managed playlists (read-only, locked)
+
+🎯 PLAYBACK ENGINE
+- Embedded MPV (hardware decoding, HDR, high-quality scaling)
+- HTML5/HLS/Shaka fallback
+- External player support (VLC, MPV, IINA)
+- Download for offline viewing
+
+⌨️ REMOTE & ACCESSIBILITY
+- Web remote control (phone as remote)
+- Android TV / Fire TV / LG / Samsung / Apple TV native apps
+- Full keyboard, gamepad, remote support
+- Parental lock (PIN)
+
+🌍 20 LANGUAGES
+English, French, Spanish, German, Arabic, Italian, Portuguese, Russian, Turkish, Japanese, Korean, Chinese (Simplified/Traditional), Dutch, Polish, Greek, Hungarian, Ukrainian, Belarussian, Moroccan Arabic.
+
+🔒 PRIVACY FIRST
+- No account required for local playback
+- Device identity derived from hardware (no tracking)
+- Playlists stored locally unless you enable cloud sync
+- Open-source core (MIT), premium cloud features optional
+
+Keywords: iptv, m3u, xtream codes, stalker, live tv, epg, vod, series, m3u8, playlist player, video player, tv guide, catchup, multiview, mpv, shaka player
+
+Age Rating: Everyone / 4+ (no mature content, no violence, no gambling, no social features)
+Category: Video Players & Editors
+Promotional Text: The all-in-one IPTV player
+```
+
+Let me continue creating the remaining platform metadata files:</think>
+<tool_call>
+<function=Write>
+<parameter=content>
+Yestream — IPTV Player
+Free trial. Then premium.
+
+📺 LIVE TV & EPG
+• M3U/M3U8 playlist support
+• Xtream Codes API integration
+• Stalker portal support
+• Full EPG guide with 7-day schedule
+
+🎬 MOVIES & SERIES
+• Xtream VOD catalog with categories
+• Series with season/episode browser
+
+☁️ CLOUD SYNC & MULTI-DEVICE
+• Free 7-day trial per device
+• Activate via QR code on yestream.ai.studio
+• Playlists sync across devices
+
+🎯 PLAYBACK ENGINE
+• Embedded MPV playback
+• HTML5/HLS/Shaka fallback
+• External player support
+
+⌨️ REMOTE & ACCESSIBILITY
+• Web remote control (phone as remote)
+• Android TV / Fire TV / LG / Samsung support
+• Full keyboard, gamepad, remote support
+
+🌍 20 LANGUAGES
+English, French, Spanish, German, Arabic, Italian, Portuguese, Russian, Turkish, Japanese, Korean, Chinese (Simplified/Traditional), Dutch, Polish, Greek, Hungarian, Ukrainian, Belarussian, Moroccan Arabic.
+
+🔒 PRIVACY FIRST
+• No account required for local playback
+• Device identity derived from hardware
+• Playlists stored locally unless cloud sync enabled
+• Open-source core (MIT), premium cloud features optional
+
+Category: Video Players & Editors
+Age Rating: Everyone / 4+
+Promotional Text: The all-in-one IPTV player

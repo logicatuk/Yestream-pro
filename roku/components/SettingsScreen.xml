@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<component name="SettingsScreen" extends="Group">
+    <interface>
+        <field id="onBack" type="boolean" value="false" />
+    </interface>
+
+    <children>
+        <Rectangle width="1920" height="1080" color="#0A0A0A" />
+        <Label id="headerTitle" text="Settings" font="font:LargeBoldSystemFont" color="#FFFFFF" translation="[40, 40]" />
+        <List id="settingsList" translation="[40, 120]" width="1840" height="800" itemSize="[1840, 80]" />
+        <Button id="backBtn" translation="[1700, 40]" width="180" height="50">
+            <Label text="Back" font="font:MediumSystemFont" color="#FFFFFF" />
+        </Button>
+    </children>
+
+    <script type="text/brightscript">
+    <![CDATA[
+    sub init()
+        m.top.onBack = false
+        m.settingsList = m.top.findNode("settingsList")
+        settings = []
+        settings.append({ title: "Connectivity", desc: "Network settings" })
+        settings.append({ title: "Parental Lock", desc: "Content restrictions" })
+        settings.append({ title: "About", desc: "Version and support" })
+        settings.append({ title: "Logout", desc: "Sign out" })
+        m.settingsList.content = createObject("roSGNode", "ContentNode")
+        m.settingsList.content.append(settings)
+        m.settingsList.observeField("itemSelected", "onSettingSelected")
+    end sub
+
+    sub onSettingSelected()
+        idx = m.settingsList.itemSelected
+        if idx >= 0
+            item = m.settingsList.content.getChild(idx)
+            title = item.title
+            if title = "About"
+                m.top.onBack = true
+        end if
+    end sub
+
+    sub onKeyDown(key as Integer)
+        if key = 283
+            m.top.onBack = true
+        end if
+    end sub
+    ]]>
+    </script>
+</component>

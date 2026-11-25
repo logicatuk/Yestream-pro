@@ -1,0 +1,28 @@
+{
+  "packageId": "ai.studio.yestream",
+  "host": "yestream.ai.studio",
+  "name": "Yestream",
+  "launcherName": "Yestream",
+  "display": "standalone",
+  "themeColor": "#0B1F33",
+  "navigationColor": "#0B1F33",
+  "backgroundColor": "#0B1F33",
+  "startUrl": "/",
+  "iconUrl": "https://yestream.ai.studio/android-chrome-512x512.png",
+  "maskableIconUrl": "https://yestream.ai.studio/android-chrome-maskable-512x512.png",
+  "webManifestUrl": "https://yestream.ai.studio/site.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {
+    "enableNotifications": true,
+    "enableServiceWorker": true
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMobileOnly": false,
+  "minSdkVersion": 24,
+  "targetSdkVersion": 34,
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "appVersionName": "0.25.1",
+  "appVersionCode": 250010001
+}

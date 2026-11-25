@@ -89,6 +89,27 @@ export function installRemote(
             back();
             return;
         }
+
+        // Smart TV Remote: OK / Enter / Select button (keyCode 13, 29443, 65385, 'Enter')
+        // Ensures explicit element.click() activation on focused items across Smart TV engines
+        const isOkKey =
+            code === 13 ||
+            code === 29443 ||
+            code === 65385 ||
+            event.key === 'Enter';
+
+        if (isOkKey && !event.defaultPrevented) {
+            const active = document.activeElement as HTMLElement | null;
+            if (active && active !== document.body) {
+                if (editingText(active) || editingTextarea(active)) {
+                    return;
+                }
+                event.preventDefault();
+                event.stopPropagation();
+                active.click();
+            }
+            return;
+        }
         const action = mediaKeyAction(code);
         if (action) {
             event.preventDefault();

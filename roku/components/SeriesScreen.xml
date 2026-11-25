@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<component name="SeriesScreen" extends="Group">
+    <interface>
+        <field id="playlistId" type="string" value="" />
+        <field id="onSeriesSelect" type="assocarray" value="" />
+        <field id="onBack" type="boolean" value="false" />
+    </interface>
+
+    <children>
+        <Rectangle width="1920" height="1080" color="#0A0A0A" />
+        <Label id="headerTitle" text="Series" font="font:LargeBoldSystemFont" color="#FFFFFF" translation="[40, 40]" />
+        <Grid id="seriesGrid" translation="[40, 120]" width="1840" height="880" numcolumns="4" colwidth="440" colheight="320" />
+        <Button id="backBtn" translation="[1700, 40]" width="180" height="50">
+            <Label text="Back" font="font:MediumSystemFont" color="#FFFFFF" />
+        </Button>
+    </children>
+
+    <script type="text/brightscript">
+    <![CDATA[
+    sub init()
+        m.top.playlistId = ""
+        m.top.onSeriesSelect = invalid
+        m.top.onBack = false
+        m.seriesGrid = m.top.findNode("seriesGrid")
+        m.seriesGrid.observeField("itemSelected", "onGridItemSelected")
+    end sub
+
+    sub loadSeries(playlistId as string)
+        m.top.playlistId = playlistId
+        result = syncPlaylists(0)
+        if result.ok
+            items = []
+            for each playlist in result.data.playlists
+                if playlist.id = playlistId or playlistId = ""
+                    for each series in playlist.series ? []
+                        items.push({
+                            id: series.id,
+                            title: series.title,
+                            poster: series.posterUrl,
+                            description: series.description,
+                            seasons: series.seasons
+                        })
+                    end for
+                end if
+            end for
+            m.seriesGrid.content = buildGridContent(items)
+        end if
+    end sub
+
+    sub onGridItemSelected()
+        idx = m.seriesGrid.itemSelected
+        if idx >= 0
+            item = m.seriesGrid.content.getChild(idx)
+            m.top.onSeriesSelect = {
+                title: item.title,
+                seasons: item.seasons
+            }
+        end if
+    end sub
+
+    sub onKeyDown(key as Integer)
+        if key = 283
+            m.top.onBack = true
+        end if
+    end sub
+    ]]>
+    </script>
+</component>

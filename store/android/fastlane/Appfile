@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Fastlane Appfile for Yestream Android
+# This file configures the default parameters for fastlane actions
+
+app_identifier("com.yestream.tv")
+apple_id("") # not used for Android
+itc_team_id("") # not used for Android
+team_id("") # not used for Android
+
+# For Android:
+package_name("com.yestream.tv")
+json_key_file("./google-play-service-account.json") # path to service account JSON

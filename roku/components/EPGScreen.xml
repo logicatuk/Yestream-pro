@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<component name="EPGScreen" extends="Group">
+    <interface>
+        <field id="playlistId" type="string" value="" />
+        <field id="onProgramSelect" type="assocarray" value="" />
+        <field id="onBack" type="boolean" value="false" />
+    </interface>
+
+    <children>
+        <Rectangle width="1920" height="1080" color="#0A0A0A" />
+        <Label id="headerTitle" text="EPG Guide" font="font:LargeBoldSystemFont" color="#FFFFFF" translation="[40, 40]" />
+        <Group id="channelColumn" translation="[40, 120]" width="300" height="880">
+            <Rectangle width="300" height="880" color="#1A1A2E" />
+            <List id="channelList" translation="[20, 20]" width="260" height="840" itemSize="[260, 60]" />
+        </Group>
+        <Group id="programGridGroup" translation="[340, 160]" width="1540" height="840">
+            <Grid id="programGrid" width="1540" height="840" numcolumns="7" colwidth="200" colheight="120" />
+        </Group>
+        <Label id="timeHeader" text="12:00   13:00   14:00   15:00   16:00   17:00   18:00" font="font:SmallSystemFont" color="#94A3B8" translation="[360, 120]" />
+        <Button id="backBtn" translation="[1700, 40]" width="180" height="50">
+            <Label text="Back" font="font:MediumSystemFont" color="#FFFFFF" />
+        </Button>
+    </children>
+
+    <script type="text/brightscript">
+    <![CDATA[
+    sub init()
+        m.top.playlistId = ""
+        m.top.onProgramSelect = invalid
+        m.top.onBack = false
+        m.channelList = m.top.findNode("channelList")
+        m.programGrid = m.top.findNode("programGrid")
+        m.programGrid.observeField("itemSelected", "onProgramSelected")
+    end sub
+
+    sub loadEPG(playlistId as string)
+        m.top.playlistId = playlistId
+        result = syncPlaylists(0)
+        if result.ok
+            channels = []
+            programs = []
+            for each playlist in result.data.playlists
+                if playlist.id = playlistId or playlistId = ""
+                    for each channel in playlist.channels ? []
+                        channels.push({ title: channel.name, id: channel.id })
+                        for each prog in channel.programs ? []
+                            programs.push({
+                                channelId: channel.id,
+                                title: prog.title,
+                                start: prog.start,
+                                stop: prog.stop
+                            })
+                        end for
+                    end for
+                end if
+            end for
+            m.channelList.content = buildListContent(channels)
+            m.programGrid.content = buildGridContent(programs)
+        end if
+    end sub
+
+    sub onProgramSelected()
+        idx = m.programGrid.itemSelected
+        if idx >= 0
+            item = m.programGrid.content.getChild(idx)
+            m.top.onProgramSelect = { title: item.title, channelId: item.channelId }
+        end if
+    end sub
+
+    sub onKeyDown(key as Integer)
+        if key = 283
+            m.top.onBack = true
+        end if
+    end sub
+    ]]>
+    </script>
+</component>

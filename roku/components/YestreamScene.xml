@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<component name="YestreamScene" extends="Scene">
+    <interface>
+        <field id="entitlement" type="assocarray" />
+        <field id="deviceId" type="string" />
+        <field id="deviceKey" type="string" />
+        <field id="macAddress" type="string" />
+    </interface>
+
+    <children>
+        <!-- Background -->
+        <Rectangle id="background" width="1920" height="1080" color="#070A10" />
+
+        <!-- Navigation Bar -->
+        <TopNavigationBar id="topNav" translation="[0, 0]" />
+
+        <!-- Screens Container -->
+        <Group id="screensContainer" translation="[0, 90]">
+            <HomeScreen id="homeScreen" visible="true" />
+            <LiveTVScreen id="liveTvScreen" visible="false" />
+            <PlaylistsScreen id="playlistsScreen" visible="false" />
+        </Group>
+
+        <!-- Expiry Lock Overlay Screen -->
+        <ExpiryLockScreen id="expiryLockScreen" visible="false" />
+    </children>
+
+    <script type="text/brightscript" uri="pkg:/source/config.brs" />
+    <script type="text/brightscript" uri="pkg:/source/device-identity.brs" />
+    <script type="text/brightscript" uri="pkg:/source/cloud-api.brs" />
+    <script type="text/brightscript" uri="pkg:/source/access-evaluation.brs" />
+    <script type="text/brightscript">
+    <![CDATA[
+    sub init()
+        m.topNav = m.top.findNode("topNav")
+        m.homeScreen = m.top.findNode("homeScreen")
+        m.liveTvScreen = m.top.findNode("liveTvScreen")
+        m.playlistsScreen = m.top.findNode("playlistsScreen")
+        m.expiryLockScreen = m.top.findNode("expiryLockScreen")
+
+        m.topNav.observeField("activeTabIndex", "onTabChanged")
+
+        initializeDevice()
+    end sub
+
+    sub initializeDevice()
+        identity = loadStoredIdentity()
+        m.top.deviceId = getDeviceId()
+        m.top.macAddress = identity.mac
+        m.top.deviceKey = identity.key6
+
+        ' Register device with backend
+        payload = {
+            mac: identity.mac,
+            hardwareFingerprint: m.top.deviceId,
+            platform: "Roku",
+            model: CreateObject("roDeviceInfo").GetModel(),
+            appVersion: "0.1.0"
+        }
+        
+        regRes = registerDevice(payload)
+        if regRes.ok and regRes.data <> invalid
+            if regRes.data.credential <> invalid
+                identity.credential = regRes.data.credential
+                saveStoredIdentity(identity)
+            end if
+        end if
+    end sub
+
+    sub onTabChanged()
+        idx = m.topNav.activeTabIndex
+        m.homeScreen.visible = (idx = 0)
+        m.liveTvScreen.visible = (idx = 1)
+        m.playlistsScreen.visible = (idx = 2)
+
+        if idx = 2
+            m.playlistsScreen.setFocus(true)
+        else if idx = 1
+            m.liveTvScreen.setFocus(true)
+        else
+            m.homeScreen.setFocus(true)
+        end if
+    end sub
+    ]]>
+    </script>
+</component>

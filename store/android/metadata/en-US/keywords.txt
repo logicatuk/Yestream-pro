@@ -1,0 +1,1 @@
+iptv,m3u,xtream codes,stalker,live tv,epg,vod,series,m3u8,playlist player,video player,tv guide,catchup,multiview,mpv,shaka player

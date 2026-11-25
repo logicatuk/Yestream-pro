@@ -150,8 +150,8 @@
         ],
         "files": [
             [
-                "apps/electron-backend/linux/com.fourgray.iptvnator.metainfo.xml",
-                "/share/metainfo/com.fourgray.iptvnator.metainfo.xml"
+                "apps/electron-backend/linux/com.yestream.app.metainfo.xml",
+                "/share/metainfo/com.yestream.app.metainfo.xml"
             ]
         ]
     },
