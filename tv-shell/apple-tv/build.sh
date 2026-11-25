@@ -33,8 +33,26 @@ xcrun --sdk ${SDK} swiftc \
     Sources/Views/*.swift \
     Sources/App/*.swift
 
+echo "==> Compiling asset catalog with actool..."
+if [ "${TARGET}" = "device" ]; then
+    ACTOOL_PLATFORM="appletvos"
+else
+    ACTOOL_PLATFORM="appletvsimulator"
+fi
+
+xcrun actool Resources/Assets.xcassets \
+    --compile "${APP_BUNDLE}" \
+    --platform "${ACTOOL_PLATFORM}" \
+    --target-device tv \
+    --minimum-deployment-target 16.0 \
+    --app-icon "Brand Assets" \
+    --output-partial-info-plist "${BUILD_DIR}/partial.plist"
+
 echo "==> Packaging Info.plist and resources..."
 cp Resources/Info.plist "${APP_BUNDLE}/Info.plist"
+if [ -f Resources/logo.png ]; then
+    cp Resources/logo.png "${APP_BUNDLE}/logo.png"
+fi
 
 echo "==> Signing app bundle..."
 codesign --force --deep --sign - "${APP_BUNDLE}"

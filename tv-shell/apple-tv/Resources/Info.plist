@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>CFBundleExecutable</key>
+    <string>Yestream TV</string>
     <key>CFBundleIdentifier</key>
     <string>com.yestream.tv</string>
     <key>CFBundleName</key>
@@ -10,6 +12,21 @@
     <string>Yestream TV</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
+    <key>CFBundleSupportedPlatforms</key>
+    <array>
+        <string>AppleTVOS</string>
+        <string>AppleTVSimulator</string>
+    </array>
+    <key>CFBundleIcons</key>
+    <dict>
+        <key>CFBundlePrimaryIcon</key>
+        <string>App Icon</string>
+    </dict>
+    <key>TVTopShelfImage</key>
+    <dict>
+        <key>TVTopShelfPrimaryImage</key>
+        <string>Top Shelf Image</string>
+    </dict>
     <key>CFBundleShortVersionString</key>
     <string>0.25.6</string>
     <key>CFBundleVersion</key>

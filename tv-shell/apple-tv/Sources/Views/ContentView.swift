@@ -3,7 +3,7 @@ import SwiftUI
 public struct ContentView: View {
     @ObservedObject var cloud = CloudSyncService.shared
     @ObservedObject var appState = AppState.shared
-    @State private var selectedTab: Int = 0
+    @State private var selectedTab: Int = AppState.shared.playlists.isEmpty ? 5 : 0
 
     public var body: some View {
         TabView(selection: $selectedTab) {
