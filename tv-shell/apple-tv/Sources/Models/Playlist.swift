@@ -39,8 +39,23 @@ public struct MediaItem: Identifiable, Codable, Hashable {
     public let categoryId: String?
     public let categoryName: String?
     public let epgChannelId: String?
+    public let rating: String?
+    public let year: String?
+    public let plot: String?
 
-    public init(id: String, title: String, kind: MediaKind, streamUrl: String, logoUrl: String? = nil, categoryId: String? = nil, categoryName: String? = nil, epgChannelId: String? = nil) {
+    public init(
+        id: String,
+        title: String,
+        kind: MediaKind,
+        streamUrl: String,
+        logoUrl: String? = nil,
+        categoryId: String? = nil,
+        categoryName: String? = nil,
+        epgChannelId: String? = nil,
+        rating: String? = nil,
+        year: String? = nil,
+        plot: String? = nil
+    ) {
         self.id = id
         self.title = title
         self.kind = kind
@@ -49,5 +64,50 @@ public struct MediaItem: Identifiable, Codable, Hashable {
         self.categoryId = categoryId
         self.categoryName = categoryName
         self.epgChannelId = epgChannelId
+        self.rating = rating
+        self.year = year
+        self.plot = plot
+    }
+}
+
+public struct SeriesItem: Identifiable, Codable, Hashable {
+    public let id: String
+    public let seriesId: Int
+    public let title: String
+    public let coverUrl: String?
+    public let rating: String?
+    public let categoryId: String?
+    public let categoryName: String?
+    public let plot: String?
+
+    public init(seriesId: Int, title: String, coverUrl: String? = nil, rating: String? = nil, categoryId: String? = nil, categoryName: String? = nil, plot: String? = nil) {
+        self.id = "\(seriesId)"
+        self.seriesId = seriesId
+        self.title = title
+        self.coverUrl = coverUrl
+        self.rating = rating
+        self.categoryId = categoryId
+        self.categoryName = categoryName
+        self.plot = plot
+    }
+}
+
+public struct EpisodeItem: Identifiable, Codable, Hashable {
+    public let id: String
+    public let episodeId: Int
+    public let title: String
+    public let seasonNum: Int
+    public let episodeNum: Int
+    public let streamUrl: String
+    public let coverUrl: String?
+
+    public init(episodeId: Int, title: String, seasonNum: Int, episodeNum: Int, streamUrl: String, coverUrl: String? = nil) {
+        self.id = "\(episodeId)"
+        self.episodeId = episodeId
+        self.title = title
+        self.seasonNum = seasonNum
+        self.episodeNum = episodeNum
+        self.streamUrl = streamUrl
+        self.coverUrl = coverUrl
     }
 }
