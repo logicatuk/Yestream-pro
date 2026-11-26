@@ -67,8 +67,13 @@ export function TvExpiryGuard({
             <div class="expiry-luxury-container">
                 {/* 1. BRAND HEADER (Authentic white origami bird logo) */}
                 <div class="expiry-brand-header">
-                    <img src="/logo.png" alt="Yestream" class="expiry-brand-logo" width="56" height="56" onError={(e) => {
-                        (e.currentTarget as HTMLElement).style.display = 'none';
+                    <img src="assets/logo.png" alt="Yestream" class="expiry-brand-logo" width="52" height="52" onError={(e) => {
+                        const el = e.currentTarget as HTMLImageElement;
+                        if (el.src.includes('assets/logo.png')) {
+                            el.src = 'logo.png';
+                        } else if (el.src.includes('logo.png')) {
+                            el.src = '/logo.png';
+                        }
                     }} />
                     <div class="expiry-brand-text">
                         <span class="brand-title">YESTREAM</span>

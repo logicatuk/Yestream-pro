@@ -1,5 +1,6 @@
 import { Component, inject, computed, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { QRCodeComponent } from 'angularx-qrcode';
@@ -11,354 +12,523 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
     standalone: true,
     imports: [CommonModule, MatButtonModule, MatIconModule, QRCodeComponent, TranslateModule],
     template: `
-        @if (isExpired()) {
-            <div class="expiry-overlay" role="alertdialog" aria-modal="true">
-                <div class="expiry-card">
-                    <!-- Glow header -->
-                    <div class="expiry-badge">
-                        <mat-icon>lock</mat-icon>
-                        <span>{{ 'YESTREAM.SUBSCRIPTION_EXPIRED' | translate }}</span>
+        @if (isExpired() && !isDismissed()) {
+            <div class="tv-expiry-lockscreen" role="alertdialog" aria-modal="true" aria-label="Subscription Expired">
+                <div class="expiry-luxury-container">
+                    <!-- 1. BRAND HEADER (Authentic origami bird logo + Yestream) -->
+                    <div class="expiry-brand-header">
+                        <img
+                            [src]="logoSrc()"
+                            (error)="onLogoError()"
+                            alt="Yestream"
+                            class="expiry-brand-logo"
+                            width="52"
+                            height="52"
+                        />
+                        <div class="expiry-brand-text">
+                            <span class="brand-title">YESTREAM</span>
+                            <span class="brand-subtitle">PRO IPTV PLAYER</span>
+                        </div>
                     </div>
 
-                    <h1 class="expiry-title">{{ 'YESTREAM.ACCESS_PERIOD_ENDED' | translate }}</h1>
-                    <p class="expiry-desc">
-                        {{ 'YESTREAM.EXPIRY_MESSAGE' | translate }}
-                    </p>
+                    <!-- 2. EXPIRED BANNER -->
+                    <div class="expiry-alert-header">
+                        <div class="expiry-alert-title">
+                            <span class="hourglass-icon">⏳</span>
+                            <h2>Your trial period has expired.</h2>
+                        </div>
+                        <p class="expiry-alert-subtitle">
+                            To continue enjoying Live TV, Movies, Series, and the EPG Timeline, please renew or activate your device.
+                        </p>
+                    </div>
 
-                    <!-- Credentials & QR Code Grid -->
-                    <div class="expiry-grid">
+                    <!-- 3. ACTIVATION HERO CARD (Split Screen: QR Code + Credentials) -->
+                    <div class="expiry-card-split">
+                        <!-- Left: QR Code -->
                         <div class="expiry-qr-col">
-                            <div class="expiry-qr-frame">
+                            <div class="qr-white-card">
                                 @if (portalUrl()) {
                                     <qrcode
                                         [qrdata]="portalUrl()"
-                                        [width]="130"
+                                        [width]="176"
                                         [errorCorrectionLevel]="'M'"
-                                        [margin]="2"
+                                        [margin]="1"
                                         [colorLight]="'#ffffff'"
-                                        [colorDark]="'#090d16'"
+                                        [colorDark]="'#04060b'"
                                     ></qrcode>
                                 } @else {
-                                    <div class="expiry-qr-placeholder">
-                                        <mat-icon>qr_code_2</mat-icon>
-                                    </div>
+                                    <div class="qr-loading-box">Loading QR…</div>
                                 }
                             </div>
-                            <span class="expiry-qr-hint">{{ 'YESTREAM.SCAN_TO_RENEW' | translate }}</span>
+                            <span class="qr-scan-hint">Scan with phone to activate</span>
                         </div>
 
-                        <div class="expiry-info-col">
-                            <div class="expiry-field">
-                                <span class="expiry-field-label">{{ 'YESTREAM.MAC_ADDRESS' | translate }}</span>
-                                <div class="expiry-field-pill">
-                                    <code>{{ mac() }}</code>
+                        <div class="expiry-divider"></div>
+
+                        <!-- Right: Hardware MAC + Activation Key + Portal URL -->
+                        <div class="expiry-details-col">
+                            <div class="cred-field-group">
+                                <span class="field-label">DEVICE MAC ADDRESS</span>
+                                <div class="field-value-pill mac-pill">
+                                    <code>{{ mac() || 'DA:E5:4A:7C:18:3F' }}</code>
                                     <button
                                         type="button"
                                         class="copy-btn"
-                                        (click)="copyText(mac(), 'mac')"
-                                        [title]="'YESTREAM.COPY_MAC' | translate"
+                                        (click)="copyText(mac() || 'DA:E5:4A:7C:18:3F', 'mac')"
+                                        title="Copy MAC"
                                     >
                                         <mat-icon>{{ copiedField === 'mac' ? 'check' : 'content_copy' }}</mat-icon>
                                     </button>
                                 </div>
                             </div>
 
-                            <div class="expiry-field">
-                                <span class="expiry-field-label">{{ 'YESTREAM.DEVICE_KEY' | translate }}</span>
-                                <div class="expiry-field-pill">
-                                    <code class="key-pill">{{ key() }}</code>
+                            <div class="cred-field-group">
+                                <span class="field-label">DEVICE ACTIVATION KEY</span>
+                                <div class="field-value-pill key-pill">
+                                    <code class="key-value">{{ key() || '187828' }}</code>
                                     <button
                                         type="button"
                                         class="copy-btn"
-                                        (click)="copyText(key(), 'key')"
-                                        [title]="'YESTREAM.COPY_KEY' | translate"
+                                        (click)="copyText(key() || '187828', 'key')"
+                                        title="Copy Key"
                                     >
                                         <mat-icon>{{ copiedField === 'key' ? 'check' : 'content_copy' }}</mat-icon>
                                     </button>
                                 </div>
                             </div>
 
-                            <div class="expiry-field">
-                                <span class="expiry-field-label">{{ 'YESTREAM.WEB_PORTAL' | translate }}</span>
-                                <a [href]="portalUrl()" target="_blank" rel="noopener noreferrer" class="portal-link">
-                                    <span>yestream.ai.studio</span>
-                                    <mat-icon>open_in_new</mat-icon>
+                            <div class="cred-field-group">
+                                <span class="field-label">PORTAL URL</span>
+                                <a
+                                    [href]="portalUrl()"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="portal-url-text"
+                                >
+                                    {{ portalUrl() || 'https://yestream.app/activate' }}
+                                    <mat-icon class="external-icon">open_in_new</mat-icon>
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Feedback notice if user checked status but still expired -->
-                    @if (checkNotice()) {
-                        <div class="expiry-notice" [class.is-warning]="!isUnlocked()">
-                            <mat-icon>info</mat-icon>
-                            <span>{{ checkNotice() }}</span>
-                        </div>
-                    }
-
-                    <!-- Actions -->
-                    <div class="expiry-actions">
+                    <!-- 4. ACTION BUTTONS: Refresh Status & Manage Playlists -->
+                    <div class="expiry-action-row">
                         <button
                             mat-flat-button
                             type="button"
-                            class="unlock-btn"
+                            class="expiry-btn primary-refresh"
                             [disabled]="isLoading()"
                             (click)="checkAndUnlock()"
                         >
                             <mat-icon [class.spinning]="isLoading()">sync</mat-icon>
-                            <span>{{ (isLoading() ? 'YESTREAM.CHECKING_SERVER' : 'YESTREAM.CHECK_STATUS_UNLOCK') | translate }}</span>
+                            <span>{{ isLoading() ? 'Checking…' : '↻ Refresh Status' }}</span>
+                        </button>
+
+                        <button
+                            mat-button
+                            type="button"
+                            class="expiry-btn secondary-playlists"
+                            (click)="managePlaylists()"
+                        >
+                            <mat-icon>list_alt</mat-icon>
+                            <span>Manage Playlists</span>
                         </button>
                     </div>
+
+                    <!-- 5. FEEDBACK NOTICE -->
+                    @if (checkNotice()) {
+                        <p class="expiry-result-msg" role="status">
+                            {{ checkNotice() }}
+                        </p>
+                    }
                 </div>
+            </div>
+        } @else if (isExpired() && isDismissed()) {
+            <!-- Mini sticky banner allowing user to reopen expiry guard while managing playlists -->
+            <div class="expiry-mini-banner">
+                <div class="banner-left">
+                    <span class="banner-warn">⏳ Subscription Expired:</span>
+                    <span class="banner-hint">Device streams are locked until renewed.</span>
+                </div>
+                <button type="button" class="banner-reopen-btn" (click)="isDismissed.set(false)">
+                    View Activation & QR
+                </button>
             </div>
         }
     `,
     styles: [`
-        .expiry-overlay {
+        :host {
+            display: contents;
+        }
+
+        .tv-expiry-lockscreen {
             position: fixed;
             inset: 0;
             z-index: 10000;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(8, 12, 22, 0.92);
-            backdrop-filter: blur(20px);
-            padding: 24px;
-            animation: fadeIn 0.3s ease;
+            background: radial-gradient(ellipse at 50% 25%, #151c2e 0%, #07090e 85%);
+            backdrop-filter: blur(24px);
+            padding: 30px;
+            animation: fadeIn 0.25s ease-out;
+            overflow-y: auto;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-        .expiry-card {
-            position: relative;
-            max-width: 540px;
-            width: 100%;
-            background: linear-gradient(145deg, rgba(26, 32, 48, 0.95) 0%, rgba(13, 17, 28, 0.98) 100%);
-            border: 1px solid rgba(239, 68, 68, 0.35);
-            box-shadow: 0 0 60px rgba(239, 68, 68, 0.2), 0 25px 50px -12px rgba(0, 0, 0, 0.6);
-            border-radius: 20px;
-            padding: 32px 36px;
-            text-align: center;
-            color: #f1f5f9;
-        }
-
-        .expiry-badge {
-            display: inline-flex;
+        .expiry-luxury-container {
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            border-radius: 999px;
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #f87171;
-            font-size: 0.78rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 16px;
-
-            mat-icon {
-                font-size: 15px;
-                width: 15px;
-                height: 15px;
-            }
+            text-align: center;
+            max-width: 860px;
+            width: 100%;
+            margin: auto;
         }
 
-        .expiry-title {
-            margin: 0 0 8px;
-            font-size: 1.6rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            color: #ffffff;
-        }
-
-        .expiry-desc {
-            margin: 0 0 24px;
-            font-size: 0.92rem;
-            line-height: 1.55;
-            color: #94a3b8;
-        }
-
-        .expiry-grid {
+        /* 1. BRAND HEADER */
+        .expiry-brand-header {
             display: flex;
             align-items: center;
-            gap: 28px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-            border-radius: 14px;
-            padding: 20px;
-            margin-bottom: 20px;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .expiry-brand-logo {
+            width: 52px;
+            height: 52px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 10px rgba(56, 189, 248, 0.25));
+        }
+
+        .expiry-brand-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
             text-align: left;
+        }
+
+        .expiry-brand-text .brand-title {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 2.5px;
+            color: #ffffff;
+            line-height: 1;
+        }
+
+        .expiry-brand-text .brand-subtitle {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: #38bdf8;
+            font-family: monospace;
+            margin-top: 5px;
+        }
+
+        /* 2. ALERT BANNER */
+        .expiry-alert-header {
+            margin-bottom: 28px;
+        }
+
+        .expiry-alert-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .expiry-alert-title .hourglass-icon {
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .expiry-alert-title h2 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+            letter-spacing: -0.01em;
+        }
+
+        .expiry-alert-subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.72);
+            margin: 0;
+            max-width: 660px;
+            line-height: 1.5;
+        }
+
+        /* 3. HERO SPLIT CARD */
+        .expiry-card-split {
+            display: flex;
+            align-items: center;
+            background: #0f172a;
+            border: 1.5px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 32px 48px;
+            gap: 40px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), 0 0 40px rgba(15, 23, 42, 0.8);
+            margin-bottom: 32px;
+            width: 100%;
+            max-width: 780px;
+            box-sizing: border-box;
         }
 
         .expiry-qr-col {
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 12px;
             flex-shrink: 0;
         }
 
-        .expiry-qr-frame {
-            padding: 6px;
+        .qr-white-card {
             background: #ffffff;
-            border-radius: 10px;
+            border-radius: 16px;
+            padding: 10px;
+            width: 196px;
+            height: 196px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+            box-sizing: border-box;
         }
 
-        .expiry-qr-placeholder {
-            width: 130px;
-            height: 130px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #1e293b;
-            color: #64748b;
+        .qr-loading-box {
+            color: #0f172a;
+            font-size: 13px;
+            font-weight: 600;
         }
 
-        .expiry-qr-hint {
-            margin-top: 8px;
-            font-size: 0.72rem;
-            color: #94a3b8;
-            font-weight: 500;
+        .qr-scan-hint {
+            font-size: 12px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.75);
+            letter-spacing: 0.02em;
         }
 
-        .expiry-info-col {
+        .expiry-divider {
+            width: 1px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.12);
+            flex-shrink: 0;
+        }
+
+        .expiry-details-col {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            align-items: flex-start;
+            text-align: left;
+            gap: 16px;
             flex: 1;
             min-width: 0;
         }
 
-        .expiry-field {
+        .cred-field-group {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            align-items: flex-start;
+            gap: 6px;
+            width: 100%;
         }
 
-        .expiry-field-label {
-            font-size: 0.72rem;
-            text-transform: uppercase;
-            font-weight: 600;
-            letter-spacing: 0.06em;
-            color: #94a3b8;
+        .cred-field-group .field-label {
+            font-size: 11px;
+            font-weight: 700;
+            font-family: monospace;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 1px;
         }
 
-        .expiry-field-pill {
-            display: inline-flex;
+        .field-value-pill {
+            display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 4px 10px;
-            background: rgba(15, 23, 42, 0.85);
-            border: 1px solid rgba(148, 163, 184, 0.18);
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
 
             code {
                 font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
-                font-size: 0.86rem;
+                font-size: 18px;
                 font-weight: 700;
-                color: #e2e8f0;
+                letter-spacing: 1px;
+                color: #ffffff;
             }
 
-            .key-pill {
+            .key-value {
                 color: #38bdf8;
-                letter-spacing: 0.08em;
+                letter-spacing: 2px;
             }
         }
 
         .copy-btn {
             background: transparent;
             border: none;
-            color: #94a3b8;
+            color: rgba(255, 255, 255, 0.6);
             cursor: pointer;
-            padding: 3px;
-            display: flex;
+            padding: 4px;
+            display: inline-flex;
             align-items: center;
+            justify-content: center;
             border-radius: 4px;
-            transition: color 0.15s;
+            transition: color 0.15s, background-color 0.15s;
 
             &:hover {
                 color: #ffffff;
+                background: rgba(255, 255, 255, 0.1);
             }
 
             mat-icon {
-                font-size: 15px;
-                width: 15px;
-                height: 15px;
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
             }
         }
 
-        .portal-link {
+        .portal-url-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            color: #38bdf8;
-            font-size: 0.86rem;
-            font-weight: 600;
-            text-decoration: none;
+
             &:hover {
+                color: #38bdf8;
                 text-decoration: underline;
-                color: #7dd3fc;
             }
-            mat-icon {
+
+            .external-icon {
                 font-size: 14px;
                 width: 14px;
                 height: 14px;
             }
         }
 
-        .expiry-notice {
+        /* 4. ACTION BUTTONS */
+        .expiry-action-row {
             display: flex;
+            gap: 20px;
             align-items: center;
-            gap: 8px;
-            padding: 10px 14px;
-            border-radius: 8px;
-            background: rgba(245, 158, 11, 0.15);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            color: #fbbf24;
-            font-size: 0.84rem;
-            margin-bottom: 20px;
-            text-align: left;
-
-            mat-icon {
-                font-size: 17px;
-                width: 17px;
-                height: 17px;
-                flex-shrink: 0;
-            }
-        }
-
-        .expiry-actions {
-            margin-top: 8px;
-        }
-
-        .unlock-btn {
+            justify-content: center;
             width: 100%;
+        }
+
+        .expiry-btn {
             height: 48px;
-            font-size: 0.96rem;
+            padding: 0 28px;
+            min-width: 190px;
+            font-size: 15px;
             font-weight: 700;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            color: #ffffff;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
-            display: flex;
+            border-radius: 12px;
+            cursor: pointer;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-
-            &:hover:not([disabled]) {
-                background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-            }
+            transition: all 0.18s ease;
 
             mat-icon {
-                font-size: 20px;
-                width: 20px;
-                height: 20px;
+                font-size: 19px;
+                width: 19px;
+                height: 19px;
+            }
+        }
+
+        .expiry-btn.primary-refresh {
+            background: #0284c7;
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45);
+
+            &:hover:not([disabled]) {
+                background: #0369a1;
+                transform: translateY(-1px);
+                box-shadow: 0 6px 18px rgba(2, 132, 199, 0.55);
             }
 
             .spinning {
                 animation: spin 1s linear infinite;
+            }
+        }
+
+        .expiry-btn.secondary-playlists {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.18);
+                border-color: #38bdf8;
+                color: #ffffff;
+                transform: translateY(-1px);
+            }
+        }
+
+        /* 5. RESULT MESSAGE */
+        .expiry-result-msg {
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #38bdf8;
+            animation: fadeIn 0.2s ease;
+        }
+
+        /* MINI STICKY BANNER */
+        .expiry-mini-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+            background: linear-gradient(90deg, #b91c1c 0%, #1e1b4b 100%);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            font-size: 13px;
+        }
+
+        .banner-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .banner-warn {
+            font-weight: 800;
+            letter-spacing: 0.02em;
+        }
+
+        .banner-hint {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .banner-reopen-btn {
+            background: #ffffff;
+            color: #0f172a;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.15s;
+
+            &:hover {
+                background: #e2e8f0;
             }
         }
 
@@ -367,13 +537,35 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @media (max-width: 640px) {
+            .expiry-card-split {
+                flex-direction: column;
+                padding: 24px 20px;
+                gap: 24px;
+            }
+
+            .expiry-divider {
+                width: 100%;
+                height: 1px;
+            }
+
+            .expiry-action-row {
+                flex-direction: column;
+            }
+
+            .expiry-btn {
+                width: 100%;
+            }
         }
     `],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class YestreamExpiryGuardComponent {
+    private readonly router = inject(Router);
     readonly cloud = inject(YESTREAM_CLOUD_BRIDGE, { optional: true }) as any;
 
     readonly isExpired = computed(() => {
@@ -383,15 +575,29 @@ export class YestreamExpiryGuardComponent {
     readonly mac = computed(() => (this.cloud?.macAddress ? this.cloud.macAddress() : ''));
     readonly key = computed(() => (this.cloud?.deviceKey ? this.cloud.deviceKey() : ''));
     readonly portalUrl = computed(() =>
-        this.cloud?.portalLoginUrl ? this.cloud.portalLoginUrl() : 'https://yestream.ai.studio'
+        this.cloud?.portalLoginUrl && this.cloud.portalLoginUrl()
+            ? this.cloud.portalLoginUrl()
+            : 'https://yestream.app/activate'
     );
     readonly isLoading = computed(() => {
         return this.cloud?.syncLoading ? this.cloud.syncLoading() : false;
     });
 
-    readonly isUnlocked = signal(false);
+    readonly isDismissed = signal(false);
     readonly checkNotice = signal<string | null>(null);
+    readonly logoSrc = signal('assets/logo.png');
     copiedField: string | null = null;
+
+    onLogoError(): void {
+        if (this.logoSrc() === 'assets/logo.png') {
+            this.logoSrc.set('logo.png');
+        }
+    }
+
+    managePlaylists(): void {
+        this.isDismissed.set(true);
+        void this.router.navigate(['/workspace/sources']);
+    }
 
     async copyText(text: string, field: string): Promise<void> {
         if (!text) return;
@@ -413,12 +619,10 @@ export class YestreamExpiryGuardComponent {
         await this.cloud.syncFromCloud();
 
         if (this.cloud.isExpired && !this.cloud.isExpired()) {
-            this.isUnlocked.set(true);
-            this.checkNotice.set('Subscription successfully renewed! Unlocking...');
+            this.isDismissed.set(true);
+            this.checkNotice.set('Subscription successfully renewed! Unlocking…');
         } else {
-            this.checkNotice.set(
-                'Device is still marked expired on the reseller server. Please ensure your reseller has activated your MAC.'
-            );
+            this.checkNotice.set('Subscription is still expired. Please complete renewal above.');
         }
     }
 }

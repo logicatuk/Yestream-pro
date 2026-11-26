@@ -81,34 +81,64 @@ export function ExpiryLock({ tv }: { tv: TvModel }) {
     }
 
     return (
-        <div class="expiry-lock" role="alertdialog" aria-label="Access Expired" aria-modal>
-            <div class="expiry-lock-inner">
-                <div class="expiry-lock-icon" aria-hidden="true">🔒</div>
-                <h1 class="expiry-lock-title">Access Period Ended</h1>
-                <p class="expiry-lock-subtitle muted">
-                    Your Yestream subscription has expired.<br />
-                    Scan the code below or contact your provider to renew.
-                </p>
+        <div class="expiry-lock" role="alertdialog" aria-label="Subscription Expired" aria-modal>
+            <div class="expiry-luxury-container">
+                {/* 1. BRAND HEADER (Authentic white origami bird logo) */}
+                <div class="expiry-brand-header">
+                    <img src="assets/logo.png" alt="Yestream" class="expiry-brand-logo" width="52" height="52" onError={(e) => {
+                        const el = e.currentTarget as HTMLImageElement;
+                        if (el.src.includes('assets/logo.png')) {
+                            el.src = 'logo.png';
+                        } else if (el.src.includes('logo.png')) {
+                            el.src = '/logo.png';
+                        }
+                    }} />
+                    <div class="expiry-brand-text">
+                        <span class="brand-title">YESTREAM</span>
+                        <span class="brand-subtitle">PRO IPTV PLAYER</span>
+                    </div>
+                </div>
 
-                <div class="expiry-lock-content">
-                    {qr ? (
-                        <div class="expiry-lock-qr">
-                            <img src={qr} alt="Renewal QR code" width={200} height={200} />
-                        </div>
-                    ) : null}
+                {/* 2. EXPIRED BANNER */}
+                <div class="expiry-alert-header">
+                    <div class="expiry-alert-title">
+                        <span class="hourglass-icon">⏳</span>
+                        <h2>Your trial period has expired.</h2>
+                    </div>
+                    <p class="expiry-alert-subtitle">
+                        To continue enjoying Live TV, Movies, Series, and the EPG Timeline, please renew or activate your device.
+                    </p>
+                </div>
 
-                    <div class="expiry-lock-credentials">
-                        <div class="expiry-cred-row">
-                            <span class="expiry-cred-label">MAC</span>
-                            <code class="expiry-cred-value">{mac}</code>
+                {/* 3. HERO CARD */}
+                <div class="expiry-card-split">
+                    <div class="expiry-qr-col">
+                        <div class="qr-white-card">
+                            {qr ? (
+                                <img src={qr} alt="Renewal QR code" class="expiry-qr-image" width={176} height={176} />
+                            ) : (
+                                <div class="qr-loading-box">Loading QR…</div>
+                            )}
                         </div>
-                        <div class="expiry-cred-row">
-                            <span class="expiry-cred-label">Key</span>
-                            <code class="expiry-cred-value expiry-cred-key">{deviceKey}</code>
+                        <span class="qr-scan-hint">Scan with phone to activate</span>
+                    </div>
+
+                    <div class="expiry-divider" />
+
+                    <div class="expiry-details-col">
+                        <div class="cred-field-group">
+                            <span class="field-label">DEVICE MAC ADDRESS</span>
+                            <div class="field-value-pill mac-pill">{mac}</div>
                         </div>
-                        <div class="expiry-cred-row">
-                            <span class="expiry-cred-label">Web</span>
-                            <span class="expiry-cred-value muted">{renewUrl}</span>
+
+                        <div class="cred-field-group">
+                            <span class="field-label">DEVICE ACTIVATION KEY</span>
+                            <div class="field-value-pill key-pill">{deviceKey}</div>
+                        </div>
+
+                        <div class="cred-field-group">
+                            <span class="field-label">PORTAL URL</span>
+                            <span class="portal-url-text">https://yestream.app/activate</span>
                         </div>
                     </div>
                 </div>
@@ -116,21 +146,23 @@ export function ExpiryLock({ tv }: { tv: TvModel }) {
                 {checkResult ? (
                     <p
                         role="status"
-                        class={`expiry-lock-result${checkResult.startsWith('✓') ? ' expiry-lock-result--ok' : ''}`}
+                        class={`expiry-result-msg${checkResult.startsWith('✓') ? ' expiry-result-msg--ok' : ''}`}
                     >
                         {checkResult}
                     </p>
                 ) : null}
 
-                <button
-                    ref={btnRef}
-                    class="primary expiry-lock-btn"
-                    disabled={checking}
-                    onClick={() => void checkStatus()}
-                    data-focus="expiry-check"
-                >
-                    {checking ? 'Checking…' : '↺ Check Status & Unlock'}
-                </button>
+                <div class="expiry-action-row">
+                    <button
+                        ref={btnRef}
+                        class="expiry-btn primary-refresh"
+                        disabled={checking}
+                        onClick={() => void checkStatus()}
+                        data-focus="expiry-check"
+                    >
+                        {checking ? 'Checking…' : '↻ Refresh Status'}
+                    </button>
+                </div>
             </div>
         </div>
     );
