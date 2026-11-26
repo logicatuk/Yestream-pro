@@ -12,83 +12,108 @@ public struct HomeView: View {
         cloud.registration?.mac ?? "DA:E5:4A:7C:18:3F"
     }
 
+    private var planStatusText: String {
+        let plan = cloud.registration?.plan ?? "PRO"
+        let status = (cloud.registration?.status ?? "active").uppercased()
+        return "\(status) • \(plan)"
+    }
+
     private var expirationString: String {
         if let exp = cloud.registration?.expiresAt {
             let iso = ISO8601DateFormatter()
             if let date = iso.date(from: exp) {
                 let df = DateFormatter()
-                df.dateFormat = "dd/MM/yyyy HH:mm"
+                df.dateFormat = "dd/MM/yyyy"
                 return df.string(from: date)
             }
         }
-        return "14/12/2027 17:59"
+        return "Active Subscription"
     }
 
     public var body: some View {
         ZStack {
-            // Deep Navy Blue Background (Hot IPTV / IBO Ice UI: #08101E)
-            Color(red: 0.035, green: 0.065, blue: 0.12)
+            // Deep Navy / Midnight Blue Background
+            Color(red: 0.035, green: 0.06, blue: 0.11)
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                Spacer().frame(height: 36)
+                Spacer().frame(height: 30)
 
                 // ==========================================
-                // 1. BRAND HEADER (Hot IPTV / IBO Player Style)
+                // 1. BRAND HEADER (Authentic Yestream Pro)
                 // ==========================================
                 VStack(spacing: 8) {
                     HStack(spacing: 12) {
-                        Image(systemName: "flame.fill")
-                            .font(.system(size: 38))
-                            .foregroundColor(Color(red: 1.0, green: 0.55, blue: 0.15))
+                        Image(systemName: "sparkles.tv")
+                            .font(.system(size: 38, weight: .bold))
+                            .foregroundColor(Color(red: 0.3, green: 0.65, blue: 1.0))
 
-                        VStack(alignment: .leading, spacing: 0) {
-                            Text("Xtream Code")
-                                .font(.system(size: 11, weight: .bold))
-                                .foregroundColor(.white.opacity(0.7))
-                            Text("Hot IPTV")
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text("YESTREAM")
                                 .font(.system(size: 34, weight: .black, design: .rounded))
+                                .tracking(2.0)
                                 .foregroundColor(.white)
+                            Text("PRO IPTV PLAYER")
+                                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                .tracking(3.0)
+                                .foregroundColor(Color(red: 0.3, green: 0.65, blue: 1.0))
                         }
                     }
 
-                    // Current list label
-                    HStack(spacing: 6) {
-                        Image(systemName: "list.bullet.indent")
+                    // Active playlist info
+                    HStack(spacing: 8) {
+                        Image(systemName: "externaldrive.connected.to.line.below")
                             .font(.system(size: 12))
-                            .foregroundColor(Color(red: 1.0, green: 0.7, blue: 0.2))
-                        Text("Current list :")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.85))
-                        Text(activePlaylist?.name.cleanedIptvTitle ?? "List 1")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(Color(red: 1.0, green: 0.75, blue: 0.25))
+                            .foregroundColor(.white.opacity(0.6))
+                        Text("Active Playlist :")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.white.opacity(0.75))
+                        Text(activePlaylist?.name.cleanedIptvTitle ?? "Default Playlist")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundColor(.white)
+                        if let type = activePlaylist?.type {
+                            Text(type == .xtream ? "XTREAM" : "M3U")
+                                .font(.system(size: 10, weight: .heavy, design: .monospaced))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.white.opacity(0.1))
+                                .cornerRadius(4)
+                                .foregroundColor(.white.opacity(0.85))
+                        }
                     }
                     .padding(.top, 4)
 
-                    // Active & Expiration Status Pill
+                    // Real Status & Subscription Info Pill
                     HStack(spacing: 12) {
                         HStack(spacing: 6) {
-                            Text("😊")
-                            Text("Active")
-                                .font(.system(size: 12, weight: .bold))
+                            Circle()
+                                .fill(Color(red: 0.188, green: 0.820, blue: 0.345))
+                                .frame(width: 7, height: 7)
+                            Text(planStatusText)
+                                .font(.system(size: 12, weight: .bold, design: .monospaced))
                                 .foregroundColor(.white)
                         }
 
+                        Text("•")
+                            .foregroundColor(.white.opacity(0.4))
+                            .font(.caption2)
+
                         HStack(spacing: 6) {
-                            Text("⏳")
-                            Text("Expires on \(expirationString)")
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundColor(.white.opacity(0.9))
+                            Image(systemName: "calendar")
+                                .font(.system(size: 11))
+                                .foregroundColor(.white.opacity(0.7))
+                            Text(expirationString)
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.85))
                         }
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 6)
-                    .background(Color.black.opacity(0.55))
-                    .cornerRadius(16)
+                    .background(Color.white.opacity(0.06))
+                    .cornerRadius(14)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(Color.white.opacity(0.12), lineWidth: 1)
                     )
                     .padding(.top, 4)
                 }
@@ -99,24 +124,27 @@ public struct HomeView: View {
                 // 2. MAIN 3 CARDS: Live TV, Movies, Series
                 // ==========================================
                 HStack(spacing: 36) {
-                    HotIptvCard(
+                    YestreamHeroCard(
                         title: "Live TV",
+                        subtitle: "\(appState.channels.count) Channels",
                         systemIcon: "tv",
                         action: {
                             appState.selectedTab = 1
                         }
                     )
 
-                    HotIptvCard(
+                    YestreamHeroCard(
                         title: "Movies",
+                        subtitle: "\(appState.vodMovies.count) Films",
                         systemIcon: "film",
                         action: {
                             appState.selectedTab = 2
                         }
                     )
 
-                    HotIptvCard(
+                    YestreamHeroCard(
                         title: "Series",
+                        subtitle: "\(appState.seriesList.count) Series",
                         systemIcon: "play.tv",
                         action: {
                             appState.selectedTab = 3
@@ -128,102 +156,97 @@ public struct HomeView: View {
                 Spacer()
 
                 // ==========================================
-                // 3. BOTTOM UTILITY PILL BUTTONS
+                // 3. BOTTOM UTILITY BUTTONS (Fixed frame, no balloon distortion)
                 // ==========================================
-                HStack(spacing: 24) {
+                HStack(spacing: 32) {
                     Button(action: {
                         Task {
                             await cloud.syncDevice()
                             await appState.loadActivePlaylistCatalog(forceRefresh: true)
                         }
                     }) {
-                        Text("Refresh")
-                            .font(.system(size: 14, weight: .bold))
-                            .padding(.horizontal, 28)
-                            .padding(.vertical, 10)
-                            .background(Color.white.opacity(0.08))
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.white.opacity(0.12), lineWidth: 1)
-                            )
+                        HStack(spacing: 8) {
+                            Image(systemName: "arrow.clockwise")
+                                .font(.system(size: 14, weight: .bold))
+                            Text("Refresh")
+                                .font(.system(size: 14, weight: .bold))
+                        }
+                        .frame(width: 160, height: 44)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.bordered)
 
                     Button(action: {
                         appState.selectedTab = 4
                     }) {
-                        Text("Change Playlist")
-                            .font(.system(size: 14, weight: .bold))
-                            .padding(.horizontal, 28)
-                            .padding(.vertical, 10)
-                            .background(Color.white.opacity(0.08))
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.white.opacity(0.12), lineWidth: 1)
-                            )
+                        HStack(spacing: 8) {
+                            Image(systemName: "list.bullet.rectangle")
+                                .font(.system(size: 14, weight: .bold))
+                            Text("Playlists")
+                                .font(.system(size: 14, weight: .bold))
+                        }
+                        .frame(width: 160, height: 44)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.bordered)
 
                     Button(action: {
-                        appState.selectedTab = 6
+                        appState.selectedTab = 7
                     }) {
-                        Text("Settings")
-                            .font(.system(size: 14, weight: .bold))
-                            .padding(.horizontal, 28)
-                            .padding(.vertical, 10)
-                            .background(Color.white.opacity(0.08))
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.white.opacity(0.12), lineWidth: 1)
-                            )
+                        HStack(spacing: 8) {
+                            Image(systemName: "gearshape")
+                                .font(.system(size: 14, weight: .bold))
+                            Text("Settings")
+                                .font(.system(size: 14, weight: .bold))
+                        }
+                        .frame(width: 160, height: 44)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.bordered)
                 }
 
-                Spacer().frame(height: 32)
+                Spacer().frame(height: 28)
 
                 // ==========================================
-                // 4. FOOTER: MAC & DISCLAIMER
+                // 4. FOOTER: Real Hardware MAC & Brand Mark
                 // ==========================================
                 VStack(spacing: 4) {
-                    Text("Your MAC : \(macAddress)")
-                        .font(.system(size: 12, weight: .medium, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.7))
+                    Text("MAC ADDRESS : \(macAddress)")
+                        .font(.system(size: 12, weight: .bold, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.65))
 
-                    Text("HotIPTV.app © is just a media player, No channels included")
+                    Text("Yestream Pro • Ultra High Definition Streaming")
                         .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(Color(red: 0.9, green: 0.45, blue: 0.2))
+                        .foregroundColor(.white.opacity(0.4))
                 }
-                .padding(.bottom, 24)
+                .padding(.bottom, 22)
             }
         }
     }
 }
 
-// MARK: - Hot IPTV Card Component
-struct HotIptvCard: View {
+// MARK: - Yestream Hero Card Component
+struct YestreamHeroCard: View {
     let title: String
+    let subtitle: String
     let systemIcon: String
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 20) {
+            VStack(spacing: 16) {
                 Spacer()
 
                 Image(systemName: systemIcon)
-                    .font(.system(size: 64, weight: .semibold))
+                    .font(.system(size: 60, weight: .semibold))
                     .foregroundColor(.white)
 
-                Text(title)
-                    .font(.system(size: 26, weight: .bold))
-                    .foregroundColor(.white)
+                VStack(spacing: 4) {
+                    Text(title)
+                        .font(.system(size: 26, weight: .bold))
+                        .foregroundColor(.white)
+
+                    Text(subtitle)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(.white.opacity(0.65))
+                }
 
                 Spacer()
             }
@@ -234,7 +257,7 @@ struct HotIptvCard: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 20)
-                    .stroke(Color.white.opacity(0.15), lineWidth: 1.5)
+                    .stroke(Color.white.opacity(0.14), lineWidth: 1.5)
             )
         }
         .buttonStyle(.card)
