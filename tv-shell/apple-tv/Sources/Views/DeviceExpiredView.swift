@@ -160,7 +160,7 @@ public struct DeviceExpiredView: View {
                             Text("PORTAL URL")
                                 .font(.system(size: 10, weight: .bold, design: .monospaced))
                                 .foregroundColor(.white.opacity(0.4))
-                            Text("https://yestream.app/activate")
+                            Text("https://yestream.ai.studio/")
                                 .font(.system(size: 13, weight: .semibold))
                                 .foregroundColor(.white.opacity(0.75))
                         }

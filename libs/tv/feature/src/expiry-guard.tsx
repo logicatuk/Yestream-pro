@@ -126,7 +126,7 @@ export function TvExpiryGuard({
 
                         <div class="cred-field-group">
                             <span class="field-label">PORTAL URL</span>
-                            <span class="portal-url-text">https://yestream.app/activate</span>
+                            <a href="https://yestream.ai.studio/" target="_blank" rel="noopener noreferrer" class="portal-url-text">https://yestream.ai.studio/</a>
                         </div>
                     </div>
                 </div>

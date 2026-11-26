@@ -50,7 +50,7 @@
                 <Label id="keyDisplay" text="187828" font="font:MediumBoldSystemFont" color="#38BDF8" translation="[20, 134]" />
 
                 <Label text="PORTAL URL" font="font:SmallBoldSystemFont" color="#475569" translation="[0, 190]" />
-                <Label id="portalLink" text="https://yestream.app/activate" font="font:SmallSystemFont" color="#94A3B8" translation="[0, 215]" />
+                <Label id="portalLink" text="https://yestream.ai.studio/" font="font:SmallSystemFont" color="#94A3B8" translation="[0, 215]" />
             </Group>
 
             <!-- Action Buttons: Refresh Status & Manage Playlists -->

@@ -47,18 +47,14 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                         <!-- Left: QR Code -->
                         <div class="expiry-qr-col">
                             <div class="qr-white-card">
-                                @if (portalUrl()) {
-                                    <qrcode
-                                        [qrdata]="portalUrl()"
-                                        [width]="176"
-                                        [errorCorrectionLevel]="'M'"
-                                        [margin]="1"
-                                        [colorLight]="'#ffffff'"
-                                        [colorDark]="'#04060b'"
-                                    ></qrcode>
-                                } @else {
-                                    <div class="qr-loading-box">Loading QR…</div>
-                                }
+                                <qrcode
+                                    [qrdata]="qrCodeData()"
+                                    [width]="176"
+                                    [errorCorrectionLevel]="'M'"
+                                    [margin]="1"
+                                    [colorLight]="'#ffffff'"
+                                    [colorDark]="'#04060b'"
+                                ></qrcode>
                             </div>
                             <span class="qr-scan-hint">Scan with phone to activate</span>
                         </div>
@@ -100,12 +96,12 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                             <div class="cred-field-group">
                                 <span class="field-label">PORTAL URL</span>
                                 <a
-                                    [href]="portalUrl()"
+                                    href="https://yestream.ai.studio/"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     class="portal-url-text"
                                 >
-                                    {{ portalUrl() || 'https://yestream.app/activate' }}
+                                    <span>https://yestream.ai.studio/</span>
                                     <mat-icon class="external-icon">open_in_new</mat-icon>
                                 </a>
                             </div>
@@ -574,10 +570,11 @@ export class YestreamExpiryGuardComponent {
 
     readonly mac = computed(() => (this.cloud?.macAddress ? this.cloud.macAddress() : ''));
     readonly key = computed(() => (this.cloud?.deviceKey ? this.cloud.deviceKey() : ''));
-    readonly portalUrl = computed(() =>
+    readonly portalUrl = 'https://yestream.ai.studio/';
+    readonly qrCodeData = computed(() =>
         this.cloud?.portalLoginUrl && this.cloud.portalLoginUrl()
             ? this.cloud.portalLoginUrl()
-            : 'https://yestream.app/activate'
+            : 'https://yestream.ai.studio/'
     );
     readonly isLoading = computed(() => {
         return this.cloud?.syncLoading ? this.cloud.syncLoading() : false;
