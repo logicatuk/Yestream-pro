@@ -43,6 +43,10 @@ public struct MediaItem: Identifiable, Codable, Hashable {
     public let year: String?
     public let plot: String?
 
+    public var hasEpg: Bool {
+        return (epgChannelId != nil && !epgChannelId!.isEmpty && epgChannelId != "null")
+    }
+
     public init(
         id: String,
         title: String,

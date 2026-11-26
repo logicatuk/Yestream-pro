@@ -697,23 +697,24 @@ private struct SeasonTabButtonBody: View {
             configuration.label
                 .font(.system(size: 15, weight: (isSelected || isFocused) ? .bold : .medium))
         }
-        .foregroundColor(isFocused ? .black : (isSelected ? .white : Color.white.opacity(0.75)))
+        .foregroundColor(.white)
         .padding(.horizontal, 22)
         .padding(.vertical, 10)
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(
-                    isFocused ? Color.white : (isSelected ? Color(red: 0.12, green: 0.44, blue: 0.96) : Color.white.opacity(0.08))
+                    isFocused ? Color(red: 0.14, green: 0.30, blue: 0.65) : (isSelected ? Color(red: 0.12, green: 0.44, blue: 0.96) : Color.white.opacity(0.08))
                 )
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(
-                    isFocused ? Color.white : (isSelected ? Color.blue.opacity(0.6) : Color.white.opacity(0.12)),
-                    lineWidth: 1.5
+                    isFocused ? Color.cyan : (isSelected ? Color.blue.opacity(0.6) : Color.white.opacity(0.12)),
+                    lineWidth: isFocused ? 2 : 1.5
                 )
         )
-        .scaleEffect(isFocused ? 1.06 : (configuration.isPressed ? 0.95 : 1.0))
+        .shadow(color: isFocused ? Color.cyan.opacity(0.4) : Color.clear, radius: 5)
+        .scaleEffect(isFocused ? 1.04 : (configuration.isPressed ? 0.95 : 1.0))
         .animation(.easeInOut(duration: 0.12), value: isFocused)
     }
 }

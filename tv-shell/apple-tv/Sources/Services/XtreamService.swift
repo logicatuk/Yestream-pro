@@ -136,6 +136,7 @@ public class XtreamService {
                 let icon = s["stream_icon"] as? String
                 let catId = (s["category_id"] as? String) ?? (s["category_id"] as? Int).map(String.init)
                 let playUrl = "\(base)/live/\(u)/\(p)/\(streamId).m3u8"
+                let epgId = (s["epg_channel_id"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
 
                 return MediaItem(
                     id: "\(streamId)",
@@ -144,7 +145,8 @@ public class XtreamService {
                     streamUrl: playUrl,
                     logoUrl: icon,
                     categoryId: catId,
-                    categoryName: catId.flatMap { categoryMap[$0] }
+                    categoryName: catId.flatMap { categoryMap[$0] },
+                    epgChannelId: (epgId?.isEmpty == false && epgId != "null") ? epgId : nil
                 )
             }
         }

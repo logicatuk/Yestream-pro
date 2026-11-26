@@ -7,7 +7,7 @@ public struct EPGGuideView: View {
     // Filter & Navigation States
     @State private var selectedCategoryId: String = "ALL"
     @State private var showCategoryPicker: Bool = false
-    @State private var onlyWithEpg: Bool = false
+    @State private var onlyWithEpg: Bool = true // Default to true: only show channels that have EPG
     @State private var channelQuery: String = ""
     @State private var selectedDateOffset: Int = 0 // 0 = Today, 1 = Tomorrow
     @State private var selectedProgram: EpgProgram?
@@ -25,7 +25,7 @@ public struct EPGGuideView: View {
 
     public init() {}
 
-    // Filtered Channels
+    // Filtered Channels (ALL channels, no artificial 40 limit)
     private var filteredChannels: [MediaItem] {
         var list = appState.channels
 
@@ -40,7 +40,7 @@ public struct EPGGuideView: View {
         if onlyWithEpg {
             list = list.filter { ch in
                 let progs = appState.epgCache[ch.id] ?? []
-                return !progs.isEmpty
+                return !progs.isEmpty || ch.hasEpg
             }
         }
 
@@ -117,9 +117,9 @@ public struct EPGGuideView: View {
 
                         Divider().background(Color.white.opacity(0.08))
 
-                        // Channel Rows
-                        VStack(spacing: 0) {
-                            ForEach(Array(filteredChannels.prefix(40).enumerated()), id: \.element.id) { index, channel in
+                        // Channel Rows (LazyVStack for all channels)
+                        LazyVStack(spacing: 0) {
+                            ForEach(Array(filteredChannels.enumerated()), id: \.element.id) { index, channel in
                                 let isEven = index % 2 == 0
                                 EpgChannelRowTile(
                                     index: index + 1,
@@ -127,7 +127,7 @@ public struct EPGGuideView: View {
                                     isPlaying: channel.id == appState.currentlyPlaying?.id,
                                     rowWidth: channelColumnWidth,
                                     rowHeight: rowHeight,
-                                    backgroundColor: isEven ? Color(red: 0.06, green: 0.08, blue: 0.14) : Color(red: 0.08, green: 0.11, blue: 0.18),
+                                    backgroundColor: isEven ? Color(red: 0.05, green: 0.07, blue: 0.12) : Color(red: 0.07, green: 0.10, blue: 0.16),
                                     onPlay: {
                                         playChannel(channel)
                                     }
@@ -156,14 +156,14 @@ public struct EPGGuideView: View {
                                 if selectedDateOffset == 0 && nowOffsetPoints >= 0 {
                                     Rectangle()
                                         .fill(Color(red: 0.95, green: 0.35, blue: 0.45))
-                                        .frame(width: 2, height: CGFloat(min(filteredChannels.count, 40)) * (rowHeight + 1))
+                                        .frame(width: 2, height: CGFloat(max(filteredChannels.count, 1)) * (rowHeight + 1))
                                         .offset(x: nowOffsetPoints)
                                         .zIndex(10)
                                         .allowsHitTesting(false)
                                 }
 
-                                VStack(alignment: .leading, spacing: 0) {
-                                    ForEach(Array(filteredChannels.prefix(40).enumerated()), id: \.element.id) { index, channel in
+                                LazyVStack(alignment: .leading, spacing: 0) {
+                                    ForEach(Array(filteredChannels.enumerated()), id: \.element.id) { index, channel in
                                         let isEven = index % 2 == 0
                                         programmeRail(for: channel, isEven: isEven)
                                             .frame(height: rowHeight)
@@ -195,96 +195,57 @@ public struct EPGGuideView: View {
         .task {
             await prefetchEpg()
         }
+        .onChange(of: selectedCategoryId) { _ in
+            Task {
+                await prefetchEpg()
+            }
+        }
     }
 
     // MARK: - Top Toolbar
     private var topToolbar: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 14) {
             // Date Navigator
-            HStack(spacing: 8) {
-                Button(action: {
+            HStack(spacing: 6) {
+                EpgToolbarButton(icon: "chevron.left") {
                     if selectedDateOffset > -1 { selectedDateOffset -= 1 }
-                }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 13, weight: .bold))
                 }
-                .buttonStyle(.bordered)
 
                 Text(dateLabel)
                     .font(.system(size: 13, weight: .bold))
                     .foregroundColor(.white)
-                    .frame(minWidth: 130, alignment: .center)
+                    .frame(minWidth: 120, alignment: .center)
 
-                Button(action: {
+                EpgToolbarButton(icon: "chevron.right") {
                     if selectedDateOffset < 2 { selectedDateOffset += 1 }
-                }) {
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 13, weight: .bold))
                 }
-                .buttonStyle(.bordered)
             }
 
             // NOW Button
-            Button(action: {
+            EpgToolbarButton(title: "Now", circleColor: .red) {
                 selectedDateOffset = 0
                 currentTime = Date()
-            }) {
-                HStack(spacing: 6) {
-                    Circle().fill(Color.red).frame(width: 8, height: 8)
-                    Text("Now")
-                        .font(.system(size: 13, weight: .bold))
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
             }
-            .buttonStyle(.bordered)
 
             // Category Selector
-            Button(action: {
+            EpgToolbarButton(title: categoryName(for: selectedCategoryId), iconRight: "chevron.down") {
                 showCategoryPicker = true
-            }) {
-                HStack(spacing: 6) {
-                    Text(categoryName(for: selectedCategoryId))
-                        .font(.system(size: 13, weight: .bold))
-                        .lineLimit(1)
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 10, weight: .bold))
-                }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 6)
             }
-            .buttonStyle(.bordered)
 
             // Only With EPG Toggle
-            Button(action: {
+            EpgToolbarButton(
+                title: "Only with EPG",
+                icon: onlyWithEpg ? "checkmark.circle.fill" : "circle",
+                iconColor: onlyWithEpg ? Color.cyan : Color.secondary,
+                isActive: onlyWithEpg
+            ) {
                 onlyWithEpg.toggle()
-            }) {
-                HStack(spacing: 6) {
-                    Image(systemName: onlyWithEpg ? "checkmark.circle.fill" : "circle")
-                        .foregroundColor(onlyWithEpg ? .cyan : .secondary)
-                    Text("Only with EPG")
-                        .font(.system(size: 13, weight: .medium))
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
             }
-            .buttonStyle(.bordered)
 
             Spacer()
 
-            // Filter channels input
-            HStack(spacing: 8) {
-                Image(systemName: "magnifyingglass")
-                    .font(.system(size: 13))
-                    .foregroundColor(.secondary)
-                TextField("Filter channels…", text: $channelQuery)
-                    .font(.system(size: 13))
-                    .frame(width: 180)
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(Color.white.opacity(0.08))
-            .cornerRadius(10)
+            // Custom Sleek Search Field (No White Bulb!)
+            EpgSearchField(text: $channelQuery)
         }
         .padding(.horizontal, 40)
         .background(Color(red: 0.06, green: 0.09, blue: 0.16))
@@ -428,7 +389,7 @@ public struct EPGGuideView: View {
                 .fontWeight(.bold)
 
             ScrollView(.vertical) {
-                VStack(spacing: 8) {
+                LazyVStack(spacing: 8) {
                     Button(action: {
                         selectedCategoryId = "ALL"
                         showCategoryPicker = false
@@ -503,13 +464,32 @@ public struct EPGGuideView: View {
     }
 
     private func prefetchEpg() async {
-        for ch in filteredChannels.prefix(15) {
-            await appState.loadEpg(for: ch)
+        let baseList: [MediaItem]
+        if selectedCategoryId != "ALL" && !selectedCategoryId.isEmpty {
+            baseList = appState.channels.filter { $0.categoryId == selectedCategoryId }
+        } else {
+            // Prioritize broadcast channels with potential EPG (non-ambient)
+            let broadcast = appState.channels.filter { ch in
+                let cat = ch.categoryName?.lowercased() ?? ""
+                return !cat.contains("relax")
+            }
+            baseList = broadcast.isEmpty ? appState.channels : broadcast
+        }
+
+        let candidates = Array(baseList.prefix(80))
+        await withTaskGroup(of: Void.self) { group in
+            for ch in candidates {
+                if appState.epgCache[ch.id] == nil {
+                    group.addTask {
+                        await appState.loadEpg(for: ch)
+                    }
+                }
+            }
         }
     }
 }
 
-// MARK: - Focusable Channel Row Tile
+// MARK: - Custom Sleek Focusable Channel Row Tile (No White Blob!)
 private struct EpgChannelRowTile: View {
     let index: Int
     let channel: MediaItem
@@ -519,14 +499,12 @@ private struct EpgChannelRowTile: View {
     let backgroundColor: Color
     let onPlay: () -> Void
 
-    @FocusState private var isFocused: Bool
-
     var body: some View {
         Button(action: onPlay) {
             HStack(spacing: 12) {
                 Text("\(index)")
                     .font(.system(size: 13, weight: .bold, design: .monospaced))
-                    .foregroundColor(isFocused ? .black : .white.opacity(0.6))
+                    .foregroundColor(.white.opacity(0.7))
                     .frame(width: 28, alignment: .trailing)
 
                 if let logo = channel.logoUrl, let url = URL(string: logo) {
@@ -535,11 +513,11 @@ private struct EpgChannelRowTile: View {
                             img.resizable().scaledToFit()
                         } else {
                             RoundedRectangle(cornerRadius: 6)
-                                .fill(isFocused ? Color.black.opacity(0.1) : Color.blue.opacity(0.35))
+                                .fill(Color.blue.opacity(0.35))
                                 .overlay(
                                     Image(systemName: "tv")
                                         .font(.system(size: 12))
-                                        .foregroundColor(isFocused ? .black : .white.opacity(0.8))
+                                        .foregroundColor(.white.opacity(0.8))
                                 )
                         }
                     }
@@ -547,11 +525,11 @@ private struct EpgChannelRowTile: View {
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                 } else {
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(isFocused ? Color.black.opacity(0.1) : Color.blue.opacity(0.35))
+                        .fill(Color.blue.opacity(0.35))
                         .overlay(
                             Image(systemName: "tv")
                                 .font(.system(size: 12))
-                                .foregroundColor(isFocused ? .black : .white.opacity(0.8))
+                                .foregroundColor(.white.opacity(0.8))
                         )
                         .frame(width: 32, height: 32)
                 }
@@ -559,7 +537,7 @@ private struct EpgChannelRowTile: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(channel.title.cleanedIptvTitle)
                         .font(.system(size: 13, weight: .bold))
-                        .foregroundColor(isFocused ? .black : .white)
+                        .foregroundColor(.white)
                         .lineLimit(1)
 
                     if isPlaying {
@@ -569,61 +547,81 @@ private struct EpgChannelRowTile: View {
                             Text("Playing")
                                 .font(.system(size: 10, weight: .bold))
                         }
-                        .foregroundColor(isFocused ? Color(red: 0.1, green: 0.6, blue: 0.2) : .green)
+                        .foregroundColor(Color(red: 0.2, green: 0.85, blue: 0.3))
                     } else if let cat = channel.categoryName, !cat.isEmpty {
                         Text(cat)
                             .font(.system(size: 10))
-                            .foregroundColor(isFocused ? .black.opacity(0.7) : .white.opacity(0.5))
+                            .foregroundColor(.white.opacity(0.6))
                             .lineLimit(1)
                     } else {
                         Text("No programme information")
                             .font(.system(size: 10))
-                            .foregroundColor(isFocused ? .black.opacity(0.55) : .white.opacity(0.4))
+                            .foregroundColor(.white.opacity(0.45))
                     }
                 }
                 Spacer(minLength: 0)
             }
             .padding(.horizontal, 10)
-            .frame(width: rowWidth - 12, height: rowHeight - 8, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(isFocused ? Color.white : backgroundColor)
-            )
-            .scaleEffect(isFocused ? 1.02 : 1.0)
-            .animation(.easeInOut(duration: 0.15), value: isFocused)
+            .frame(width: rowWidth - 12, height: rowHeight - 6, alignment: .leading)
         }
-        .buttonStyle(.plain)
-        .focused($isFocused)
+        .buttonStyle(EpgChannelButtonStyle(backgroundColor: backgroundColor))
         .padding(.horizontal, 6)
     }
 }
 
-// MARK: - Focusable Programme Block Tile
+// MARK: - EpgChannelButtonStyle
+private struct EpgChannelButtonStyle: ButtonStyle {
+    let backgroundColor: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+        EpgChannelButtonBody(configuration: configuration, backgroundColor: backgroundColor)
+    }
+}
+
+private struct EpgChannelButtonBody: View {
+    let configuration: ButtonStyle.Configuration
+    let backgroundColor: Color
+    @Environment(\.isFocused) private var isFocused
+
+    var body: some View {
+        configuration.label
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isFocused ? Color(red: 0.14, green: 0.28, blue: 0.54) : backgroundColor)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(isFocused ? Color.cyan : Color.white.opacity(0.04), lineWidth: isFocused ? 2 : 1)
+            )
+            .shadow(color: isFocused ? Color.cyan.opacity(0.4) : Color.clear, radius: 5)
+            .animation(.easeInOut(duration: 0.12), value: isFocused)
+    }
+}
+
+// MARK: - Custom Sleek Focusable Programme Block Tile (No White Blob!)
 private struct EpgProgrammeBlockTile: View {
     let program: EpgProgram
     let width: CGFloat
     let rowHeight: CGFloat
     let onSelect: () -> Void
 
-    @FocusState private var isFocused: Bool
-
     var body: some View {
         Button(action: onSelect) {
             VStack(alignment: .leading, spacing: 3) {
                 Text(program.title)
                     .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(isFocused ? .black : .white)
+                    .foregroundColor(.white)
                     .lineLimit(1)
 
                 Text(program.formattedTimeRange)
                     .font(.system(size: 10, design: .monospaced))
-                    .foregroundColor(isFocused ? .black.opacity(0.75) : .white.opacity(0.7))
+                    .foregroundColor(Color(red: 0.85, green: 0.92, blue: 1.0))
 
                 if program.progress > 0 && program.progress < 1.0 {
                     GeometryReader { g in
                         ZStack(alignment: .leading) {
                             Capsule().fill(Color.white.opacity(0.2))
-                            Capsule().fill(isFocused ? Color.red : Color(red: 0.95, green: 0.35, blue: 0.45))
+                            Capsule().fill(Color(red: 0.2, green: 0.85, blue: 1.0))
                                 .frame(width: g.size.width * CGFloat(program.progress))
                         }
                     }
@@ -632,30 +630,48 @@ private struct EpgProgrammeBlockTile: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .frame(width: width, height: rowHeight - 10, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(isFocused ? Color.white : Color(red: 0.12, green: 0.16, blue: 0.24))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(isFocused ? Color.clear : Color.white.opacity(0.08), lineWidth: 1)
-            )
-            .scaleEffect(isFocused ? 1.03 : 1.0)
-            .animation(.easeInOut(duration: 0.15), value: isFocused)
+            .frame(width: width, height: rowHeight - 8, alignment: .leading)
         }
-        .buttonStyle(.plain)
-        .focused($isFocused)
+        .buttonStyle(EpgProgrammeButtonStyle(width: width, rowHeight: rowHeight))
     }
 }
 
-// MARK: - Focusable Empty Programme Rail Tile
+// MARK: - EpgProgrammeButtonStyle
+private struct EpgProgrammeButtonStyle: ButtonStyle {
+    let width: CGFloat
+    let rowHeight: CGFloat
+
+    func makeBody(configuration: Configuration) -> some View {
+        EpgProgrammeButtonBody(configuration: configuration, width: width, rowHeight: rowHeight)
+    }
+}
+
+private struct EpgProgrammeButtonBody: View {
+    let configuration: ButtonStyle.Configuration
+    let width: CGFloat
+    let rowHeight: CGFloat
+    @Environment(\.isFocused) private var isFocused
+
+    var body: some View {
+        configuration.label
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isFocused ? Color(red: 0.14, green: 0.30, blue: 0.58) : Color(red: 0.10, green: 0.14, blue: 0.22))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(isFocused ? Color.cyan : Color.white.opacity(0.08), lineWidth: isFocused ? 2 : 1)
+            )
+            .shadow(color: isFocused ? Color.cyan.opacity(0.4) : Color.clear, radius: 6)
+            .animation(.easeInOut(duration: 0.12), value: isFocused)
+    }
+}
+
+// MARK: - Focusable Empty Programme Rail Tile (No White Blob!)
 private struct EpgEmptyRailTile: View {
     let channel: MediaItem
     let rowHeight: CGFloat
     let onPlay: () -> Void
-
-    @FocusState private var isFocused: Bool
 
     var body: some View {
         Button(action: onPlay) {
@@ -663,24 +679,145 @@ private struct EpgEmptyRailTile: View {
                 Text("No programme information for this channel")
                     .font(.system(size: 12, weight: .medium, design: .serif))
                     .italic()
-                    .foregroundColor(isFocused ? .black : .white.opacity(0.55))
+                    .foregroundColor(.white.opacity(0.55))
                     .padding(.horizontal, 16)
                 Spacer()
             }
-            .frame(width: 800, height: rowHeight - 10, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(isFocused ? Color.white : Color.clear)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(isFocused ? Color.clear : Color.white.opacity(0.04), lineWidth: 1)
-            )
-            .scaleEffect(isFocused ? 1.01 : 1.0)
-            .animation(.easeInOut(duration: 0.15), value: isFocused)
+            .frame(width: 800, height: rowHeight - 8, alignment: .leading)
         }
-        .buttonStyle(.plain)
-        .focused($isFocused)
+        .buttonStyle(EpgEmptyRailButtonStyle())
     }
 }
 
+private struct EpgEmptyRailButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        EpgEmptyRailButtonBody(configuration: configuration)
+    }
+}
+
+private struct EpgEmptyRailButtonBody: View {
+    let configuration: ButtonStyle.Configuration
+    @Environment(\.isFocused) private var isFocused
+
+    var body: some View {
+        configuration.label
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isFocused ? Color.white.opacity(0.08) : Color.clear)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(isFocused ? Color.white.opacity(0.25) : Color.white.opacity(0.04), lineWidth: 1)
+            )
+            .animation(.easeInOut(duration: 0.12), value: isFocused)
+    }
+}
+
+// MARK: - Custom Sleek Focusable Toolbar Button (No White Pill!)
+private struct EpgToolbarButton: View {
+    var title: String? = nil
+    var icon: String? = nil
+    var iconRight: String? = nil
+    var circleColor: Color? = nil
+    var iconColor: Color? = nil
+    var isActive: Bool = false
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                if let circle = circleColor {
+                    Circle().fill(circle).frame(width: 8, height: 8)
+                }
+                if let ic = icon {
+                    Image(systemName: ic)
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(iconColor ?? .white)
+                }
+                if let t = title {
+                    Text(t)
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                }
+                if let icR = iconRight {
+                    Image(systemName: icR)
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(.white.opacity(0.7))
+                }
+            }
+        }
+        .buttonStyle(EpgToolbarButtonStyle(isActive: isActive))
+    }
+}
+
+private struct EpgToolbarButtonStyle: ButtonStyle {
+    let isActive: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        EpgToolbarButtonBody(configuration: configuration, isActive: isActive)
+    }
+}
+
+private struct EpgToolbarButtonBody: View {
+    let configuration: ButtonStyle.Configuration
+    let isActive: Bool
+    @Environment(\.isFocused) private var isFocused
+
+    var body: some View {
+        configuration.label
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isFocused ? Color(red: 0.14, green: 0.28, blue: 0.54) : Color.white.opacity(0.08))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(isFocused ? Color.cyan : (isActive ? Color.cyan.opacity(0.6) : Color.white.opacity(0.12)), lineWidth: isFocused ? 2 : 1)
+            )
+            .shadow(color: isFocused ? Color.cyan.opacity(0.35) : Color.clear, radius: 4)
+            .animation(.easeInOut(duration: 0.12), value: isFocused)
+    }
+}
+
+// MARK: - Custom Sleek Focusable Search Field (No White Bulb!)
+private struct EpgSearchField: View {
+    @Binding var text: String
+    @FocusState private var isFocused: Bool
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(isFocused ? .cyan : .secondary)
+
+            TextField("Filter channels…", text: $text)
+                .font(.system(size: 13))
+                .foregroundColor(.white)
+                .textFieldStyle(.plain)
+                .focused($isFocused)
+
+            if !text.isEmpty {
+                Button(action: { text = "" }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .frame(width: 220, height: 36)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(isFocused ? Color(red: 0.12, green: 0.20, blue: 0.38) : Color.white.opacity(0.08))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(isFocused ? Color.cyan : Color.white.opacity(0.12), lineWidth: isFocused ? 2 : 1)
+        )
+        .shadow(color: isFocused ? Color.cyan.opacity(0.35) : Color.clear, radius: 5)
+    }
+}
