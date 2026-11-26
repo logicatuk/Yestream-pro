@@ -26,6 +26,8 @@ public struct SettingsView: View {
     @AppStorage("pref_sleepTimerSetting") private var sleepTimerSetting: Int = 0
     @AppStorage("pref_preventSleepDuringPlayback") private var preventSleepDuringPlayback: Bool = true
 
+    @State private var showExpiredPreview: Bool = false
+
     public var body: some View {
         Form {
             // ==========================================
@@ -97,6 +99,15 @@ public struct SettingsView: View {
                     Text(cloud.syncMessage)
                         .font(.caption)
                         .foregroundColor(.green)
+                }
+
+                Button(action: {
+                    showExpiredPreview = true
+                }) {
+                    HStack {
+                        Image(systemName: "hourglass.badge.plus")
+                        Text("Preview Expired & Activation Screen")
+                    }
                 }
             }
 
@@ -229,6 +240,9 @@ public struct SettingsView: View {
                         .foregroundColor(.green)
                 }
             }
+        }
+        .fullScreenCover(isPresented: $showExpiredPreview) {
+            DeviceExpiredView()
         }
     }
 }

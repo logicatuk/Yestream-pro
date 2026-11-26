@@ -127,6 +127,9 @@ public class AppState: ObservableObject {
     public init() {
         loadLocalPlaylists()
         loadFavoritesAndHistory()
+        if playlists.isEmpty {
+            selectedTab = 5 // Automatically default to Playlists tab when no playlists exist
+        }
     }
 
     private func cacheFileUrl(for playlistId: String) -> URL? {

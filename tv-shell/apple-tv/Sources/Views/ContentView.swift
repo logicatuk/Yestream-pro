@@ -94,6 +94,18 @@ public struct ContentView: View {
                 }
                 .transition(.opacity.animation(.easeInOut(duration: 0.25)))
             }
+
+            // Full-screen Device Expired / Activation Gate
+            if cloud.registration?.isExpired == true {
+                DeviceExpiredView()
+                    .transition(.opacity.animation(.easeInOut(duration: 0.3)))
+                    .zIndex(100)
+            }
+        }
+        .onAppear {
+            if appState.playlists.isEmpty {
+                appState.selectedTab = 5
+            }
         }
         .task {
             // Auto register and sync on launch
