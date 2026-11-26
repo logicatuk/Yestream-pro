@@ -490,27 +490,18 @@ public struct SeriesDetailView: View {
                                 .foregroundColor(.white.opacity(0.6))
 
                             ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 12) {
+                                HStack(spacing: 16) {
                                     ForEach(availableSeasons, id: \.self) { s in
                                         Button(action: {
                                             selectedSeason = s
                                         }) {
                                             Text("Season \(s)")
-                                                .font(.system(size: 15, weight: .bold))
-                                                .padding(.horizontal, 20)
-                                                .padding(.vertical, 10)
-                                                .background(selectedSeason == s ? Color(red: 0.1, green: 0.45, blue: 0.95) : Color.white.opacity(0.08))
-                                                .foregroundColor(.white)
-                                                .cornerRadius(12)
-                                                .overlay(
-                                                    RoundedRectangle(cornerRadius: 12)
-                                                        .stroke(selectedSeason == s ? Color.white.opacity(0.4) : Color.clear, lineWidth: 1)
-                                                )
                                         }
-                                        .buttonStyle(.plain)
+                                        .buttonStyle(SeasonTabButtonStyle(isSelected: selectedSeason == s))
                                     }
                                 }
-                                .padding(.vertical, 4)
+                                .padding(.horizontal, 4)
+                                .padding(.vertical, 8)
                             }
                         }
                         .focusSection()
@@ -678,3 +669,52 @@ public struct SeriesDetailView: View {
         self.isSearchingSubs = false
     }
 }
+
+// MARK: - Season Tab Button Style (Precision tvOS Focus & Selection)
+public struct SeasonTabButtonStyle: ButtonStyle {
+    public let isSelected: Bool
+
+    public init(isSelected: Bool) {
+        self.isSelected = isSelected
+    }
+
+    public func makeBody(configuration: Configuration) -> some View {
+        SeasonTabButtonBody(configuration: configuration, isSelected: isSelected)
+    }
+}
+
+private struct SeasonTabButtonBody: View {
+    let configuration: ButtonStyle.Configuration
+    let isSelected: Bool
+    @Environment(\.isFocused) private var isFocused
+
+    var body: some View {
+        HStack(spacing: 8) {
+            if isSelected {
+                Image(systemName: "checkmark")
+                    .font(.system(size: 11, weight: .bold))
+            }
+            configuration.label
+                .font(.system(size: 15, weight: (isSelected || isFocused) ? .bold : .medium))
+        }
+        .foregroundColor(isFocused ? .black : (isSelected ? .white : Color.white.opacity(0.75)))
+        .padding(.horizontal, 22)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(
+                    isFocused ? Color.white : (isSelected ? Color(red: 0.12, green: 0.44, blue: 0.96) : Color.white.opacity(0.08))
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(
+                    isFocused ? Color.white : (isSelected ? Color.blue.opacity(0.6) : Color.white.opacity(0.12)),
+                    lineWidth: 1.5
+                )
+        )
+        .scaleEffect(isFocused ? 1.06 : (configuration.isPressed ? 0.95 : 1.0))
+        .animation(.easeInOut(duration: 0.12), value: isFocused)
+    }
+}
+
