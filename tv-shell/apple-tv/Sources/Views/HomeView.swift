@@ -43,12 +43,20 @@ public struct HomeView: View {
                 // 1. BRAND HEADER (Authentic Yestream Pro)
                 // ==========================================
                 VStack(spacing: 8) {
-                    HStack(spacing: 12) {
-                        Image(systemName: "sparkles.tv")
-                            .font(.system(size: 38, weight: .bold))
-                            .foregroundColor(Color(red: 0.3, green: 0.65, blue: 1.0))
+                    HStack(spacing: 14) {
+                        if let path = Bundle.main.path(forResource: "logo", ofType: "png"),
+                           let uiImage = UIImage(contentsOfFile: path) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 52, height: 52)
+                        } else {
+                            Image(systemName: "play.tv.fill")
+                                .font(.system(size: 42))
+                                .foregroundColor(Color(red: 0.3, green: 0.65, blue: 1.0))
+                        }
 
-                        VStack(alignment: .leading, spacing: 1) {
+                        VStack(alignment: .leading, spacing: 2) {
                             Text("YESTREAM")
                                 .font(.system(size: 34, weight: .black, design: .rounded))
                                 .tracking(2.0)
