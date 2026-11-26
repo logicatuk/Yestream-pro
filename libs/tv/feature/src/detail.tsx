@@ -46,8 +46,9 @@ export function Detail({
         item?.kind === 'series'
             ? seriesAction(item, tv.episodes, tv.data)
             : undefined;
+    const canPlay = item?.kind !== 'series' || !!primary;
     useLayoutEffect(() => {
-        if (!entryFocus.current || !primary || tv.fullscreen) return;
+        if (!entryFocus.current || !canPlay || tv.fullscreen) return;
         entryFocus.current = false;
         if (tv.restoreKey.startsWith('person:')) return;
         let owns = true;
@@ -55,7 +56,7 @@ export function Detail({
         return () => {
             owns = false;
         };
-    }, [!!primary, tv.fullscreen]);
+    }, [canPlay, tv.fullscreen]);
     useEffect(() => {
         if (!tv.busy && !metadataLoading && tv.restoreKey.startsWith('person:'))
             tv.finishFocus();

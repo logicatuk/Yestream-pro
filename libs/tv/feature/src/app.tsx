@@ -249,7 +249,7 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
                     <TvExpiryGuard
                         registration={registration}
                         onStatusRefreshed={(updated) => setRegistration(updated)}
-                        onOpenSettings={() => tv.navigate('settings')}
+                        onOpenSettings={() => tv.navigate('sources')}
                     />
                 ) : null}
                 {r.view === 'home' ? (

@@ -421,6 +421,31 @@ export async function syncTvDevice(
     return { registration: reg, playlists: [] };
 }
 
+/**
+ * Deletes a playlist from the Yestream Cloud backend (/api/v1/device/playlists/:id).
+ */
+export async function deleteTvCloudPlaylist(
+    reg: TvDeviceRegistration | null,
+    playlistId: string
+): Promise<boolean> {
+    if (!reg?.credential) return false;
+    try {
+        const res = await fetch(
+            `${YESTREAM_CLOUD_ORIGIN}/api/v1/device/playlists/${encodeURIComponent(playlistId)}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${reg.credential}`,
+                    ...(reg.deviceId ? { 'x-device-id': reg.deviceId } : {}),
+                },
+            }
+        );
+        return res.ok;
+    } catch {
+        return false;
+    }
+}
+
 export function isTvExpired(registration: TvDeviceRegistration | null): boolean {
     if (!registration) return false;
     if (registration.status === 'expired' || registration.status === 'suspended') {

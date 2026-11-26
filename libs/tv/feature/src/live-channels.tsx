@@ -1,3 +1,4 @@
+import { useRef } from 'preact/hooks';
 import { ChannelLogo, Empty, VirtualCollection } from '@iptvnator/tv/ui';
 import type { TvModel } from './use-tv';
 import { categoryKey, useLiveBrowse } from './use-live-browse';
@@ -10,6 +11,7 @@ export function LiveChannels({
     overlay?: boolean;
     browse: ReturnType<typeof useLiveBrowse>;
 }) {
+    const lastClickRef = useRef<{ id: string; time: number }>({ id: '', time: 0 });
     const pinned =
         tv.playing &&
         tv.route.category === tv.playingCategory &&
@@ -88,8 +90,40 @@ export function LiveChannels({
                                 aria-pressed={tv.selected?.id === item.id}
                                 onFocus={() => tv.setSelected(item)}
                                 onClick={() => {
+                                    const now = Date.now();
+                                    const isDoubleClick =
+                                        lastClickRef.current.id === item.id &&
+                                        now - lastClickRef.current.time < 650;
+                                    lastClickRef.current = { id: item.id, time: now };
+
                                     tv.setSelected(item);
-                                    void tv.play(item);
+                                    if (isDoubleClick) {
+                                        tv.setFullscreen(true);
+                                        void tv.play(
+                                            item,
+                                            undefined,
+                                            undefined,
+                                            undefined,
+                                            undefined,
+                                            false,
+                                            true
+                                        );
+                                    } else {
+                                        void tv.play(item);
+                                    }
+                                }}
+                                onDblClick={() => {
+                                    tv.setSelected(item);
+                                    tv.setFullscreen(true);
+                                    void tv.play(
+                                        item,
+                                        undefined,
+                                        undefined,
+                                        undefined,
+                                        undefined,
+                                        false,
+                                        true
+                                    );
                                 }}
                             >
                                 <span class="channel-number">

@@ -9,6 +9,7 @@ import {
 import {
     registerTvDevice,
     syncTvDevice,
+    deleteTvCloudPlaylist,
     loadStoredTvRegistration,
     TvDeviceRegistration,
     YESTREAM_CLOUD_ORIGIN,
@@ -355,6 +356,10 @@ export function Sources({ tv }: { tv: TvModel }) {
                                                                 `Remove "${source.name}" and its channels from this TV?`
                                                             )
                                                         ) {
+                                                            const currentReg = registration || loadStoredTvRegistration();
+                                                            if (currentReg) {
+                                                                void deleteTvCloudPlaylist(currentReg, source.id);
+                                                            }
                                                             tv.update((d) =>
                                                                 removeSourceData(
                                                                     d,

@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect, useLayoutEffect, useRef } from 'preact/hooks';
 import QRCode from 'qrcode';
 import {
     TvDeviceRegistration,
     syncTvDevice,
-    YESTREAM_CLOUD_ORIGIN,
     buildCustomerLoginUrl,
 } from '@iptvnator/tv/data-access';
 
@@ -19,10 +18,15 @@ export function TvExpiryGuard({
     const [qrUrl, setQrUrl] = useState<string>('');
     const [checking, setChecking] = useState<boolean>(false);
     const [msg, setMsg] = useState<string>('');
+    const refreshBtnRef = useRef<HTMLButtonElement>(null);
 
     const portalUrl =
         registration.portalLoginUrl ||
         buildCustomerLoginUrl(registration.mac, registration.key6 || registration.deviceKey);
+
+    useLayoutEffect(() => {
+        refreshBtnRef.current?.focus();
+    }, []);
 
     useEffect(() => {
         let mounted = true;
@@ -30,7 +34,7 @@ export function TvExpiryGuard({
             width: 260,
             margin: 2,
             errorCorrectionLevel: 'M',
-            color: { dark: '#0b1329', light: '#ffffff' },
+            color: { dark: '#04060b', light: '#ffffff' },
         }).then((qr) => {
             if (mounted) setQrUrl(qr);
         });
@@ -42,14 +46,14 @@ export function TvExpiryGuard({
     async function handleCheckStatus() {
         if (checking) return;
         setChecking(true);
-        setMsg('Checking renewal status with server…');
+        setMsg('Checking activation with Yestream Cloud…');
         try {
             const { registration: updated } = await syncTvDevice(registration);
             onStatusRefreshed(updated);
             if (updated.status === 'active' || updated.status === 'trial') {
-                setMsg('Subscription active! Unlocking TV…');
+                setMsg('Device active! Unlocking TV…');
             } else {
-                setMsg('Subscription is still marked as expired. Please renew online.');
+                setMsg('Subscription is still expired. Please complete renewal above.');
             }
         } catch {
             setMsg('Unable to reach server. Please check internet connection.');
@@ -59,66 +63,91 @@ export function TvExpiryGuard({
     }
 
     return (
-        <div class="tv-expiry-lockscreen">
-            <div class="expiry-modal-card">
-                <div class="lock-icon-circle">
-                    <svg
-                        width="48"
-                        height="48"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="#f87171"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
-                </div>
-
-                <h1>Subscription Expired</h1>
-                <p class="expiry-subtitle">
-                    Your access period has expired. Scan the QR code or visit the portal to renew your device access.
-                </p>
-
-                <div class="expiry-qr-container">
-                    {qrUrl ? (
-                        <img src={qrUrl} alt="Renewal QR Code" class="expiry-qr-img" />
-                    ) : (
-                        <div class="qr-placeholder">Loading QR…</div>
-                    )}
-                </div>
-
-                <div class="expiry-creds-banner">
-                    <div class="cred-chip">
-                        <span>MAC:</span>
-                        <strong>{registration.mac}</strong>
-                    </div>
-                    <div class="cred-chip">
-                        <span>KEY:</span>
-                        <strong>{registration.key6 || registration.deviceKey}</strong>
-                    </div>
-                    <div class="cred-chip">
-                        <span>PORTAL:</span>
-                        <strong>/customer/login</strong>
+        <div class="tv-expiry-lockscreen" role="alertdialog" aria-modal aria-label="Subscription Expired">
+            <div class="expiry-luxury-container">
+                {/* 1. BRAND HEADER (Authentic white origami bird logo) */}
+                <div class="expiry-brand-header">
+                    <img src="/logo.png" alt="Yestream" class="expiry-brand-logo" width="56" height="56" onError={(e) => {
+                        (e.currentTarget as HTMLElement).style.display = 'none';
+                    }} />
+                    <div class="expiry-brand-text">
+                        <span class="brand-title">YESTREAM</span>
+                        <span class="brand-subtitle">PRO IPTV PLAYER</span>
                     </div>
                 </div>
 
-                {msg ? <p class="expiry-feedback-msg">{msg}</p> : null}
+                {/* 2. EXPIRED BANNER */}
+                <div class="expiry-alert-header">
+                    <div class="expiry-alert-title">
+                        <span class="hourglass-icon">⏳</span>
+                        <h2>Your trial period has expired.</h2>
+                    </div>
+                    <p class="expiry-alert-subtitle">
+                        To continue enjoying Live TV, Movies, Series, and the EPG Timeline, please renew or activate your device.
+                    </p>
+                </div>
 
-                <div class="expiry-btn-group">
+                {/* 3. ACTIVATION HERO CARD (Split Screen: QR Code + Credentials) */}
+                <div class="expiry-card-split">
+                    {/* Left: QR Code */}
+                    <div class="expiry-qr-col">
+                        <div class="qr-white-card">
+                            {qrUrl ? (
+                                <img src={qrUrl} alt="Renewal QR Code" class="expiry-qr-image" />
+                            ) : (
+                                <div class="qr-loading-box">Loading QR…</div>
+                            )}
+                        </div>
+                        <span class="qr-scan-hint">Scan with phone to activate</span>
+                    </div>
+
+                    <div class="expiry-divider" />
+
+                    {/* Right: Hardware MAC + Activation Key */}
+                    <div class="expiry-details-col">
+                        <div class="cred-field-group">
+                            <span class="field-label">DEVICE MAC ADDRESS</span>
+                            <div class="field-value-pill mac-pill">
+                                {registration.mac || 'DA:E5:4A:7C:18:3F'}
+                            </div>
+                        </div>
+
+                        <div class="cred-field-group">
+                            <span class="field-label">DEVICE ACTIVATION KEY</span>
+                            <div class="field-value-pill key-pill">
+                                {registration.key6 || registration.deviceKey || '••••••'}
+                            </div>
+                        </div>
+
+                        <div class="cred-field-group">
+                            <span class="field-label">PORTAL URL</span>
+                            <span class="portal-url-text">https://yestream.app/activate</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 4. ACTION BUTTONS: Refresh Status & Manage Playlists */}
+                <div class="expiry-action-row">
                     <button
-                        class="refresh-btn primary"
+                        ref={refreshBtnRef}
+                        class="expiry-btn primary-refresh"
+                        data-focus="expiry-refresh"
                         onClick={handleCheckStatus}
                         disabled={checking}
                     >
-                        {checking ? 'Checking Status…' : '↻ Check Status & Unlock'}
+                        {checking ? 'Checking…' : '↻ Refresh Status'}
                     </button>
-                    <button class="settings-fallback-btn" onClick={onOpenSettings}>
-                        Manage Playlists & Settings
+
+                    <button
+                        class="expiry-btn secondary-playlists"
+                        data-focus="expiry-playlists"
+                        onClick={onOpenSettings}
+                    >
+                        ☰ Manage Playlists
                     </button>
                 </div>
+
+                {msg ? <p class="expiry-result-msg" role="status">{msg}</p> : null}
             </div>
         </div>
     );

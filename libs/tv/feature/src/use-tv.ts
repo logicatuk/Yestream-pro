@@ -178,7 +178,8 @@ export function useTv(video: { current: HTMLVideoElement | null }) {
         origin: string | NavigationOrigin = focusKey(),
         signal?: AbortSignal,
         retryResolution?: { retry: () => void; label?: string },
-        forceRestart = false
+        forceRestart = false,
+        openFullscreen = false
     ) {
         if (!ready || item.sourceId !== data.activeId || signal?.aborted)
             return false;
@@ -187,7 +188,7 @@ export function useTv(video: { current: HTMLVideoElement | null }) {
         cancelPlayback();
         failedResolution.current = undefined;
         if (!forceRestart && playing?.id === item.id && item.kind === 'live') {
-            if (!fullscreen) {
+            if (!fullscreen || openFullscreen) {
                 playerOrigin.remember(originAtStart);
                 setFullscreen(true);
                 restoreFocus('player-toggle');
@@ -218,7 +219,7 @@ export function useTv(video: { current: HTMLVideoElement | null }) {
                     );
                 }
             }
-            if (item.kind !== 'live' || isSavedView(route.view)) {
+            if (openFullscreen || fullscreen || item.kind !== 'live' || isSavedView(route.view)) {
                 setFullscreen(true);
                 restoreFocus('player-toggle');
             }
