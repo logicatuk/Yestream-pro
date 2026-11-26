@@ -203,25 +203,6 @@ public struct DeviceExpiredView: View {
                     .focused($focusedButton, equals: .refresh)
                     .disabled(isChecking)
 
-                    Button(action: {
-                        if let onOpenPlaylists = onOpenPlaylists {
-                            onOpenPlaylists()
-                        } else {
-                            dismiss()
-                            appState.selectedTab = 5
-                        }
-                    }) {
-                        HStack(spacing: 8) {
-                            Image(systemName: "list.bullet.rectangle")
-                                .font(.system(size: 14, weight: .bold))
-                            Text("Manage Playlists")
-                                .font(.system(size: 14, weight: .bold))
-                        }
-                        .frame(width: 200, height: 48)
-                    }
-                    .buttonStyle(.bordered)
-                    .focused($focusedButton, equals: .playlists)
-
                     if cloud.registration?.isExpired == false {
                         Button(action: {
                             dismiss()

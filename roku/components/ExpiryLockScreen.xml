@@ -53,15 +53,10 @@
                 <Label id="portalLink" text="https://yestream.ai.studio/" font="font:SmallSystemFont" color="#94A3B8" translation="[0, 215]" />
             </Group>
 
-            <!-- Action Buttons: Refresh Status & Manage Playlists -->
-            <Group id="btnRefresh" translation="[240, 560]">
+            <!-- Action Button: Refresh Status -->
+            <Group id="btnRefresh" translation="[380, 560]">
                 <Rectangle id="btnRefreshBg" width="240" height="52" color="#38BDF8" />
                 <Label id="btnRefreshText" text="↻  Refresh Status" font="font:MediumBoldSystemFont" color="#020617" horizAlign="center" width="240" translation="[0, 14]" />
-            </Group>
-
-            <Group id="btnPlaylists" translation="[520, 560]">
-                <Rectangle id="btnPlaylistsBg" width="240" height="52" color="#1E293B" />
-                <Label id="btnPlaylistsText" text="☰  Manage Playlists" font="font:MediumBoldSystemFont" color="#FFFFFF" horizAlign="center" width="240" translation="[0, 14]" />
             </Group>
 
             <!-- Status Notice -->

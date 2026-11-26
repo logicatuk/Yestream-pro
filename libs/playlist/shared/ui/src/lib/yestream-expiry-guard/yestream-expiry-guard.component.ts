@@ -12,7 +12,7 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
     standalone: true,
     imports: [CommonModule, MatButtonModule, MatIconModule, QRCodeComponent, TranslateModule],
     template: `
-        @if (isExpired() && !isDismissed()) {
+        @if (isExpired()) {
             <div class="tv-expiry-lockscreen" role="alertdialog" aria-modal="true" aria-label="Subscription Expired">
                 <div class="expiry-luxury-container">
                     <!-- 1. BRAND HEADER (Authentic origami bird logo + Yestream) -->
@@ -108,7 +108,7 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                         </div>
                     </div>
 
-                    <!-- 4. ACTION BUTTONS: Refresh Status & Manage Playlists -->
+                    <!-- 4. ACTION BUTTON: Refresh Status -->
                     <div class="expiry-action-row">
                         <button
                             mat-flat-button
@@ -120,16 +120,6 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                             <mat-icon [class.spinning]="isLoading()">sync</mat-icon>
                             <span>{{ isLoading() ? 'Checking…' : '↻ Refresh Status' }}</span>
                         </button>
-
-                        <button
-                            mat-button
-                            type="button"
-                            class="expiry-btn secondary-playlists"
-                            (click)="managePlaylists()"
-                        >
-                            <mat-icon>list_alt</mat-icon>
-                            <span>Manage Playlists</span>
-                        </button>
                     </div>
 
                     <!-- 5. FEEDBACK NOTICE -->
@@ -139,17 +129,6 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                         </p>
                     }
                 </div>
-            </div>
-        } @else if (isExpired() && isDismissed()) {
-            <!-- Mini sticky banner allowing user to reopen expiry guard while managing playlists -->
-            <div class="expiry-mini-banner">
-                <div class="banner-left">
-                    <span class="banner-warn">⏳ Subscription Expired:</span>
-                    <span class="banner-hint">Device streams are locked until renewed.</span>
-                </div>
-                <button type="button" class="banner-reopen-btn" (click)="isDismissed.set(false)">
-                    View Activation & QR
-                </button>
             </div>
         }
     `,
@@ -580,7 +559,6 @@ export class YestreamExpiryGuardComponent {
         return this.cloud?.syncLoading ? this.cloud.syncLoading() : false;
     });
 
-    readonly isDismissed = signal(false);
     readonly checkNotice = signal<string | null>(null);
     readonly logoSrc = signal('assets/logo.png');
     copiedField: string | null = null;
@@ -589,11 +567,6 @@ export class YestreamExpiryGuardComponent {
         if (this.logoSrc() === 'assets/logo.png') {
             this.logoSrc.set('logo.png');
         }
-    }
-
-    managePlaylists(): void {
-        this.isDismissed.set(true);
-        void this.router.navigate(['/workspace/sources']);
     }
 
     async copyText(text: string, field: string): Promise<void> {
@@ -616,7 +589,6 @@ export class YestreamExpiryGuardComponent {
         await this.cloud.syncFromCloud();
 
         if (this.cloud.isExpired && !this.cloud.isExpired()) {
-            this.isDismissed.set(true);
             this.checkNotice.set('Subscription successfully renewed! Unlocking…');
         } else {
             this.checkNotice.set('Subscription is still expired. Please complete renewal above.');

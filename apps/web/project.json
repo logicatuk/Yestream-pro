@@ -9,11 +9,17 @@
             "enabled": false
         }
     },
-    "tags": ["scope:app", "domain:web", "type:app"],
+    "tags": [
+        "scope:app",
+        "domain:web",
+        "type:app"
+    ],
     "targets": {
         "build": {
             "executor": "@angular/build:application",
-            "outputs": ["{workspaceRoot}/dist/apps/web"],
+            "outputs": [
+                "{workspaceRoot}/dist/apps/web"
+            ],
             "defaultConfiguration": "production",
             "options": {
                 "outputPath": {
@@ -178,16 +184,25 @@
         },
         "build-hosted": {
             "executor": "nx:run-commands",
-            "dependsOn": ["^build"],
-            "inputs": ["production", "^production"],
-            "outputs": ["{workspaceRoot}/dist/apps/hosted-pwa"],
+            "dependsOn": [
+                "^build"
+            ],
+            "inputs": [
+                "production",
+                "^production"
+            ],
+            "outputs": [
+                "{workspaceRoot}/dist/apps/hosted-pwa"
+            ],
             "options": {
                 "command": "pnpm nx run web:build:pwa --outputPath=dist/apps/hosted-pwa --excludeTaskDependencies --skip-nx-cache"
             }
         },
         "build-e2e": {
             "executor": "nx:run-commands",
-            "dependsOn": ["^build"],
+            "dependsOn": [
+                "^build"
+            ],
             "options": {
                 "command": "pnpm nx run web:build:electron-e2e --excludeTaskDependencies"
             }
@@ -239,7 +254,9 @@
         },
         "test": {
             "executor": "nx:run-commands",
-            "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+            "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+            ],
             "options": {
                 "command": [
                     "node",

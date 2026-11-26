@@ -131,7 +131,7 @@ export function TvExpiryGuard({
                     </div>
                 </div>
 
-                {/* 4. ACTION BUTTONS: Refresh Status & Manage Playlists */}
+                {/* 4. ACTION BUTTON: Refresh Status */}
                 <div class="expiry-action-row">
                     <button
                         ref={refreshBtnRef}
@@ -141,14 +141,6 @@ export function TvExpiryGuard({
                         disabled={checking}
                     >
                         {checking ? 'Checking…' : '↻ Refresh Status'}
-                    </button>
-
-                    <button
-                        class="expiry-btn secondary-playlists"
-                        data-focus="expiry-playlists"
-                        onClick={onOpenSettings}
-                    >
-                        ☰ Manage Playlists
                     </button>
                 </div>
 
