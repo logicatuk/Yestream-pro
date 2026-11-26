@@ -65,5 +65,6 @@ export * from './lib/detail-ui/hero-trailer-backdrop.component';
 // (the EPG dialogs) can use it; re-exported here for existing consumers.
 export * from '@iptvnator/ui/dialog';
 export * from './lib/app-icons/app-icons';
+export * from './lib/player-fullscreen.util';
 
 export * from './lib/detail-ui/age-rating-chip.component';

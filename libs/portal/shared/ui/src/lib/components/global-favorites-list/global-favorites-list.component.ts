@@ -37,7 +37,7 @@ import {
     playlistDisplayLabel,
 } from '@iptvnator/shared/interfaces';
 import { resolveChannelEpgLookupKey } from '@iptvnator/m3u-state';
-import { APP_ICONS, EpgMappingDialogComponent } from '@iptvnator/ui/components';
+import { APP_ICONS, EpgMappingDialogComponent, requestLivePlayerFullscreen } from '@iptvnator/ui/components';
 import { EpgRuntimeBridgeService } from '@iptvnator/epg/data-access';
 import {
     DEFAULT_FAVORITES_CHANNEL_SORT_MODE,
@@ -209,8 +209,9 @@ export class GlobalFavoritesListComponent {
     }
 
     onChannelActivate(channel: UnifiedFavoriteChannel): void {
-        if (this.openStreamOnDoubleClick() && !isCatalogUnavailable(channel)) {
+        if (!isCatalogUnavailable(channel)) {
             this.playbackRequested.emit(channel);
+            requestLivePlayerFullscreen();
         }
     }
 

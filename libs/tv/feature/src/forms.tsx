@@ -184,9 +184,9 @@ export function Sources({ tv }: { tv: TvModel }) {
                 url: httpUrl(rawUrl),
                 ...(type !== 'm3u'
                     ? {
-                          username: field('username'),
-                          password: field('password'),
-                      }
+                        username: field('username'),
+                        password: field('password'),
+                    }
                     : {}),
             };
             setSaving(true);
@@ -301,9 +301,8 @@ export function Sources({ tv }: { tv: TvModel }) {
                                 const isActive = tv.data.activeId === source.id;
                                 return (
                                     <div
-                                        class={`playlist-card ${
-                                            isActive ? 'active' : ''
-                                        }`}
+                                        class={`playlist-card ${isActive ? 'active' : ''
+                                            }`}
                                         key={source.id}
                                     >
                                         <div class="playlist-card-main">

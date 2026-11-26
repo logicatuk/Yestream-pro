@@ -54,13 +54,18 @@ public struct DeviceExpiredView: View {
                 // 1. BRAND HEADER (Identical to HomeView)
                 // ==========================================
                 HStack(spacing: 14) {
-                    if let path = Bundle.main.path(forResource: "logo", ofType: "png"),
+                    if let path = Bundle.main.path(forResource: "logo", ofType: "png") ?? (FileManager.default.fileExists(atPath: Bundle.main.bundlePath + "/logo.png") ? Bundle.main.bundlePath + "/logo.png" : nil),
                        let uiImage = UIImage(contentsOfFile: path) {
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFit()
                             .frame(width: 52, height: 52)
                     } else if let uiImage = UIImage(named: "logo") {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 52, height: 52)
+                    } else if let uiImage = UIImage(contentsOfFile: Bundle.main.bundlePath + "/logo.png") {
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFit()

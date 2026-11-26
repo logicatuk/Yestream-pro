@@ -14,8 +14,8 @@ export function LiveChannels({
     const lastClickRef = useRef<{ id: string; time: number }>({ id: '', time: 0 });
     const pinned =
         tv.playing &&
-        tv.route.category === tv.playingCategory &&
-        !tv.catalog.items.some((item) => item.id === tv.playing?.id)
+            tv.route.category === tv.playingCategory &&
+            !tv.catalog.items.some((item) => item.id === tv.playing?.id)
             ? tv.playing
             : undefined;
     const items = pinned ? [pinned, ...tv.catalog.items] : tv.catalog.items;
@@ -43,8 +43,8 @@ export function LiveChannels({
                     {browse.categoriesOpen
                         ? 'Choose a category'
                         : overlay
-                          ? 'OK: switch channel · Back: close'
-                          : 'OK: preview · OK again: fullscreen'}
+                            ? 'OK: switch channel · Back: close'
+                            : 'OK: preview · OK again: fullscreen'}
                 </span>
             </div>
             <div
@@ -130,8 +130,8 @@ export function LiveChannels({
                                     {item === pinned
                                         ? '●'
                                         : String(
-                                              n + 1 - (pinned ? 1 : 0)
-                                          ).padStart(2, '0')}
+                                            n + 1 - (pinned ? 1 : 0)
+                                        ).padStart(2, '0')}
                                 </span>
                                 <ChannelLogo src={item.poster} />
                                 <span>
@@ -139,14 +139,14 @@ export function LiveChannels({
                                     <small>
                                         {tv.playing?.id === item.id
                                             ? tv.player.current
-                                                  ?.hasConfirmedPlayback
+                                                ?.hasConfirmedPlayback
                                                 ? '● Playing'
                                                 : 'Starting / paused'
                                             : (tv.data.sources.find(
-                                                  (source) =>
-                                                      source.id ===
-                                                      item.sourceId
-                                              )?.name ?? 'Source unavailable')}
+                                                (source) =>
+                                                    source.id ===
+                                                    item.sourceId
+                                            )?.name ?? 'Source unavailable')}
                                     </small>
                                 </span>
                             </button>
@@ -154,9 +154,9 @@ export function LiveChannels({
                     />
                 )}
                 {!browse.categoriesOpen &&
-                !tv.busy &&
-                !tv.catalogError &&
-                !items.length ? (
+                    !tv.busy &&
+                    !tv.catalogError &&
+                    !items.length ? (
                     <Empty>No channels in this category.</Empty>
                 ) : null}
                 {browse.categoriesOpen && tv.catalogError ? (
