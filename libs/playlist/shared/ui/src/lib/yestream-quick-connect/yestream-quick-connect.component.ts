@@ -271,6 +271,30 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                 animation: spin 1s linear infinite;
             }
         }
+        @media (max-width: 600px), (max-height: 540px) {
+            .yqc-card {
+                container-type: inline-size;
+                padding: 10px 14px;
+                margin-bottom: 8px;
+            }
+            .yqc-header { margin-bottom: 8px; padding-bottom: 6px; }
+            .yqc-body { gap: 10px; }
+            .yqc-qr-wrap { --qr-size: clamp(104px, 32vh, 148px); }
+            .yqc-qr-wrap qrcode,
+            .yqc-qr-placeholder {
+                width: var(--qr-size);
+                height: var(--qr-size);
+            }
+            .yqc-details { padding-top: 8px; gap: 6px; }
+            .yqc-actions { margin-top: 0; }
+            @container (min-width: 420px) {
+                .yqc-body {
+                    grid-template-columns: minmax(128px, 1fr) minmax(230px, 1.5fr);
+                    align-items: center;
+                }
+                .yqc-details { border-top: 0; padding-top: 0; }
+            }
+        }
         @keyframes spin {
             100% { transform: rotate(360deg); }
         }

@@ -536,6 +536,37 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                 width: 100%;
             }
         }
+        @media (max-width: 640px), (max-height: 540px) {
+            .tv-expiry-lockscreen { padding: 12px; }
+            .expiry-brand-header { gap: 8px; margin-bottom: 8px; }
+            .expiry-brand-logo { width: 32px; height: 32px; }
+            .expiry-brand-text .brand-title { font-size: 21px; }
+            .expiry-brand-text .brand-subtitle { font-size: 9px; margin-top: 2px; }
+            .expiry-alert-header { margin-bottom: 10px; }
+            .expiry-alert-title { margin-bottom: 4px; }
+            .expiry-alert-title h2 { font-size: 20px; }
+            .expiry-alert-subtitle { line-height: 1.35; }
+            .expiry-card-split { padding: 12px; gap: 10px; margin-bottom: 10px; }
+            .expiry-qr-col, .expiry-details-col { gap: 6px; }
+            .qr-white-card {
+                width: clamp(116px, 26vh, 148px);
+                height: auto;
+                aspect-ratio: 1;
+                padding: 6px;
+            }
+            .qr-white-card qrcode { width: 100%; }
+            .expiry-details-col { align-self: stretch; justify-content: center; }
+            .cred-field-group { gap: 2px; }
+            .field-value-pill { padding: 3px 8px; }
+            .field-value-pill code { font-size: 15px; }
+            .expiry-btn { height: 44px; }
+            .expiry-result-msg { margin: 6px 0 0; }
+        }
+        @media (min-width: 520px) and (max-height: 540px) {
+            .expiry-card-split { flex-direction: row; justify-content: center; }
+            .expiry-divider { width: 1px; height: auto; align-self: stretch; }
+            .expiry-details-col { flex: 0 1 380px; }
+        }
     `],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
