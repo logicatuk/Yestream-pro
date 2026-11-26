@@ -31,29 +31,35 @@ public struct ContentView: View {
                     }
                     .tag(3)
 
+                EPGGuideView()
+                    .tabItem {
+                        Label("EPG Guide", systemImage: "calendar.badge.clock")
+                    }
+                    .tag(4)
+
                 PlaylistsView()
                     .tabItem {
                         Label("Playlists", systemImage: "list.bullet.rectangle")
                     }
-                    .tag(4)
+                    .tag(5)
 
                 FavoritesView()
                     .tabItem {
                         Label("Favorites", systemImage: "heart")
                     }
-                    .tag(5)
+                    .tag(6)
 
                 SearchView()
                     .tabItem {
                         Label("Search", systemImage: "magnifyingglass")
                     }
-                    .tag(6)
+                    .tag(7)
 
                 SettingsView()
                     .tabItem {
                         Label("Settings", systemImage: "gearshape")
                     }
-                    .tag(7)
+                    .tag(8)
             }
 
             // Sync / Catalog Loading HUD Overlay

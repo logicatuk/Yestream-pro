@@ -129,9 +129,9 @@ public struct HomeView: View {
                 Spacer()
 
                 // ==========================================
-                // 2. MAIN 3 CARDS: Live TV, Movies, Series
+                // 2. MAIN 4 CARDS: Live TV, Movies, Series, EPG Guide
                 // ==========================================
-                HStack(spacing: 36) {
+                HStack(spacing: 28) {
                     YestreamHeroCard(
                         title: "Live TV",
                         subtitle: "\(appState.channels.count) Channels",
@@ -158,8 +158,17 @@ public struct HomeView: View {
                             appState.selectedTab = 3
                         }
                     )
+
+                    YestreamHeroCard(
+                        title: "EPG Guide",
+                        subtitle: "TV Timeline",
+                        systemIcon: "calendar.badge.clock",
+                        action: {
+                            appState.selectedTab = 4
+                        }
+                    )
                 }
-                .padding(.horizontal, 80)
+                .padding(.horizontal, 48)
 
                 Spacer()
 
@@ -184,7 +193,7 @@ public struct HomeView: View {
                     .buttonStyle(.bordered)
 
                     Button(action: {
-                        appState.selectedTab = 4
+                        appState.selectedTab = 5
                     }) {
                         HStack(spacing: 8) {
                             Image(systemName: "list.bullet.rectangle")
@@ -197,7 +206,7 @@ public struct HomeView: View {
                     .buttonStyle(.bordered)
 
                     Button(action: {
-                        appState.selectedTab = 7
+                        appState.selectedTab = 8
                     }) {
                         HStack(spacing: 8) {
                             Image(systemName: "gearshape")
@@ -243,12 +252,12 @@ struct YestreamHeroCard: View {
                 Spacer()
 
                 Image(systemName: systemIcon)
-                    .font(.system(size: 60, weight: .semibold))
+                    .font(.system(size: 54, weight: .semibold))
                     .foregroundColor(.white)
 
                 VStack(spacing: 4) {
                     Text(title)
-                        .font(.system(size: 26, weight: .bold))
+                        .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.white)
 
                     Text(subtitle)
@@ -258,7 +267,7 @@ struct YestreamHeroCard: View {
 
                 Spacer()
             }
-            .frame(width: 280, height: 230)
+            .frame(width: 260, height: 220)
             .background(
                 RoundedRectangle(cornerRadius: 20)
                     .fill(Color(red: 0.08, green: 0.13, blue: 0.22).opacity(0.95))
