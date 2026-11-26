@@ -3,6 +3,7 @@ import { DatePipe, NgStyle } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
+    ElementRef,
     computed,
     effect,
     inject,
@@ -20,6 +21,8 @@ import { SettingsStore } from '@iptvnator/services';
 import { applyChannelNameStrip } from '@iptvnator/shared/m3u-utils';
 import { favoriteIcon } from '../../app-icons/app-icons';
 
+import { openLivePlayerFullscreen } from '../../player-fullscreen.util';
+
 @Component({
     selector: 'app-channel-list-item',
     styleUrls: ['./channel-list-item.component.scss'],
@@ -36,6 +39,8 @@ import { favoriteIcon } from '../../app-icons/app-icons';
     ],
 })
 export class ChannelListItemComponent {
+    private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+    private lastKeyboardActivation = -Infinity;
     private readonly programmeDialog = inject(EpgProgrammeDialogService);
     private readonly logoFailed = signal(false);
     private readonly settingsStore = inject(SettingsStore);
@@ -138,15 +143,38 @@ export class ChannelListItemComponent {
         }
 
         if (event?.detail === 0) {
-            this.keyboardActivated.emit();
+            const now = performance.now();
+            const doublePress = now - this.lastKeyboardActivation < 650;
+            this.lastKeyboardActivation = doublePress ? -Infinity : now;
+            if (
+                !doublePress ||
+                !openLivePlayerFullscreen(this.host.nativeElement)
+            ) {
+                this.keyboardActivated.emit();
+            }
         } else {
             this.clicked.emit();
         }
     }
 
+    clearKeyboardActivation(): void {
+        this.lastKeyboardActivation = -Infinity;
+    }
+
+    onKeyDownEnter(event: Event): void {
+        if ((event as KeyboardEvent).repeat) {
+            event.preventDefault();
+        }
+    }
+
     onDoubleClick(): void {
         if (this.disabled()) return;
-        this.activated.emit();
+        if (
+            !openLivePlayerFullscreen(this.host.nativeElement) ||
+            this.settingsStore.openStreamOnDoubleClick()
+        ) {
+            this.activated.emit();
+        }
     }
 
     onContextMenu(event: MouseEvent): void {

@@ -295,6 +295,24 @@ describe('ChannelListItemComponent', () => {
         expect(activated).toHaveBeenCalledTimes(1);
     });
 
+    it('expands the preview once for two keyboard activations on the same row', () => {
+        const row = fixture.nativeElement as HTMLElement;
+        const layout = document.createElement('app-video-player');
+        const player = document.createElement('app-web-player-view');
+        player.requestFullscreen = jest.fn().mockResolvedValue(undefined);
+        layout.append(row, player);
+        const playback = jest.fn();
+        fixture.componentInstance.keyboardActivated.subscribe(playback);
+        const press = () => fixture.componentInstance.onClick({ detail: 0 } as MouseEvent);
+        press();
+        fixture.componentInstance.clearKeyboardActivation();
+        press();
+        expect(player.requestFullscreen).not.toHaveBeenCalled();
+        press();
+        expect(player.requestFullscreen).toHaveBeenCalledTimes(1);
+        expect(playback).toHaveBeenCalledTimes(2);
+    });
+
     it('emits a context menu request on right click when details are enabled', () => {
         fixture.componentRef.setInput('name', 'News One');
         fixture.componentRef.setInput('showDetailsContextMenu', true);

@@ -6,7 +6,6 @@
     cdkDragPreviewContainer="parent"
     [class.active]="selected()"
     (click)="onClick($event)"
-    (dblclick)="onDoubleClick()"
     (contextmenu)="onContextMenu($event)"
     data-test-id="channel-item"
 >
@@ -16,6 +15,9 @@
     <button
         type="button"
         class="channel-content"
+        (dblclick)="onDoubleClick()"
+        (blur)="clearKeyboardActivation()"
+        (keydown.enter)="onKeyDownEnter($event)"
         [attr.aria-disabled]="disabled() || null"
     >
         <div class="channel-logo-shell" aria-hidden="true">
