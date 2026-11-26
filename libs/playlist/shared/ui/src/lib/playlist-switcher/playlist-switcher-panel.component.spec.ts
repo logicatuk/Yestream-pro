@@ -55,19 +55,14 @@ describe('PlaylistSwitcherPanelComponent', () => {
     let navigate: jest.Mock;
     let xtreamRefreshing: ReturnType<typeof signal<ReadonlySet<string>>>;
 
-    const input = () =>
+    const listbox = () =>
         (fixture.nativeElement as HTMLElement).querySelector(
-            '.switcher__search input'
-        ) as HTMLInputElement;
+            '[role=listbox]'
+        ) as HTMLElement;
     const press = (key: string, init: KeyboardEventInit = {}) => {
-        input().dispatchEvent(
+        listbox().dispatchEvent(
             new KeyboardEvent('keydown', { key, bubbles: true, ...init })
         );
-        fixture.detectChanges();
-    };
-    const type = (value: string) => {
-        input().value = value;
-        input().dispatchEvent(new Event('input'));
         fixture.detectChanges();
     };
     const optionIds = () =>
@@ -191,16 +186,15 @@ describe('PlaylistSwitcherPanelComponent', () => {
     });
 
     it('moves the highlight with the arrow keys, wrapping, and opens it on Enter', () => {
-        press('ArrowDown');
-        expect(input().getAttribute('aria-activedescendant')).toBe(
+        expect(listbox().getAttribute('aria-activedescendant')).toBe(
             'playlist-switcher-all-alpha'
         );
         press('ArrowUp');
-        expect(input().getAttribute('aria-activedescendant')).toBe(
+        expect(listbox().getAttribute('aria-activedescendant')).toBe(
             'playlist-switcher-all-charlie'
         );
         press('ArrowDown');
-        expect(input().getAttribute('aria-activedescendant')).toBe(
+        expect(listbox().getAttribute('aria-activedescendant')).toBe(
             'playlist-switcher-all-alpha'
         );
 
@@ -211,80 +205,14 @@ describe('PlaylistSwitcherPanelComponent', () => {
         expect(closed).toHaveBeenCalled();
     });
 
-    it.each([
-        ['isComposing', { isComposing: true }],
-        ['keyCode 229 after compositionend', { keyCode: 229 }],
-    ])(
-        'leaves keys of an IME composition to the input method (%s)',
-        (_label, init) => {
-            const closed = jest.fn();
-            component.closeRequested.subscribe(closed);
-            press('ArrowDown');
-            const highlighted = input().getAttribute('aria-activedescendant');
-            // The switcher overlay closes on an Escape that reaches it.
-            const bubbled = jest.fn();
-            document.addEventListener('keydown', bubbled);
-            // Safari: commit keys follow compositionend with keyCode 229.
-            if (!('isComposing' in init)) {
-                input().dispatchEvent(
-                    new Event('compositionend', { bubbles: true })
-                );
-            }
-
-            press('ArrowDown', init);
-            press('Escape', init);
-            press('Enter', init);
-            document.removeEventListener('keydown', bubbled);
-            input().dispatchEvent(
-                new KeyboardEvent('keyup', { bubbles: true })
-            );
-
-            expect(input().getAttribute('aria-activedescendant')).toBe(
-                highlighted
-            );
-            expect(selectPlaylist).not.toHaveBeenCalled();
-            expect(closed).not.toHaveBeenCalled();
-            expect(bubbled).not.toHaveBeenCalled();
-        }
-    );
-
-    it('scrolls a new search back to its first match at the top', () => {
-        const list = (fixture.nativeElement as HTMLElement).querySelector(
-            '.switcher__list'
-        ) as HTMLElement;
-        list.scrollTop = 120;
-        type('a');
-        expect(list.scrollTop).toBe(0);
-
-        list.scrollTop = 120;
-        component.setType('xtream');
-        expect(list.scrollTop).toBe(0);
-    });
-
     it('moves through options whose IDs a selector would misread', () => {
         const restored = { ...ALPHA, _id: 'odd:id.one', title: 'Aardvark' };
         playlists.set([restored, BRAVO]);
         fixture.detectChanges();
-        expect(() => press('ArrowDown')).not.toThrow();
-        expect(input().getAttribute('aria-activedescendant')).toBe(
+        expect(fixture.nativeElement.querySelector('input')).toBeNull();
+        expect(listbox().getAttribute('aria-activedescendant')).toBe(
             'playlist-switcher-all-odd:id.one'
         );
-    });
-
-    it('filters by name or host as you type and highlights the first match', () => {
-        type('charlie.example');
-        expect(optionIds()).toEqual(['playlist-switcher-all-charlie']);
-        expect(input().getAttribute('aria-activedescendant')).toBe(
-            'playlist-switcher-all-charlie'
-        );
-
-        type('nothing like it');
-        expect(optionIds()).toEqual([]);
-        expect(
-            (fixture.nativeElement as HTMLElement).querySelector(
-                '.switcher__empty'
-            )?.textContent
-        ).toContain('WORKSPACE.SWITCHER.NO_MATCHES');
     });
 
     it('falls back to All when the remembered type has no sources left', () => {
@@ -414,19 +342,19 @@ describe('PlaylistSwitcherPanelComponent', () => {
 
     it('keeps the highlight on its option, or in range, when the list changes', () => {
         press('ArrowUp');
-        expect(input().getAttribute('aria-activedescendant')).toBe(
+        expect(listbox().getAttribute('aria-activedescendant')).toBe(
             'playlist-switcher-all-charlie'
         );
         // An earlier option leaves: the highlight follows charlie.
         playlists.set([BRAVO, CHARLIE]);
         fixture.detectChanges();
-        expect(input().getAttribute('aria-activedescendant')).toBe(
+        expect(listbox().getAttribute('aria-activedescendant')).toBe(
             'playlist-switcher-all-charlie'
         );
         // The highlighted last option leaves: Enter opens the new last one.
         playlists.set([BRAVO]);
         fixture.detectChanges();
-        expect(input().getAttribute('aria-activedescendant')).toBe(
+        expect(listbox().getAttribute('aria-activedescendant')).toBe(
             'playlist-switcher-all-bravo'
         );
         press('Enter');

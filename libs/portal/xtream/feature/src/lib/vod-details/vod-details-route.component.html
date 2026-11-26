@@ -3,6 +3,7 @@
     @if (selectedItem()) {
         @let primary = hero.primaryAction();
         <app-detail-action-button
+            [focusOnEntry]="true"
             [label]="primary.label"
             [meta]="primary.meta"
             [icon]="primary.icon"

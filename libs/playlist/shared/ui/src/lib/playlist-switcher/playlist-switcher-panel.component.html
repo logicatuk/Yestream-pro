@@ -34,29 +34,6 @@
         </button>
     </header>
 
-    <label class="switcher__search">
-        <mat-icon aria-hidden="true">search</mat-icon>
-        <input
-            appImeInput
-            #searchInput
-            type="text"
-            role="combobox"
-            autocomplete="off"
-            spellcheck="false"
-            aria-autocomplete="list"
-            aria-expanded="true"
-            aria-keyshortcuts="Shift+F10"
-            [attr.aria-controls]="listId"
-            [attr.aria-activedescendant]="activeOptionId()"
-            [attr.aria-label]="'WORKSPACE.SWITCHER.SEARCH' | translate"
-            [placeholder]="'WORKSPACE.SWITCHER.SEARCH' | translate"
-            [value]="query()"
-            (input)="setQuery(searchInput.value)"
-            (keydown)="onSearchKeydown($event)"
-        />
-        <kbd aria-hidden="true">↑↓ ↵</kbd>
-    </label>
-
     @if (showTypeFilter()) {
         <mat-button-toggle-group
             class="switcher__types"
@@ -85,6 +62,10 @@
         #list
         class="switcher__list"
         role="listbox"
+        tabindex="0"
+        [attr.aria-activedescendant]="activeOptionId()"
+        aria-keyshortcuts="Shift+F10"
+        (keydown)="$event.target === list && onListKeydown($event)"
         [id]="listId"
         [attr.aria-label]="'HOME.PLAYLISTS.MY_PLAYLISTS' | translate"
     >

@@ -24,7 +24,6 @@
 // filter, which clips its overflow, collapsed to 2px and the search field
 // to its text line.
 .switcher__header,
-.switcher__search,
 .switcher__types,
 .switcher__empty,
 .switcher__footer {
@@ -59,59 +58,7 @@
     @include controls.ghost-icon-button(32px, 18px);
 }
 
-// The same search field as the header and the side panels: 36px, the
-// shared search tokens, focus on the field (token border and halo) rather
-// than as an outline on the input.
-.switcher__search {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    height: 36px;
-    margin: 0 14px 10px;
-    padding: 0 10px;
-    box-sizing: border-box;
-    border: 1px solid var(--app-search-border, var(--app-line-strong));
-    border-radius: 10px;
-    background: var(--app-search-bg, var(--app-content-bg));
-    color: var(--app-muted-color);
-    transition:
-        border-color 0.15s ease,
-        box-shadow 0.15s ease;
 
-    &:focus-within {
-        border-color: var(--app-focus-ring);
-        box-shadow: 0 0 0 3px
-            color-mix(in srgb, var(--app-focus-ring) 12%, transparent);
-    }
-
-    .mat-icon {
-        flex: none;
-        width: 18px;
-        height: 18px;
-        font-size: 18px;
-    }
-
-    input {
-        flex: 1;
-        min-width: 0;
-        border: 0;
-        outline: none;
-        background: none;
-        color: var(--app-heading-color);
-        font: inherit;
-        font-size: 0.84rem;
-
-        &::placeholder {
-            color: var(--app-muted-color);
-        }
-    }
-
-    kbd {
-        font-family: var(--app-font-mono);
-        font-size: 11px;
-        font-weight: 500;
-    }
-}
 
 .switcher__types {
     @include controls.segmented-control(30px);

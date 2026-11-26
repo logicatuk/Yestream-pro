@@ -46,7 +46,7 @@ export function Detail({
         item?.kind === 'series'
             ? seriesAction(item, tv.episodes, tv.data)
             : undefined;
-    const canPlay = item?.kind !== 'series' || !!primary;
+    const canPlay = !!item && item.sourceId === tv.data.activeId && (item.kind !== 'series' || !!primary);
     useLayoutEffect(() => {
         if (!entryFocus.current || !canPlay || tv.fullscreen) return;
         entryFocus.current = false;

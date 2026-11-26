@@ -18,9 +18,7 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                         <mat-icon>devices</mat-icon>
                         <span>{{ 'YESTREAM.CLOUD_CONNECT' | translate }}</span>
                     </div>
-                    <div class="yqc-portal-hint">
-                        {{ 'YESTREAM.CLOUD_CONNECT_SUBTITLE' | translate }}
-                    </div>
+
                 </div>
 
                 <div class="yqc-body">
@@ -28,9 +26,9 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                         @if (cloud.portalLoginUrl && cloud.portalLoginUrl()) {
                             <qrcode
                                 [qrdata]="cloud.portalLoginUrl()"
-                                [width]="120"
+                                [width]="224"
                                 [errorCorrectionLevel]="'M'"
-                                [margin]="2"
+                                [margin]="4"
                                 [colorLight]="'#ffffff'"
                                 [colorDark]="'#0f172a'"
                             ></qrcode>
@@ -114,7 +112,7 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
         .yqc-header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             margin-bottom: 14px;
             padding-bottom: 10px;
             border-bottom: 1px solid rgba(148, 163, 184, 0.1);
@@ -134,15 +132,10 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                 height: 16px;
             }
         }
-        .yqc-portal-hint {
-            font-size: 0.78rem;
-            color: #94a3b8;
-        }
         .yqc-body {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            flex-wrap: wrap;
+            display: grid;
+            gap: 20px;
+            grid-template-columns: minmax(0, 1fr);
         }
         .yqc-qr-wrap {
             display: flex;
@@ -156,8 +149,8 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
             }
         }
         .yqc-qr-placeholder {
-            width: 120px;
-            height: 120px;
+            width: min(224px, 100%);
+            aspect-ratio: 1;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
             display: flex;
@@ -176,8 +169,9 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
             text-align: center;
         }
         .yqc-details {
-            flex: 1;
-            min-width: 220px;
+            min-width: 0;
+            padding-top: 16px;
+            border-top: 1px solid var(--app-line);
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -186,7 +180,8 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
+            gap: 6px 12px;
+            flex-wrap: wrap;
         }
         .yqc-label {
             font-size: 0.8rem;
@@ -251,6 +246,7 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
         }
         .yqc-actions {
             margin-top: 6px;
+            display: grid;
         }
         .yqc-reload-btn {
             display: inline-flex;

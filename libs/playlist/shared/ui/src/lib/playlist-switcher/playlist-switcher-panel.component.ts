@@ -41,7 +41,6 @@ import {
     SourceActivityService,
 } from '@iptvnator/services';
 import { PlaylistMeta, PlaylistSourceKind } from '@iptvnator/shared/interfaces';
-import { ImeInputDirective } from '@iptvnator/ui/components';
 import { PlaylistRefreshActionService } from '../playlist-refresh-action.service';
 import { PlaylistInfoComponent } from '../recent-playlists/playlist-info/playlist-info.component';
 import { playlistInfoDialogConfig } from '../recent-playlists/playlist-info/playlist-info-dialog';
@@ -58,16 +57,9 @@ import {
 
 const KINDS: readonly PlaylistSourceKind[] = ['m3u', 'xtream'];
 
-/**
- * The switcher popover: search, a type segment, "Recent" and "All" groups
- * of compact source rows, and a footer. Focus stays in the search field;
- * ↑/↓ move the highlight (`aria-activedescendant`), Enter opens it,
- * Shift+F10 opens its menu and Escape closes the popover.
- */
 @Component({
     selector: 'app-playlist-switcher-panel',
     imports: [
-        ImeInputDirective,
         A11yModule,
         MatButton,
         MatButtonToggleModule,
@@ -83,7 +75,6 @@ const KINDS: readonly PlaylistSourceKind[] = ['m3u', 'xtream'];
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlaylistSwitcherPanelComponent {
-    private readonly imeInput = viewChild(ImeInputDirective);
     private readonly activity = inject(SourceActivityService);
     private readonly context = inject(PlaylistContextFacade);
     private readonly document = inject(DOCUMENT);
@@ -96,8 +87,6 @@ export class PlaylistSwitcherPanelComponent {
     private readonly statusService = inject(SourceStatusService);
     private readonly xtreamRefreshFlow = inject(XtreamRefreshFlowService);
     private readonly list = viewChild.required<ElementRef<HTMLElement>>('list');
-    private readonly searchInput =
-        viewChild.required<ElementRef<HTMLInputElement>>('searchInput');
     private readonly rows = viewChildren(SourceRowComponent);
     private readonly rowElements = viewChildren(SourceRowComponent, {
         read: ElementRef,
@@ -113,7 +102,6 @@ export class PlaylistSwitcherPanelComponent {
     readonly kinds = KINDS;
     readonly kindLabels = { m3u: 'M3U', xtream: 'Xtream', stalker: 'Stalker' };
     readonly currentId = this.context.resolvedPlaylistId;
-    readonly query = signal('');
     readonly type = signal<SourcesTypeFilter>(readSwitcherType());
 
     private readonly sortOptions = toSignal(this.sortService.getSortOptions(), {
@@ -175,38 +163,27 @@ export class PlaylistSwitcherPanelComponent {
             this.ordered(),
             this.recentHistory.ids(),
             this.activeType(),
-            this.query()
+            ''
         )
     );
     readonly options = computed<SwitcherOption[]>(() => [
         ...this.groups().recent,
         ...this.groups().all,
     ]);
-    /**
-     * A search highlights its first match, so Enter opens it. When the list
-     * changes under the same search (a source added or removed), the
-     * highlight stays on its option, or on the same place, clamped.
-     */
     readonly highlight = linkedSignal<
         {
-            query: string;
             type: SourcesTypeFilter;
             ids: readonly string[];
         },
         number
     >({
         source: () => ({
-            query: this.query(),
             type: this.activeType(),
             ids: this.options().map((option) => option.id),
         }),
         computation: (source, previous) => {
-            const sameSearch =
-                previous &&
-                previous.source.query === source.query &&
-                previous.source.type === source.type;
-            if (!sameSearch) {
-                return source.query.trim() ? 0 : -1;
+            if (!previous || previous.source.type !== source.type) {
+                return source.ids.length ? 0 : -1;
             }
             const id = previous.source.ids[previous.value];
             const kept = id === undefined ? -1 : source.ids.indexOf(id);
@@ -220,15 +197,7 @@ export class PlaylistSwitcherPanelComponent {
     );
 
     constructor() {
-        // Typing goes straight to the search. Not the focus trap's
-        // auto-capture: on close it would move focus back to wherever it was
-        // before ⌘P, and closing returns it to the trigger instead.
-        afterNextRender(() => this.searchInput().nativeElement.focus());
-    }
-
-    setQuery(value: string): void {
-        this.query.set(value);
-        this.scrollToTop();
+        afterNextRender(() => this.list().nativeElement.focus());
     }
 
     setType(type: SourcesTypeFilter): void {
@@ -245,10 +214,7 @@ export class PlaylistSwitcherPanelComponent {
         this.list().nativeElement.scrollTop = 0;
     }
 
-    onSearchKeydown(event: KeyboardEvent): void {
-        // The keys belong to the input method, not to the overlay's Escape.
-        if (this.imeInput()?.isCompositionKey(event))
-            return event.stopPropagation();
+    onListKeydown(event: KeyboardEvent): void {
         const count = this.options().length;
         switch (event.key) {
             case 'ArrowDown':
@@ -357,10 +323,10 @@ export class PlaylistSwitcherPanelComponent {
         });
     }
 
-    /** A row menu gives the focus back to the search, unless closing. */
+    /** A row menu gives the focus back to the list, unless closing. */
     onMenuClosed(): void {
         if (!this.closing) {
-            this.searchInput().nativeElement.focus();
+            this.list().nativeElement.focus();
         }
     }
 

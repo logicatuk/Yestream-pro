@@ -68,7 +68,7 @@ const translations = {
     CLOUD_CONNECT: "YESTREAM CLOUD CONNECT",
     CLOUD_CONNECT_SUBTITLE: "Manage via Web Portal or Reseller Panel",
     CHECKING_CLOUD: "Checking Cloud...",
-    SCAN_UPLOAD_PLAYLISTS: "Scan to upload playlists",
+    SCAN_UPLOAD_PLAYLISTS: "Scan to manage playlists",
     RELOAD_FROM_CLOUD: "Reload from Cloud"
   },
   fr: {

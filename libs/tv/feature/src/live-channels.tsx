@@ -1,5 +1,10 @@
 import { useRef } from 'preact/hooks';
-import { ChannelLogo, Empty, VirtualCollection } from '@iptvnator/tv/ui';
+import {
+    ChannelLogo,
+    Empty,
+    restoreFocus,
+    VirtualCollection,
+} from '@iptvnator/tv/ui';
 import type { TvModel } from './use-tv';
 import { categoryKey, useLiveBrowse } from './use-live-browse';
 export function LiveChannels({
@@ -11,11 +16,14 @@ export function LiveChannels({
     overlay?: boolean;
     browse: ReturnType<typeof useLiveBrowse>;
 }) {
-    const lastClickRef = useRef<{ id: string; time: number }>({ id: '', time: 0 });
+    const lastClickRef = useRef<{ id: string; time: number }>({
+        id: '',
+        time: 0,
+    });
     const pinned =
         tv.playing &&
-            tv.route.category === tv.playingCategory &&
-            !tv.catalog.items.some((item) => item.id === tv.playing?.id)
+        tv.route.category === tv.playingCategory &&
+        !tv.catalog.items.some((item) => item.id === tv.playing?.id)
             ? tv.playing
             : undefined;
     const items = pinned ? [pinned, ...tv.catalog.items] : tv.catalog.items;
@@ -43,8 +51,8 @@ export function LiveChannels({
                     {browse.categoriesOpen
                         ? 'Choose a category'
                         : overlay
-                            ? 'OK: switch channel · Back: close'
-                            : 'OK: preview · OK again: fullscreen'}
+                          ? 'OK: switch channel · Back: close'
+                          : 'OK: preview · OK again: fullscreen'}
                 </span>
             </div>
             <div
@@ -89,49 +97,37 @@ export function LiveChannels({
                                 data-focus={item.id}
                                 aria-pressed={tv.selected?.id === item.id}
                                 onFocus={() => tv.setSelected(item)}
+                                onBlur={() => {
+                                    lastClickRef.current.id = '';
+                                }}
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter' && event.repeat)
+                                        event.preventDefault();
+                                }}
                                 onClick={() => {
                                     const now = Date.now();
-                                    const isDoubleClick =
+                                    const secondPress =
                                         lastClickRef.current.id === item.id &&
                                         now - lastClickRef.current.time < 650;
-                                    lastClickRef.current = { id: item.id, time: now };
-
+                                    lastClickRef.current = {
+                                        id: secondPress ? '' : item.id,
+                                        time: now,
+                                    };
                                     tv.setSelected(item);
-                                    if (isDoubleClick) {
+                                    if (secondPress) {
                                         tv.setFullscreen(true);
-                                        void tv.play(
-                                            item,
-                                            undefined,
-                                            undefined,
-                                            undefined,
-                                            undefined,
-                                            false,
-                                            true
-                                        );
+                                        restoreFocus('player-toggle');
                                     } else {
                                         void tv.play(item);
                                     }
-                                }}
-                                onDblClick={() => {
-                                    tv.setSelected(item);
-                                    tv.setFullscreen(true);
-                                    void tv.play(
-                                        item,
-                                        undefined,
-                                        undefined,
-                                        undefined,
-                                        undefined,
-                                        false,
-                                        true
-                                    );
                                 }}
                             >
                                 <span class="channel-number">
                                     {item === pinned
                                         ? '●'
                                         : String(
-                                            n + 1 - (pinned ? 1 : 0)
-                                        ).padStart(2, '0')}
+                                              n + 1 - (pinned ? 1 : 0)
+                                          ).padStart(2, '0')}
                                 </span>
                                 <ChannelLogo src={item.poster} />
                                 <span>
@@ -139,14 +135,14 @@ export function LiveChannels({
                                     <small>
                                         {tv.playing?.id === item.id
                                             ? tv.player.current
-                                                ?.hasConfirmedPlayback
+                                                  ?.hasConfirmedPlayback
                                                 ? '● Playing'
                                                 : 'Starting / paused'
                                             : (tv.data.sources.find(
-                                                (source) =>
-                                                    source.id ===
-                                                    item.sourceId
-                                            )?.name ?? 'Source unavailable')}
+                                                  (source) =>
+                                                      source.id ===
+                                                      item.sourceId
+                                              )?.name ?? 'Source unavailable')}
                                     </small>
                                 </span>
                             </button>
@@ -154,9 +150,9 @@ export function LiveChannels({
                     />
                 )}
                 {!browse.categoriesOpen &&
-                    !tv.busy &&
-                    !tv.catalogError &&
-                    !items.length ? (
+                !tv.busy &&
+                !tv.catalogError &&
+                !items.length ? (
                     <Empty>No channels in this category.</Empty>
                 ) : null}
                 {browse.categoriesOpen && tv.catalogError ? (

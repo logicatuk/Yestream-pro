@@ -474,40 +474,29 @@ test.describe('Electron Playlist Switcher', () => {
 
             const trigger = page.getByTestId('playlist-switcher-trigger');
             const panel = page.locator('app-playlist-switcher-panel');
-            const search = panel.locator('input[role="combobox"]');
+            const listbox = panel.getByRole('listbox');
             await expect(playlistSwitcherTitle(page)).toContainText(
                 xtreamAName
             );
 
             await page.keyboard.press('ControlOrMeta+p');
-            await expect(search).toBeFocused();
+            await expect(listbox).toBeFocused();
             // No list shows a credential: the Xtream row names the account
             // on purpose, never its password.
             await expect(panel).not.toContainText(defaultXtreamPassword);
             await expect(panel).not.toContainText('password=');
 
-            await page.keyboard.type('switcher-local');
-            await expect(switcherOptions(page)).toHaveCount(2);
-            // A search highlights its first match; ↓ moves on, ↑ wraps.
+            await panel.getByRole('radio', { name: /M3U/i }).click();
+            await listbox.focus();
             const options = switcherOptions(page);
             const firstId = (await options.nth(0).getAttribute('id')) ?? '';
             const secondId = (await options.nth(1).getAttribute('id')) ?? '';
-            await expect(search).toHaveAttribute(
+            await expect(listbox).toHaveAttribute(
                 'aria-activedescendant',
                 firstId
             );
             await page.keyboard.press('ArrowDown');
-            await expect(search).toHaveAttribute(
-                'aria-activedescendant',
-                secondId
-            );
-            await page.keyboard.press('ArrowDown');
-            await expect(search).toHaveAttribute(
-                'aria-activedescendant',
-                firstId
-            );
-            await page.keyboard.press('ArrowUp');
-            await expect(search).toHaveAttribute(
+            await expect(listbox).toHaveAttribute(
                 'aria-activedescendant',
                 secondId
             );
@@ -526,7 +515,7 @@ test.describe('Electron Playlist Switcher', () => {
 
             // Escape closes and puts focus back on the trigger.
             await page.keyboard.press('ControlOrMeta+p');
-            await expect(search).toBeFocused();
+            await expect(listbox).toBeFocused();
             await page.keyboard.press('Escape');
             await expect(panel).toHaveCount(0);
             await expect(trigger).toBeFocused();
@@ -539,13 +528,12 @@ test.describe('Electron Playlist Switcher', () => {
                 height: 320,
             });
             await page.keyboard.press('ControlOrMeta+p');
-            await expect(search).toBeFocused();
+            await expect(listbox).toBeFocused();
             const chrome = await panel.evaluate((host) => {
                 const height = (element: Element | null) =>
                     element?.getBoundingClientRect().height ?? 0;
                 const list = host.querySelector('.switcher__list');
                 return {
-                    search: height(host.querySelector('.switcher__search')),
                     toggles: Array.from(
                         host.querySelectorAll('.mat-button-toggle'),
                         height
@@ -554,7 +542,6 @@ test.describe('Electron Playlist Switcher', () => {
                         !!list && list.scrollHeight > list.clientHeight,
                 };
             });
-            expect(chrome.search, JSON.stringify(chrome)).toBeCloseTo(36, 0);
             expect(chrome.toggles.length, JSON.stringify(chrome)).toBe(3);
             for (const toggle of chrome.toggles) {
                 expect(toggle, JSON.stringify(chrome)).toBeGreaterThanOrEqual(
@@ -570,7 +557,7 @@ test.describe('Electron Playlist Switcher', () => {
             // focus trap would keep Tab from Undo; Undo takes the focus and
             // gives it back to the trigger.
             await page.keyboard.press('ControlOrMeta+p');
-            await expect(search).toBeFocused();
+            await expect(listbox).toBeFocused();
             await page.keyboard.press('ArrowDown');
             await page.keyboard.press('Shift+F10');
             const rowMenu = await waitForMenuFocus(page);

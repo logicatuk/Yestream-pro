@@ -92,7 +92,7 @@ export async function start(page: Page) {
     });
     await page.goto('/');
     await expect(
-        page.getByRole('heading', { name: 'Sources', exact: true })
+        page.getByRole('heading', { name: 'Playlists', exact: true, level: 1 })
     ).toBeVisible();
 }
 export async function addSource(

@@ -107,6 +107,7 @@
         <ng-template appDetailActions>
             @if (hero.primaryAction(); as primary) {
                 <app-detail-action-button
+                    [focusOnEntry]="true"
                     [label]="primary.label"
                     [meta]="primary.meta"
                     [icon]="primary.icon"

@@ -195,6 +195,11 @@ describe('VodDetailsComponent offline playback', () => {
         await fixture.whenStable();
     };
 
+    it('places focus on the primary playback button when details open', async () => {
+        await render();
+        expect(document.activeElement).toBe(primaryButton());
+    });
+
     it('passes the host-owned session key unchanged to inline playback', async () => {
         await render();
         fixture.componentRef.setInput('inlinePlayback', {

@@ -1,5 +1,6 @@
+import { prepareLiveMedia } from './live-media';
 import { expect, Page, test } from '@playwright/test';
-import { addSource, backend, nav, start } from './helpers';
+import { addSource, backend, nav, start, xtream } from './helpers';
 
 async function geometry(page: Page) {
     return page.evaluate(() => {
@@ -70,6 +71,43 @@ test('Live categories use large rows, remote Back restores category/channel focu
         'src',
         src!
     );
+});
+
+test('two OK presses expand the live preview and Back returns to the channel', async ({ page }) => {
+    await start(page);
+    await page.evaluate(async ({ backend, xtream }) => {
+        const db = await new Promise<IDBDatabase>((resolve, reject) => {
+            const request = indexedDB.open('iptvnator-tv-user-data', 1);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
+        await new Promise<void>((resolve, reject) => {
+            const tx = db.transaction('state', 'readwrite');
+            tx.objectStore('state').put({ version: 1, data: {
+                backend, activeId: 'test-live', sources: [{
+                    id: 'test-live', name: 'Test live', provider: 'xtream',
+                    url: xtream, username: 'user1', password: 'pass1',
+                }],
+            } }, 'user');
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error);
+        });
+        db.close();
+    }, { backend, xtream });
+    await page.reload();
+    await prepareLiveMedia(page);
+    const channel = page.locator('.channel').first();
+    await expect(channel).toBeFocused();
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Enter');
+    await expect(page.locator('.fullscreen')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(channel).toBeFocused();
+    const anotherChannel = page.locator('.channel').nth(1);
+    await anotherChannel.dblclick();
+    await expect(page.locator('.fullscreen')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(anotherChannel).toBeFocused();
 });
 
 test('Live uses remaining screen height and EPG scroll never moves the preview or columns', async ({
