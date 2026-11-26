@@ -5,10 +5,22 @@ public struct DeviceExpiredView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var cloud = CloudSyncService.shared
     @ObservedObject var appState = AppState.shared
+
+    public var onOpenPlaylists: (() -> Void)? = nil
+
+    @FocusState private var focusedButton: ExpiredButtonFocus?
+    enum ExpiredButtonFocus: Hashable {
+        case back
+        case refresh
+        case playlists
+    }
+
     @State private var isChecking: Bool = false
     @State private var checkResultMessage: String = ""
 
-    public init() {}
+    public init(onOpenPlaylists: (() -> Void)? = nil) {
+        self.onOpenPlaylists = onOpenPlaylists
+    }
 
     private var registration: TvDeviceRegistration? {
         cloud.registration
@@ -37,44 +49,37 @@ public struct DeviceExpiredView: View {
             )
             .ignoresSafeArea()
 
-            VStack(spacing: 36) {
+            VStack(spacing: 32) {
                 // ==========================================
-                // 1. BRAND HEADER: Logo + Title
+                // 1. BRAND HEADER (Identical to HomeView)
                 // ==========================================
-                HStack(spacing: 12) {
-                    if cloud.registration?.isExpired == false {
-                        Button(action: {
-                            dismiss()
-                        }) {
-                            HStack(spacing: 6) {
-                                Image(systemName: "chevron.left")
-                                Text("Back")
-                            }
-                            .font(.system(size: 13, weight: .bold))
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 8)
-                        }
-                        .buttonStyle(.bordered)
-                        Spacer()
+                HStack(spacing: 14) {
+                    if let path = Bundle.main.path(forResource: "logo", ofType: "png"),
+                       let uiImage = UIImage(contentsOfFile: path) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 52, height: 52)
+                    } else if let uiImage = UIImage(named: "logo") {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 52, height: 52)
+                    } else {
+                        Image(systemName: "play.tv.fill")
+                            .font(.system(size: 42))
+                            .foregroundColor(Color(red: 0.3, green: 0.65, blue: 1.0))
                     }
-
-                    Image(systemName: "play.tv.fill")
-                        .font(.system(size: 32))
-                        .foregroundColor(Color(red: 0.2, green: 0.6, blue: 1.0))
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text("YESTREAM")
-                            .font(.system(size: 26, weight: .black, design: .rounded))
-                            .tracking(3)
+                            .font(.system(size: 34, weight: .black, design: .rounded))
+                            .tracking(2.0)
                             .foregroundColor(.white)
                         Text("PRO IPTV PLAYER")
-                            .font(.system(size: 10, weight: .heavy, design: .monospaced))
-                            .tracking(2)
-                            .foregroundColor(Color.cyan)
-                    }
-
-                    if cloud.registration?.isExpired == false {
-                        Spacer()
+                            .font(.system(size: 11, weight: .bold, design: .monospaced))
+                            .tracking(3.0)
+                            .foregroundColor(Color(red: 0.3, green: 0.65, blue: 1.0))
                     }
                 }
                 .padding(.top, 40)
@@ -178,46 +183,70 @@ public struct DeviceExpiredView: View {
                 )
 
                 // ==========================================
-                // 4. ACTION BUTTONS: Refresh Status & Playlists
+                // 4. ACTION BUTTONS: Refresh Status & Playlists (Standard tvOS Bordered)
                 // ==========================================
-                HStack(spacing: 20) {
+                HStack(spacing: 28) {
                     Button(action: {
                         Task {
                             await checkStatus()
                         }
                     }) {
-                        HStack(spacing: 10) {
+                        HStack(spacing: 8) {
                             if isChecking {
                                 ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                    .scaleEffect(0.9)
+                                    .scaleEffect(0.8)
                             } else {
                                 Image(systemName: "arrow.clockwise")
                                     .font(.system(size: 14, weight: .bold))
                             }
-                            Text(isChecking ? "Checking..." : "Refresh Status")
-                                .font(.system(size: 15, weight: .bold))
+                            Text(isChecking ? "Checking…" : "Refresh Status")
+                                .font(.system(size: 14, weight: .bold))
                         }
+                        .frame(width: 200, height: 48)
                     }
-                    .buttonStyle(ExpiredActionButtonStyle(isPrimary: true))
+                    .buttonStyle(.bordered)
+                    .focused($focusedButton, equals: .refresh)
                     .disabled(isChecking)
 
                     Button(action: {
-                        appState.selectedTab = 5 // Navigate to Playlists tab
+                        if let onOpenPlaylists = onOpenPlaylists {
+                            onOpenPlaylists()
+                        } else {
+                            dismiss()
+                            appState.selectedTab = 5
+                        }
                     }) {
                         HStack(spacing: 8) {
                             Image(systemName: "list.bullet.rectangle")
-                                .font(.system(size: 14))
+                                .font(.system(size: 14, weight: .bold))
                             Text("Manage Playlists")
-                                .font(.system(size: 15, weight: .medium))
+                                .font(.system(size: 14, weight: .bold))
                         }
+                        .frame(width: 200, height: 48)
                     }
-                    .buttonStyle(ExpiredActionButtonStyle(isPrimary: false))
+                    .buttonStyle(.bordered)
+                    .focused($focusedButton, equals: .playlists)
+
+                    if cloud.registration?.isExpired == false {
+                        Button(action: {
+                            dismiss()
+                        }) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 14, weight: .bold))
+                                Text("Exit Preview")
+                                    .font(.system(size: 14, weight: .bold))
+                            }
+                            .frame(width: 170, height: 48)
+                        }
+                        .buttonStyle(.bordered)
+                        .focused($focusedButton, equals: .back)
+                    }
                 }
 
                 if !checkResultMessage.isEmpty {
                     Text(checkResultMessage)
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Color.cyan)
                         .animation(.easeInOut, value: checkResultMessage)
                 }
@@ -225,6 +254,9 @@ public struct DeviceExpiredView: View {
                 Spacer()
             }
             .padding(.horizontal, 48)
+        }
+        .onAppear {
+            focusedButton = .refresh
         }
     }
 
@@ -241,33 +273,5 @@ public struct DeviceExpiredView: View {
         } else {
             checkResultMessage = "Subscription is still expired. Please complete renewal above."
         }
-    }
-}
-
-// MARK: - Action Button Style
-private struct ExpiredActionButtonStyle: ButtonStyle {
-    let isPrimary: Bool
-    @Environment(\.isFocused) private var isFocused
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .foregroundColor(.white)
-            .padding(.horizontal, 28)
-            .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(
-                        isFocused
-                            ? Color(red: 0.16, green: 0.35, blue: 0.75)
-                            : (isPrimary ? Color(red: 0.12, green: 0.44, blue: 0.95) : Color.white.opacity(0.08))
-                    )
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(isFocused ? Color.cyan : Color.white.opacity(0.15), lineWidth: isFocused ? 2 : 1)
-            )
-            .shadow(color: isFocused ? Color.cyan.opacity(0.4) : Color.clear, radius: 6)
-            .scaleEffect(isFocused ? 1.04 : (configuration.isPressed ? 0.96 : 1.0))
-            .animation(.easeInOut(duration: 0.12), value: isFocused)
     }
 }
