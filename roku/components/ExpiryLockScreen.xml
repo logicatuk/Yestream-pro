@@ -4,124 +4,127 @@
         <field id="entitlement" type="assocarray" value="" />
         <field id="isLoading" type="boolean" value="false" />
         <field id="checkNotice" type="string" value="" />
+        <field id="selectedAction" type="string" value="" />
     </interface>
 
     <children>
-        <Rectangle width="1920" height="1080" color="#0A0A0A" />
-        <Rectangle id="overlay" width="1920" height="1080" color="#080C16" opacity="0.92" />
+        <Rectangle width="1920" height="1080" color="#04060C" />
+        <Rectangle width="1920" height="1080" color="#060A14" opacity="0.95" />
 
-        <Group id="lockCard" translation="[480, 180]" width="960" height="720">
-            <Rectangle width="960" height="720" color="#1A2030" />
+        <!-- Centered Brand Header -->
+        <Poster uri="pkg:/images/logo.png" width="56" height="56" translation="[810, 40]" />
+        <Label text="YESTREAM" font="font:LargeBoldSystemFont" color="#FFFFFF" translation="[882, 38]" />
+        <Label text="PRO IPTV PLAYER" font="font:SmallBoldSystemFont" color="#38BDF8" translation="[884, 80]" />
+
+        <!-- Lock Hero Card -->
+        <Group id="lockCard" translation="[460, 150]" width="1000" height="720">
+            <Rectangle width="1000" height="720" color="#0F172A" />
+            <Rectangle width="1000" height="4" color="#EF4444" opacity="0.8" />
 
             <!-- Expiry Badge -->
-            <Group id="badgeGroup" translation="[360, 40]">
-                <Rectangle width="240" height="40" color="#EF4444" opacity="0.15" />
-                <Label id="badgeText" text="SUBSCRIPTION EXPIRED" font="font:SmallBoldSystemFont" color="#F87171" translation="[10, 8]" />
+            <Group id="badgeGroup" translation="[360, 35]">
+                <Rectangle width="280" height="38" color="#EF4444" opacity="0.18" />
+                <Label id="badgeText" text="TRIAL PERIOD EXPIRED" font="font:SmallBoldSystemFont" color="#F87171" horizAlign="center" width="280" translation="[0, 8]" />
             </Group>
 
-            <!-- Title -->
-            <Label id="titleLabel" text="Your 7-day free trial has expired" width="800" font="font:LargeBoldSystemFont" color="#FFFFFF" translation="[80, 120]" wrap="true" />
+            <!-- Title & Description -->
+            <Label id="titleLabel" text="Your trial period has expired." font="font:LargeBoldSystemFont" color="#FFFFFF" horizAlign="center" width="1000" translation="[0, 95]" />
+            <Label id="descLabel" text="To continue enjoying Live TV, Movies, Series, and EPG Timeline, please renew or activate your device." font="font:SmallSystemFont" color="#94A3B8" horizAlign="center" width="900" wrap="true" translation="[50, 145]" />
 
-            <!-- Description -->
-            <Label id="descLabel" text="Please activate your device to continue" width="800" font="font:MediumSystemFont" color="#94A3B8" translation="[80, 170]" wrap="true" />
+            <!-- Credentials Box (Split Screen: QR Code + MAC/Key) -->
+            <!-- Left: QR Code -->
+            <Poster id="qrImage" uri="pkg:/images/splash_hd.png" width="200" height="200" translation="[140, 215]" />
+            <Label text="Scan with phone to activate" font="font:SmallSystemFont" color="#94A3B8" horizAlign="center" width="240" translation="[120, 430]" />
 
-            <!-- MAC + Key Grid -->
-            <Group id="gridGroup" translation="[80, 220]" width="800" height="200">
-                <Group id="macGroup" translation="[0, 0]" width="380" height="100">
-                    <Label text="MAC Address" font="font:SmallBoldSystemFont" color="#94A3B8" translation="[0, 0]" />
-                    <Rectangle width="380" height="50" color="#0F172A" translation="[0, 30]" />
-                    <Label id="macDisplay" font="font:MediumBoldSystemFont" color="#E2E8F0" translation="[20, 38]" />
-                    <Button id="copyMacBtn" translation="[330, 35]" width="40" height="40" >
-                        <Icon source="content_copy" />
-                    </Button>
-                </Group>
+            <!-- Divider -->
+            <Rectangle width="1" height="250" color="#1E293B" translation="[480, 210]" />
 
-                <Group id="keyGroup" translation="[420, 0]" width="380" height="100">
-                    <Label text="Device Key" font="font:SmallBoldSystemFont" color="#94A3B8" translation="[0, 0]" />
-                    <Rectangle width="380" height="50" color="#0F172A" translation="[0, 30]" />
-                    <Label id="keyDisplay" font="font:MediumBoldSystemFont" color="#38BDF8" letter-spacing="0.08em" translation="[20, 38]" />
-                    <Button id="copyKeyBtn" translation="[330, 35]" width="40" height="40" >
-                        <Icon source="content_copy" />
-                    </Button>
-                </Group>
+            <!-- Right: Device Credentials -->
+            <Group translation="[530, 215]">
+                <Label text="DEVICE MAC ADDRESS" font="font:SmallBoldSystemFont" color="#64748B" />
+                <Rectangle width="380" height="48" color="#1E293B" translation="[0, 28]" />
+                <Label id="macDisplay" text="DA:E5:4A:7C:18:3F" font="font:MediumBoldSystemFont" color="#FFFFFF" translation="[20, 39]" />
 
-                <Label id="qrHint" text="Scan to renew" font="font:SmallSystemFont" color="#94A3B8" translation="[180, 140]" />
+                <Label text="DEVICE ACTIVATION KEY" font="font:SmallBoldSystemFont" color="#64748B" translation="[0, 95]" />
+                <Rectangle width="380" height="48" color="#1E293B" translation="[0, 123]" />
+                <Label id="keyDisplay" text="187828" font="font:MediumBoldSystemFont" color="#38BDF8" translation="[20, 134]" />
+
+                <Label text="PORTAL URL" font="font:SmallBoldSystemFont" color="#475569" translation="[0, 190]" />
+                <Label id="portalLink" text="https://yestream.app/activate" font="font:SmallSystemFont" color="#94A3B8" translation="[0, 215]" />
             </Group>
 
-            <!-- QR Code -->
-            <ImageCanvas id="qrCanvas" translation="[340, 340]" width="280" height="280" />
-
-            <!-- Portal Link -->
-            <Label id="portalLink" text="Or visit: yestream.ai.studio" font="font:SmallSystemFont" color="#38BDF8" translation="[280, 640]" wrap="true" />
-
-            <!-- Actions -->
-            <Button id="refreshBtn" translation="[360, 680]" width="240" height="48">
-                <Label text="Refresh Status" font="font:MediumBoldSystemFont" />
-            </Button>
-
-            <!-- Notice -->
-            <Group id="noticeGroup" translation="[80, 580]" width="800" height="60" visible="false">
-                <Rectangle width="800" height="50" color="#F59E0B" opacity="0.15" />
-                <Label id="noticeText" font="font:SmallSystemFont" color="#FBBF24" translation="[10, 10]" />
+            <!-- Action Buttons: Refresh Status & Manage Playlists -->
+            <Group id="btnRefresh" translation="[240, 560]">
+                <Rectangle id="btnRefreshBg" width="240" height="52" color="#38BDF8" />
+                <Label id="btnRefreshText" text="↻  Refresh Status" font="font:MediumBoldSystemFont" color="#020617" horizAlign="center" width="240" translation="[0, 14]" />
             </Group>
+
+            <Group id="btnPlaylists" translation="[520, 560]">
+                <Rectangle id="btnPlaylistsBg" width="240" height="52" color="#1E293B" />
+                <Label id="btnPlaylistsText" text="☰  Manage Playlists" font="font:MediumBoldSystemFont" color="#FFFFFF" horizAlign="center" width="240" translation="[0, 14]" />
+            </Group>
+
+            <!-- Status Notice -->
+            <Label id="noticeText" text="" font="font:SmallBoldSystemFont" color="#38BDF8" horizAlign="center" width="1000" translation="[0, 640]" />
         </Group>
     </children>
 
     <script type="text/brightscript">
     <![CDATA[
     sub init()
-        m.top.entitlement = invalid
-        m.top.isLoading = false
-        m.top.checkNotice = ""
-        m.qrCanvas = m.top.findNode("qrCanvas")
-        m.noticeGroup = m.top.findNode("noticeGroup")
-        m.noticeText = m.top.findNode("noticeText")
         m.macDisplay = m.top.findNode("macDisplay")
         m.keyDisplay = m.top.findNode("keyDisplay")
+        m.noticeText = m.top.findNode("noticeText")
+        m.btnRefreshBg = m.top.findNode("btnRefreshBg")
+        m.btnRefreshText = m.top.findNode("btnRefreshText")
+        m.btnPlaylistsBg = m.top.findNode("btnPlaylistsBg")
+        m.btnPlaylistsText = m.top.findNode("btnPlaylistsText")
+
+        m.focusedBtn = 0 ' 0 = Refresh, 1 = Playlists
+        updateFocus()
     end sub
 
-    sub onKeyDown(key as Integer)
-        if key = 13 ' OK/Enter
-            refreshStatus()
+    sub updateFocus()
+        if m.focusedBtn = 0
+            m.btnRefreshBg.color = "#38BDF8"
+            m.btnRefreshText.color = "#020617"
+            m.btnPlaylistsBg.color = "#1E293B"
+            m.btnPlaylistsText.color = "#FFFFFF"
+        else
+            m.btnRefreshBg.color = "#1E293B"
+            m.btnRefreshText.color = "#FFFFFF"
+            m.btnPlaylistsBg.color = "#38BDF8"
+            m.btnPlaylistsText.color = "#020617"
         end if
     end sub
 
-    sub refreshStatus()
-        m.top.isLoading = true
-        ' Trigger entitlement check via parent
-        m.top.notify("onRefreshStatus")
-        m.top.isLoading = false
-    end sub
+    function onKeyEvent(key as String, press as Boolean) as Boolean
+        if not press then return false
 
-    sub setEntitlement(entitlement as object)
-        m.top.entitlement = entitlement
-        m.macDisplay.text = entitlement.mac ? entitlement.mac : "Generating..."
-        m.keyDisplay.text = entitlement.key6 ? entitlement.key6 : "Generating..."
-
-        ' Generate QR code
-        if entitlement.mac and entitlement.key6
-            url = "https://yestream.ai.studio/activate?mac=" + escape(entitlement.mac) + "&key=" + entitlement.key6
-            generateQrCode(url)
+        if key = "left"
+            if m.focusedBtn = 1
+                m.focusedBtn = 0
+                updateFocus()
+                return true
+            end if
+        else if key = "right"
+            if m.focusedBtn = 0
+                m.focusedBtn = 1
+                updateFocus()
+                return true
+            end if
+        else if key = "OK"
+            if m.focusedBtn = 0
+                m.noticeText.text = "Checking activation with Yestream Cloud..."
+                m.top.selectedAction = "refresh"
+            else
+                m.top.selectedAction = "playlists"
+            end if
+            return true
         end if
-    end sub
 
-    sub generateQrCode(url as string)
-        ' Draw QR code on ImageCanvas
-        m.qrCanvas.clear()
-        ' In production: use roImageCanvas to draw QR matrix
-    end sub
-
-    sub setCheckNotice(notice as string)
-        m.top.checkNotice = notice
-        m.noticeGroup.visible = true
-        m.noticeText.text = notice
-    end sub
-
-    sub onKeyDown(key as Integer)
-        if key = 13 ' OK/Enter
-            refreshStatus()
-        end if
-    end sub
+        return false
+    end function
     ]]>
     </script>
 </component>

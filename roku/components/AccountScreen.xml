@@ -9,7 +9,7 @@
 
     <children>
         <Rectangle width="1920" height="1080" color="#0A0A0A" />
-        <Label id="headerTitle" text="Account & Device" font="font:LargeBoldSystemFont" color="#FFFFFF" translation="[40, 40]" />
+        <Label id="headerTitle" text="Account &amp; Device" font="font:LargeBoldSystemFont" color="#FFFFFF" translation="[40, 40]" />
 
         <Group id="deviceCard" translation="[40, 120]" width="1840" height="220">
             <Rectangle width="1840" height="220" color="#1A1A2E" />

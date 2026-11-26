@@ -1,34 +1,287 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <component name="HomeScreen" extends="Group">
     <interface>
-        <field id="entitlement" type="assocarray" value="" />
-        <field id="deviceIdentity" type="assocarray" value="" />
-        <field id="playlist" type="assocarray" value="" />
+        <field id="entitlement" type="assocarray" />
+        <field id="deviceIdentity" type="assocarray" />
+        <field id="playlist" type="assocarray" />
+        <field id="selectedAction" type="string" value="" />
+        <field id="macAddress" type="string" value="" />
+        <field id="activePlaylistName" type="string" value="" />
+        <field id="planText" type="string" value="" />
+        <function name="updateDeviceInfo" />
     </interface>
 
     <children>
-        <Rectangle width="1920" height="1080" color="#0A0A0A" />
-        <RowList id="homeList" translation="[0, 0]" numrows="1" colwidth="400" rowwidth="1920" colheight="480" />
-        <Label id="titleLabel" text="Yestream Home" font="font:MediumBoldSystemFont" translation="[40, 40]" />
+        <!-- Luxury Midnight Navy Background -->
+        <Rectangle width="1920" height="990" color="#060A13" />
+
+        <!-- Ambient Glow behind Brand Header -->
+        <Rectangle width="600" height="120" color="#1E293B" opacity="0.25" translation="[660, 20]" />
+
+        <!-- ================================================= -->
+        <!-- 1. BRAND HEADER (Authentic White Origami Bird Logo) -->
+        <!-- ================================================= -->
+        <Poster id="brandLogo" uri="pkg:/images/logo.png" width="60" height="60" translation="[800, 25]" />
+        <Label text="YESTREAM" font="font:LargeBoldSystemFont" color="#FFFFFF" translation="[875, 24]" />
+        <Label text="PRO IPTV PLAYER" font="font:SmallBoldSystemFont" color="#38BDF8" translation="[877, 66]" />
+
+        <!-- Active Playlist Label -->
+        <Label id="playlistLabel" text="Active Playlist : None" font="font:SmallSystemFont" color="#94A3B8" horizAlign="center" width="1920" translation="[0, 105]" />
+
+        <!-- Subscription Status Badge -->
+        <Group id="statusBadgeGroup" translation="[760, 138]">
+            <Rectangle id="statusBadgeBg" width="400" height="32" color="#0F172A" />
+            <Label id="statusBadgeText" text="● ACTIVE • YEAR_1 • Active Subscription" font="font:SmallBoldSystemFont" color="#10B981" horizAlign="center" width="400" translation="[0, 6]" />
+        </Group>
+
+        <!-- ================================================= -->
+        <!-- 2. FOUR HERO CATEGORY CARDS                       -->
+        <!-- ================================================= -->
+        <!-- Card 0: Live TV -->
+        <Group id="card0" translation="[210, 195]">
+            <Rectangle id="card0Glow" width="366" height="396" color="#38BDF8" translation="[-3, -3]" visible="false" />
+            <Rectangle id="card0Bg" width="360" height="390" color="#0F172A" />
+            <Rectangle width="360" height="4" color="#38BDF8" opacity="0.8" />
+            <Poster uri="pkg:/images/icon_focus_hd.png" width="64" height="64" translation="[148, 80]" />
+            <Label text="Live TV" font="font:LargeBoldSystemFont" color="#FFFFFF" horizAlign="center" width="360" translation="[0, 180]" />
+            <Label text="Live Channels &amp; Streams" font="font:SmallSystemFont" color="#94A3B8" horizAlign="center" width="360" translation="[0, 235]" />
+            <Label id="card0Action" text="Press OK to Watch" font="font:SmallBoldSystemFont" color="#38BDF8" horizAlign="center" width="360" translation="[0, 310]" visible="false" />
+        </Group>
+
+        <!-- Card 1: Movies -->
+        <Group id="card1" translation="[590, 195]">
+            <Rectangle id="card1Glow" width="366" height="396" color="#38BDF8" translation="[-3, -3]" visible="false" />
+            <Rectangle id="card1Bg" width="360" height="390" color="#0F172A" />
+            <Rectangle width="360" height="4" color="#A855F7" opacity="0.8" />
+            <Poster uri="pkg:/images/icon_focus_hd.png" width="64" height="64" translation="[148, 80]" />
+            <Label text="Movies" font="font:LargeBoldSystemFont" color="#FFFFFF" horizAlign="center" width="360" translation="[0, 180]" />
+            <Label text="Films &amp; Video On Demand" font="font:SmallSystemFont" color="#94A3B8" horizAlign="center" width="360" translation="[0, 235]" />
+            <Label id="card1Action" text="Press OK to Browse" font="font:SmallBoldSystemFont" color="#A855F7" horizAlign="center" width="360" translation="[0, 310]" visible="false" />
+        </Group>
+
+        <!-- Card 2: Series -->
+        <Group id="card2" translation="[970, 195]">
+            <Rectangle id="card2Glow" width="366" height="396" color="#38BDF8" translation="[-3, -3]" visible="false" />
+            <Rectangle id="card2Bg" width="360" height="390" color="#0F172A" />
+            <Rectangle width="360" height="4" color="#EC4899" opacity="0.8" />
+            <Poster uri="pkg:/images/icon_focus_hd.png" width="64" height="64" translation="[148, 80]" />
+            <Label text="Series" font="font:LargeBoldSystemFont" color="#FFFFFF" horizAlign="center" width="360" translation="[0, 180]" />
+            <Label text="TV Shows &amp; Seasons" font="font:SmallSystemFont" color="#94A3B8" horizAlign="center" width="360" translation="[0, 235]" />
+            <Label id="card2Action" text="Press OK to Browse" font="font:SmallBoldSystemFont" color="#EC4899" horizAlign="center" width="360" translation="[0, 310]" visible="false" />
+        </Group>
+
+        <!-- Card 3: EPG Guide -->
+        <Group id="card3" translation="[1350, 195]">
+            <Rectangle id="card3Glow" width="366" height="396" color="#38BDF8" translation="[-3, -3]" visible="false" />
+            <Rectangle id="card3Bg" width="360" height="390" color="#0F172A" />
+            <Rectangle width="360" height="4" color="#10B981" opacity="0.8" />
+            <Poster uri="pkg:/images/icon_focus_hd.png" width="64" height="64" translation="[148, 80]" />
+            <Label text="EPG Guide" font="font:LargeBoldSystemFont" color="#FFFFFF" horizAlign="center" width="360" translation="[0, 180]" />
+            <Label text="TV Timeline &amp; Schedule" font="font:SmallSystemFont" color="#94A3B8" horizAlign="center" width="360" translation="[0, 235]" />
+            <Label id="card3Action" text="Press OK to Open" font="font:SmallBoldSystemFont" color="#10B981" horizAlign="center" width="360" translation="[0, 310]" visible="false" />
+        </Group>
+
+        <!-- ================================================= -->
+        <!-- 3. BOTTOM QUICK ACTION BUTTONS                    -->
+        <!-- ================================================= -->
+        <!-- Button 0: Refresh -->
+        <Group id="btn0" translation="[590, 625]">
+            <Rectangle id="btn0Bg" width="220" height="50" color="#1E293B" />
+            <Label id="btn0Text" text="↻  Refresh" font="font:MediumBoldSystemFont" color="#FFFFFF" horizAlign="center" width="220" translation="[0, 12]" />
+        </Group>
+
+        <!-- Button 1: Playlists -->
+        <Group id="btn1" translation="[850, 625]">
+            <Rectangle id="btn1Bg" width="220" height="50" color="#1E293B" />
+            <Label id="btn1Text" text="☰  Playlists" font="font:MediumBoldSystemFont" color="#FFFFFF" horizAlign="center" width="220" translation="[0, 12]" />
+        </Group>
+
+        <!-- Button 2: Settings -->
+        <Group id="btn2" translation="[1110, 625]">
+            <Rectangle id="btn2Bg" width="220" height="50" color="#1E293B" />
+            <Label id="btn2Text" text="⚙  Settings" font="font:MediumBoldSystemFont" color="#FFFFFF" horizAlign="center" width="220" translation="[0, 12]" />
+        </Group>
+
+        <!-- ================================================= -->
+        <!-- 4. FOOTER: Real Hardware MAC & Brand Tagline      -->
+        <!-- ================================================= -->
+        <Label id="macFooter" text="MAC ADDRESS : DA:E5:4A:7C:18:3F" font="font:SmallBoldSystemFont" color="#64748B" horizAlign="center" width="1920" translation="[0, 715]" />
+        <Label text="Yestream Pro • Ultra High Definition Streaming" font="font:SmallSystemFont" color="#475569" horizAlign="center" width="1920" translation="[0, 745]" />
     </children>
 
     <script type="text/brightscript">
     <![CDATA[
     sub init()
-        m.top.entitlement = invalid
-        m.top.deviceIdentity = invalid
-        m.top.playlist = invalid
-        m.homeList = m.top.findNode("homeList")
-        m.titleLabel = m.top.findNode("titleLabel")
+        m.playlistLabel = m.top.findNode("playlistLabel")
+        m.statusBadgeText = m.top.findNode("statusBadgeText")
+        m.macFooter = m.top.findNode("macFooter")
+
+        ' Card nodes
+        m.cardGlows = [
+            m.top.findNode("card0Glow"),
+            m.top.findNode("card1Glow"),
+            m.top.findNode("card2Glow"),
+            m.top.findNode("card3Glow")
+        ]
+        m.cardBgs = [
+            m.top.findNode("card0Bg"),
+            m.top.findNode("card1Bg"),
+            m.top.findNode("card2Bg"),
+            m.top.findNode("card3Bg")
+        ]
+        m.cardActions = [
+            m.top.findNode("card0Action"),
+            m.top.findNode("card1Action"),
+            m.top.findNode("card2Action"),
+            m.top.findNode("card3Action")
+        ]
+
+        ' Button nodes
+        m.btnBgs = [
+            m.top.findNode("btn0Bg"),
+            m.top.findNode("btn1Bg"),
+            m.top.findNode("btn2Bg")
+        ]
+        m.btnTexts = [
+            m.top.findNode("btn0Text"),
+            m.top.findNode("btn1Text"),
+            m.top.findNode("btn2Text")
+        ]
+
+        ' Navigation focus state: "cards" or "buttons"
+        m.focusSection = "cards"
+        m.focusedCard = 0
+        m.focusedBtn = 0
+
+        updateFocusVisuals()
     end sub
 
-    sub loadHomeContent()
-        print "Loading home content..."
-        ' Load playlist if available
-        if m.top.playlist <> invalid
-            ' Populate home list with playlist channels
+    sub updateDeviceInfo()
+        if m.top.macAddress <> invalid and m.top.macAddress <> ""
+            m.macFooter.text = "MAC ADDRESS : " + m.top.macAddress
+        end if
+
+        if m.top.activePlaylistName <> invalid and m.top.activePlaylistName <> ""
+            m.playlistLabel.text = "Active Playlist : " + m.top.activePlaylistName
+        else
+            m.playlistLabel.text = "Active Playlist : None"
+        end if
+
+        if m.top.planText <> invalid and m.top.planText <> ""
+            m.statusBadgeText.text = m.top.planText
         end if
     end sub
+
+    sub updateFocusVisuals()
+        ' Update 4 Cards
+        for i = 0 to 3
+            isCardFocused = (m.focusSection = "cards" and m.focusedCard = i)
+            m.cardGlows[i].visible = isCardFocused
+            if isCardFocused
+                m.cardBgs[i].color = "#1E293B"
+                m.cardActions[i].visible = true
+            else
+                m.cardBgs[i].color = "#0F172A"
+                m.cardActions[i].visible = false
+            end if
+        end for
+
+        ' Update 3 Buttons
+        for b = 0 to 2
+            isBtnFocused = (m.focusSection = "buttons" and m.focusedBtn = b)
+            if isBtnFocused
+                m.btnBgs[b].color = "#38BDF8"
+                m.btnTexts[b].color = "#020617"
+            else
+                m.btnBgs[b].color = "#1E293B"
+                m.btnTexts[b].color = "#FFFFFF"
+            end if
+        end for
+    end sub
+
+    function onKeyEvent(key as String, press as Boolean) as Boolean
+        handled = false
+        if not press then return handled
+
+        if m.focusSection = "cards"
+            if key = "left"
+                if m.focusedCard > 0
+                    m.focusedCard = m.focusedCard - 1
+                    updateFocusVisuals()
+                    handled = true
+                end if
+            else if key = "right"
+                if m.focusedCard < 3
+                    m.focusedCard = m.focusedCard + 1
+                    updateFocusVisuals()
+                    handled = true
+                end if
+            else if key = "down"
+                m.focusSection = "buttons"
+                if m.focusedCard = 0 or m.focusedCard = 1
+                    m.focusedBtn = 0
+                else if m.focusedCard = 2
+                    m.focusedBtn = 1
+                else
+                    m.focusedBtn = 2
+                end if
+                updateFocusVisuals()
+                handled = true
+            else if key = "up"
+                ' Allow parent scene to move focus up to TopNavigationBar
+                m.top.selectedAction = "focusNav"
+                handled = true
+            else if key = "OK"
+                if m.focusedCard = 0
+                    m.top.selectedAction = "liveTV"
+                else if m.focusedCard = 1
+                    m.top.selectedAction = "movies"
+                else if m.focusedCard = 2
+                    m.top.selectedAction = "series"
+                else if m.focusedCard = 3
+                    m.top.selectedAction = "epg"
+                end if
+                handled = true
+            end if
+
+        else if m.focusSection = "buttons"
+            if key = "left"
+                if m.focusedBtn > 0
+                    m.focusedBtn = m.focusedBtn - 1
+                    updateFocusVisuals()
+                    handled = true
+                end if
+            else if key = "right"
+                if m.focusedBtn < 2
+                    m.focusedBtn = m.focusedBtn + 1
+                    updateFocusVisuals()
+                    handled = true
+                end if
+            else if key = "up"
+                m.focusSection = "cards"
+                if m.focusedBtn = 0
+                    m.focusedCard = 1
+                else if m.focusedBtn = 1
+                    m.focusedCard = 2
+                else
+                    m.focusedCard = 3
+                end if
+                updateFocusVisuals()
+                handled = true
+            else if key = "OK"
+                if m.focusedBtn = 0
+                    m.top.selectedAction = "refresh"
+                else if m.focusedBtn = 1
+                    m.top.selectedAction = "playlists"
+                else if m.focusedBtn = 2
+                    m.top.selectedAction = "settings"
+                end if
+                handled = true
+            end if
+        end if
+
+        return handled
+    end function
     ]]>
     </script>
 </component>

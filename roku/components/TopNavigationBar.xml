@@ -2,18 +2,29 @@
 <component name="TopNavigationBar" extends="Group">
     <interface>
         <field id="activeTabIndex" type="integer" value="0" />
-        <field id="tabTitles" type="array" value='["Home", "Live TV", "Playlists", "Settings"]' />
+        <field id="tabTitles" type="array" value='["Home", "Live TV", "Movies", "Series", "EPG Guide", "Playlists", "Settings"]' />
+        <function name="setFocusToTab" />
     </interface>
 
     <children>
+        <!-- Background -->
         <Rectangle width="1920" height="90" color="#0B101B" />
-        <Label text="YESTREAM" font="font:MediumBoldSystemFont" color="#38BDF8" translation="[80, 30]" />
-        
-        <ButtonGroup id="tabButtons" translation="[360, 22]" layoutDirection="horiz" itemSpacings="[25]">
-            <Button text="Home" minWidth="140" height="46" />
-            <Button text="Live TV" minWidth="140" height="46" />
-            <Button text="Playlists" minWidth="160" height="46" />
-            <Button text="Settings" minWidth="140" height="46" />
+        <Rectangle width="1920" height="1" color="#1E293B" translation="[0, 89]" />
+
+        <!-- Brand Identity on Left -->
+        <Poster uri="pkg:/images/logo.png" width="44" height="44" translation="[60, 23]" />
+        <Label text="YESTREAM" font="font:MediumBoldSystemFont" color="#FFFFFF" translation="[116, 22]" />
+        <Label text="PRO" font="font:SmallBoldSystemFont" color="#38BDF8" translation="[118, 50]" />
+
+        <!-- Navigation Tab Buttons -->
+        <ButtonGroup id="tabButtons" translation="[400, 22]" layoutDirection="horiz" itemSpacings="[18]">
+            <Button text="Home" minWidth="120" height="46" />
+            <Button text="Live TV" minWidth="130" height="46" />
+            <Button text="Movies" minWidth="130" height="46" />
+            <Button text="Series" minWidth="130" height="46" />
+            <Button text="EPG Guide" minWidth="150" height="46" />
+            <Button text="Playlists" minWidth="140" height="46" />
+            <Button text="Settings" minWidth="130" height="46" />
         </ButtonGroup>
     </children>
 
@@ -22,11 +33,35 @@
     sub init()
         m.tabButtons = m.top.findNode("tabButtons")
         m.tabButtons.observeField("buttonSelected", "onTabSelected")
+        m.tabButtons.observeField("buttonFocused", "onTabFocused")
     end sub
 
     sub onTabSelected()
         m.top.activeTabIndex = m.tabButtons.buttonSelected
     end sub
+
+    sub onTabFocused()
+        ' Can update indicator if needed
+    end sub
+
+    sub setFocusToTab(index as Integer)
+        if index >= 0 and index < 7
+            m.tabButtons.jumpToItem = index
+            m.tabButtons.setFocus(true)
+        end if
+    end sub
+
+    function onKeyEvent(key as String, press as Boolean) as Boolean
+        if not press then return false
+
+        if key = "down"
+            ' Return focus to current screen below
+            m.top.activeTabIndex = m.tabButtons.buttonSelected
+            return false
+        end if
+
+        return false
+    end function
     ]]>
     </script>
 </component>
