@@ -13,7 +13,7 @@ export function TvExpiryGuard({
 }: {
     registration: TvDeviceRegistration;
     onStatusRefreshed: (updated: TvDeviceRegistration) => void;
-    onOpenSettings: () => void;
+    onOpenSettings?: () => void;
 }) {
     const [qrUrl, setQrUrl] = useState<string>('');
     const [checking, setChecking] = useState<boolean>(false);

@@ -245,11 +245,10 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
                         Connecting to your playlist…
                     </div>
                 ) : null}
-                {expired && r.view !== 'sources' && r.view !== 'settings' && registration ? (
+                {expired && registration ? (
                     <TvExpiryGuard
                         registration={registration}
                         onStatusRefreshed={(updated) => setRegistration(updated)}
-                        onOpenSettings={() => tv.navigate('sources')}
                     />
                 ) : null}
                 {r.view === 'home' ? (
