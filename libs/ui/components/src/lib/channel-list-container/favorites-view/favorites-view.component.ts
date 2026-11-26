@@ -32,7 +32,6 @@ import { EpgMappingDialogComponent } from '../epg-mapping-dialog/epg-mapping-dia
 import { ChannelDetailsDialogComponent } from '../channel-details-dialog/channel-details-dialog.component';
 import { resolveChannelLogo } from '../channel-logo-fallback.util';
 import { ChannelListItemComponent } from '../channel-list-item/channel-list-item.component';
-import { requestLivePlayerFullscreen } from '../../player-fullscreen.util';
 
 @Component({
     selector: 'app-favorites-view',
@@ -152,8 +151,9 @@ export class FavoritesViewComponent {
     }
 
     onChannelActivate(channel: Channel): void {
-        this.channelPlaybackRequested.emit(channel);
-        requestLivePlayerFullscreen();
+        if (this.openOnDoubleClick()) {
+            this.channelPlaybackRequested.emit(channel);
+        }
     }
 
     onFavoriteToggle(channel: Channel, event: MouseEvent): void {

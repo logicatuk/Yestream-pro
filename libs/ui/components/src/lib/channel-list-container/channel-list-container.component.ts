@@ -1,4 +1,3 @@
-import { requestLivePlayerFullscreen } from '../player-fullscreen.util';
 import { CommonModule } from '@angular/common';
 import {
     ChangeDetectionStrategy,
@@ -584,7 +583,6 @@ export class ChannelListContainerComponent implements OnInit, OnDestroy {
                 startPlayback: true,
             })
         );
-        requestLivePlayerFullscreen();
     }
 
     /**

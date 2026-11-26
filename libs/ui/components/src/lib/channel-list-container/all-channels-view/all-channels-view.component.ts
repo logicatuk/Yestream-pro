@@ -39,8 +39,10 @@ import { buildChannelEpgMetadataMap } from '../epg-enrichment.util';
 import { ChannelDetailsDialogComponent } from '../channel-details-dialog/channel-details-dialog.component';
 import { EpgMappingDialogComponent } from '../epg-mapping-dialog/epg-mapping-dialog.component';
 import { ChannelListItemComponent } from '../channel-list-item/channel-list-item.component';
-import { MenuItemRadioCheckDirective, MenuItemRadioDirective } from '../../menu-item-radio/menu-item-radio.directive';
-import { requestLivePlayerFullscreen } from '../../player-fullscreen.util';
+import {
+    MenuItemRadioCheckDirective,
+    MenuItemRadioDirective,
+} from '../../menu-item-radio/menu-item-radio.directive';
 
 const ALL_CHANNELS_SORT_STORAGE_KEY = 'm3u-all-channels-sort-mode';
 
@@ -195,8 +197,9 @@ export class AllChannelsViewComponent {
     }
 
     onChannelActivate(channel: Channel): void {
-        this.channelPlaybackRequested.emit(channel);
-        requestLivePlayerFullscreen();
+        if (this.openOnDoubleClick()) {
+            this.channelPlaybackRequested.emit(channel);
+        }
     }
 
     onFavoriteToggle(channel: Channel, event: MouseEvent): void {

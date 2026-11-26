@@ -34,7 +34,6 @@ import {
     MenuItemRadioCheckDirective,
     MenuItemRadioDirective,
     ResizableDirective,
-    requestLivePlayerFullscreen,
 } from '@iptvnator/ui/components';
 import {
     GridListComponent,
@@ -1076,9 +1075,6 @@ export class LiveStreamLayoutComponent
         }
         if (this.usesEmbeddedPlayer()) {
             this.confirmInlinePlayback(onConfirmed);
-            if (startPlayback && !remote) {
-                requestLivePlayerFullscreen();
-            }
             return;
         }
         if (!startPlayback) return;

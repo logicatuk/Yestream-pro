@@ -30,7 +30,6 @@ import {
     resolveChannelEpgProgram,
 } from '../epg-enrichment.util';
 import { ChannelListItemComponent } from '../channel-list-item/channel-list-item.component';
-import { requestLivePlayerFullscreen } from '../../player-fullscreen.util';
 
 export interface RecentViewItem {
     channel: Channel;
@@ -132,8 +131,9 @@ export class RecentViewComponent {
     }
 
     onChannelActivate(channel: Channel): void {
-        this.channelPlaybackRequested.emit(channel);
-        requestLivePlayerFullscreen();
+        if (this.openOnDoubleClick()) {
+            this.channelPlaybackRequested.emit(channel);
+        }
     }
 
     onRemoveRecent(channel: Channel, event: MouseEvent): void {

@@ -38,7 +38,6 @@ import {
     ChannelListSkeletonComponent,
     EpgMappingDialogComponent,
     ResizableDirective,
-    requestLivePlayerFullscreen,
 } from '@iptvnator/ui/components';
 import {
     EpgPreferencesService,
@@ -1108,9 +1107,6 @@ export class StalkerLiveStreamLayoutComponent
                     sourceId,
                     contentId: channelId,
                 });
-                if (startPlayback) {
-                    requestLivePlayerFullscreen();
-                }
             } else if (startPlayback) {
                 void this.portalPlayer.openResolvedPlayback(playback, true);
             }

@@ -14,24 +14,15 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
         @if (isExpired()) {
             <div class="expiry-overlay" role="alertdialog" aria-modal="true">
                 <div class="expiry-card">
-                    <!-- Brand header with Yestream logo -->
-                    <div class="expiry-brand-header">
-                        <img src="assets/logo.png" alt="Yestream" class="expiry-brand-logo" />
-                        <div class="expiry-brand-text">
-                            <span class="brand-title">YESTREAM</span>
-                            <span class="brand-subtitle">PRO IPTV PLAYER</span>
-                        </div>
-                    </div>
-
                     <!-- Glow header -->
                     <div class="expiry-badge">
-                        <mat-icon>hourglass_bottom</mat-icon>
+                        <mat-icon>lock</mat-icon>
                         <span>{{ 'YESTREAM.SUBSCRIPTION_EXPIRED' | translate }}</span>
                     </div>
 
-                    <h1 class="expiry-title">Your trial period has expired.</h1>
+                    <h1 class="expiry-title">{{ 'YESTREAM.ACCESS_PERIOD_ENDED' | translate }}</h1>
                     <p class="expiry-desc">
-                        To continue enjoying Live TV, Movies, Series, and the EPG Timeline, please renew or activate your device.
+                        {{ 'YESTREAM.EXPIRY_MESSAGE' | translate }}
                     </p>
 
                     <!-- Credentials & QR Code Grid -->
@@ -147,44 +138,6 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
             padding: 32px 36px;
             text-align: center;
             color: #f1f5f9;
-        }
-
-        .expiry-brand-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 14px;
-            margin-bottom: 22px;
-        }
-
-        .expiry-brand-logo {
-            width: 46px;
-            height: 46px;
-            object-fit: contain;
-        }
-
-        .expiry-brand-text {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            text-align: left;
-        }
-
-        .expiry-brand-text .brand-title {
-            font-size: 26px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            color: #ffffff;
-            line-height: 1;
-        }
-
-        .expiry-brand-text .brand-subtitle {
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 2.5px;
-            color: #38bdf8;
-            font-family: monospace;
-            margin-top: 3px;
         }
 
         .expiry-badge {

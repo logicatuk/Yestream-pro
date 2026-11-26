@@ -48,10 +48,7 @@ import {
     type PlaybackFallbackRequest,
     WebPlayerViewComponent,
 } from '@iptvnator/ui/playback';
-import {
-    ResizableDirective,
-    requestLivePlayerFullscreen,
-} from '@iptvnator/ui/components';
+import { ResizableDirective } from '@iptvnator/ui/components';
 import {
     RuntimeCapabilitiesService,
     SettingsStore,
@@ -356,7 +353,6 @@ export class UnifiedLiveTabComponent implements FullscreenChannelPanelHost {
         const item = this.itemFor(channel);
         if (item && !isCatalogUnavailable(item)) {
             await this.selection.activate(item, false, true);
-            requestLivePlayerFullscreen();
         }
     }
 

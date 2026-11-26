@@ -44,16 +44,16 @@ public struct HomeView: View {
                 // ==========================================
                 VStack(spacing: 8) {
                     HStack(spacing: 14) {
-                        if let path = Bundle.main.path(forResource: "logo", ofType: "png"),
-                           let uiImage = UIImage(contentsOfFile: path) {
+                        if let uiImage = UIImage(named: "logo") ?? (Bundle.main.path(forResource: "logo", ofType: "png").flatMap { UIImage(contentsOfFile: $0) }) ?? UIImage(contentsOfFile: Bundle.main.bundlePath + "/logo.png") {
                             Image(uiImage: uiImage)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 52, height: 52)
+                                .frame(width: 54, height: 54)
                         } else {
-                            Image(systemName: "play.tv.fill")
-                                .font(.system(size: 42))
-                                .foregroundColor(Color(red: 0.3, green: 0.65, blue: 1.0))
+                            Image("logo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 54, height: 54)
                         }
 
                         VStack(alignment: .leading, spacing: 2) {
