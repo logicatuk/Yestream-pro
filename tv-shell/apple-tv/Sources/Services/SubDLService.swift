@@ -56,4 +56,11 @@ public class SubDLService {
             return []
         }
     }
+
+    public static func searchSeriesSubtitles(title: String, season: Int, episode: Int) async -> [SubDLSubtitleItem] {
+        let epQuery = "\(title) S\(String(format: "%02d", season))E\(String(format: "%02d", episode))"
+        let res = await searchSubtitles(title: epQuery)
+        if !res.isEmpty { return res }
+        return await searchSubtitles(title: title)
+    }
 }

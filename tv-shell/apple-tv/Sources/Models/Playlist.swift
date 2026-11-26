@@ -100,8 +100,10 @@ public struct EpisodeItem: Identifiable, Codable, Hashable {
     public let episodeNum: Int
     public let streamUrl: String
     public let coverUrl: String?
+    public let plot: String?
+    public let duration: String?
 
-    public init(episodeId: Int, title: String, seasonNum: Int, episodeNum: Int, streamUrl: String, coverUrl: String? = nil) {
+    public init(episodeId: Int, title: String, seasonNum: Int, episodeNum: Int, streamUrl: String, coverUrl: String? = nil, plot: String? = nil, duration: String? = nil) {
         self.id = "\(episodeId)"
         self.episodeId = episodeId
         self.title = title
@@ -109,5 +111,7 @@ public struct EpisodeItem: Identifiable, Codable, Hashable {
         self.episodeNum = episodeNum
         self.streamUrl = streamUrl
         self.coverUrl = coverUrl
+        self.plot = plot
+        self.duration = duration
     }
 }

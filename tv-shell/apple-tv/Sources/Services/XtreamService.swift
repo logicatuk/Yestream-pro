@@ -21,6 +21,18 @@ public struct VodDetail: Codable {
     public let streamUrl: String
 }
 
+public struct SeriesDetail: Codable {
+    public let name: String?
+    public let backdropUrl: String?
+    public let posterUrl: String?
+    public let releaseDate: String?
+    public let cast: String?
+    public let plot: String?
+    public let genre: String?
+    public let rating: String?
+    public let episodes: [EpisodeItem]
+}
+
 public struct EpgProgram: Identifiable, Codable, Hashable {
     public let id: String
     public let title: String
@@ -244,6 +256,72 @@ public class XtreamService {
         }
 
         return (categories, series)
+    }
+
+    public static func fetchSeriesDetails(serverUrl: String, user: String, pass: String, seriesId: Int) async -> SeriesDetail? {
+        let base = normalizeServerUrl(serverUrl)
+        let (u, p) = extractCredentials(from: serverUrl, user: user, pass: pass)
+        let urlStr = "\(base)/player_api.php?username=\(u)&password=\(p)&action=get_series_info&series_id=\(seriesId)"
+
+        guard let url = URL(string: urlStr) else { return nil }
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                return nil
+            }
+            let info = json["info"] as? [String: Any] ?? [:]
+            let name = info["name"] as? String
+            let poster = info["cover"] as? String
+            let backdrop = (info["backdrop_path"] as? [String])?.first ?? poster
+            let releaseDate = info["releaseDate"] as? String
+            let cast = info["cast"] as? String ?? info["actors"] as? String
+            let plot = info["plot"] as? String
+            let genre = info["genre"] as? String
+            let rating = String(describing: info["rating"] ?? "")
+
+            let episodesDict = json["episodes"] as? [String: [[String: Any]]] ?? [:]
+            var episodes: [EpisodeItem] = []
+            for (seasonKey, epsList) in episodesDict {
+                let seasonNum = Int(seasonKey) ?? 1
+                for ep in epsList {
+                    guard let epId = ep["id"] as? Int ?? (ep["id"] as? String).flatMap(Int.init) else { continue }
+                    let epTitle = ep["title"] as? String ?? "Episode \(ep["episode_num"] ?? "")"
+                    let epNum = ep["episode_num"] as? Int ?? (ep["episode_num"] as? String).flatMap(Int.init) ?? 1
+                    let ext = ep["container_extension"] as? String ?? "mp4"
+                    let playUrl = "\(base)/series/\(u)/\(p)/\(epId).\(ext)"
+                    let epInfo = ep["info"] as? [String: Any]
+                    let cover = epInfo?["movie_image"] as? String
+                    let epPlot = epInfo?["plot"] as? String
+                    let dur = epInfo?["duration"] as? String
+
+                    episodes.append(EpisodeItem(
+                        episodeId: epId,
+                        title: epTitle,
+                        seasonNum: seasonNum,
+                        episodeNum: epNum,
+                        streamUrl: playUrl,
+                        coverUrl: cover,
+                        plot: epPlot,
+                        duration: dur
+                    ))
+                }
+            }
+            let sortedEps = episodes.sorted { ($0.seasonNum, $0.episodeNum) < ($1.seasonNum, $1.episodeNum) }
+
+            return SeriesDetail(
+                name: name,
+                backdropUrl: backdrop,
+                posterUrl: poster,
+                releaseDate: releaseDate,
+                cast: cast,
+                plot: plot,
+                genre: genre,
+                rating: rating.isEmpty ? nil : rating,
+                episodes: sortedEps
+            )
+        } catch {
+            return nil
+        }
     }
 
     public static func fetchSeriesEpisodes(serverUrl: String, user: String, pass: String, seriesId: Int) async throws -> [EpisodeItem] {
