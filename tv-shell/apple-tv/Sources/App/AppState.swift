@@ -69,6 +69,42 @@ public class AppState: ObservableObject {
     @Published public var currentlyPlaying: MediaItem?
     @Published public var searchQuery: String = ""
 
+    // Sleep Timer & Hardware Settings
+    @Published public var sleepTimerMinutes: Int = 0
+    @Published public var sleepTimerEndsAt: Date? = nil
+    private var sleepTimerTask: Task<Void, Never>? = nil
+
+    public func setSleepTimer(minutes: Int) {
+        sleepTimerTask?.cancel()
+        self.sleepTimerMinutes = minutes
+        if minutes <= 0 {
+            self.sleepTimerEndsAt = nil
+            return
+        }
+        self.sleepTimerEndsAt = Date().addingTimeInterval(TimeInterval(minutes * 60))
+        sleepTimerTask = Task {
+            try? await Task.sleep(nanoseconds: UInt64(minutes) * 60 * 1_000_000_000)
+            if !Task.isCancelled {
+                await MainActor.run {
+                    self.sleepTimerMinutes = 0
+                    self.sleepTimerEndsAt = nil
+                    self.currentlyPlaying = nil
+                }
+            }
+        }
+    }
+
+    public func cancelSleepTimer() {
+        sleepTimerTask?.cancel()
+        sleepTimerMinutes = 0
+        sleepTimerEndsAt = nil
+    }
+
+    public static var configuredBufferDuration: Double {
+        let val = UserDefaults.standard.double(forKey: "pref_bufferDurationSeconds")
+        return val > 0 ? val : 3.0
+    }
+
     public func channelCount(for categoryId: String) -> Int {
         if categoryId == "FAVORITES" {
             return favorites.filter { $0.kind == .live }.count

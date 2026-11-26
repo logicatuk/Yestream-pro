@@ -10,12 +10,28 @@ public struct SettingsView: View {
     @AppStorage("pref_showEPG") private var showEPG: Bool = true
     @AppStorage("pref_subtitleLang") private var subtitleLang: String = "English"
     @AppStorage("pref_streamFormat") private var streamFormat: String = "HLS (m3u8)"
-    @AppStorage("pref_bufferSize") private var bufferSize: String = "Auto (Recommended)"
+
+    // Buffer & Hardware Optimization
+    @AppStorage("pref_bufferDurationSeconds") private var bufferDurationSeconds: Double = 3.0
+    @AppStorage("pref_forwardBufferSizeMB") private var forwardBufferSizeMB: Int = 128
+    @AppStorage("pref_autoReconnect") private var autoReconnect: Bool = true
+
+    // Decoder Preferences
+    @AppStorage("pref_videoDecoder") private var videoDecoder: String = "Apple VideoToolbox (Metal 4K HDR)"
+    @AppStorage("pref_matchFrameRate") private var matchFrameRate: Bool = true
+    @AppStorage("pref_deinterlacing") private var deinterlacing: String = "Auto (Hardware Blend)"
+    @AppStorage("pref_audioPassthrough") private var audioPassthrough: String = "Auto (Dolby Atmos & 5.1)"
+
+    // Sleep Timer
+    @AppStorage("pref_sleepTimerSetting") private var sleepTimerSetting: Int = 0
+    @AppStorage("pref_preventSleepDuringPlayback") private var preventSleepDuringPlayback: Bool = true
 
     public var body: some View {
         Form {
-            // 1. ACCOUNT & DEVICE
-            Section(header: Text("Account & Device Diagnostics")) {
+            // ==========================================
+            // 1. ACCOUNT, LICENSE & CLOUD SYNC
+            // ==========================================
+            Section(header: Text("Account & Cloud Sync")) {
                 HStack {
                     Text("Device Platform")
                     Spacer()
@@ -41,44 +57,145 @@ public struct SettingsView: View {
                 HStack {
                     Text("Subscription Status")
                     Spacer()
-                    Text(cloud.registration?.status?.uppercased() ?? "ACTIVE")
-                        .foregroundColor(cloud.registration?.isExpired == true ? .red : .green)
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(cloud.registration?.isExpired == true ? Color.red : Color.green)
+                            .frame(width: 8, height: 8)
+                        Text(cloud.registration?.status?.uppercased() ?? "ACTIVE")
+                            .fontWeight(.bold)
+                            .foregroundColor(cloud.registration?.isExpired == true ? .red : .green)
+                    }
                 }
                 HStack {
                     Text("License Plan")
                     Spacer()
-                    Text(cloud.registration?.plan ?? "FOREVER (Lifetime)")
+                    Text(cloud.registration?.plan ?? "YEAR_1")
                         .foregroundColor(.secondary)
                 }
-                HStack {
-                    Text("Self-Service Web Portal")
-                    Spacer()
-                    Text("/customer/login")
+                if let exp = cloud.registration?.expiresAt, !exp.isEmpty {
+                    HStack {
+                        Text("Expires On")
+                        Spacer()
+                        Text(String(exp.prefix(10)))
+                            .foregroundColor(.secondary)
+                    }
+                }
+
+                Button(action: {
+                    Task {
+                        await cloud.syncDevice()
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: cloud.isSyncing ? "arrow.triangle.2.circlepath" : "arrow.clockwise")
+                        Text(cloud.isSyncing ? "Syncing from Cloud…" : "Force Cloud Sync Now")
+                            .fontWeight(.semibold)
+                    }
+                }
+
+                if !cloud.syncMessage.isEmpty {
+                    Text(cloud.syncMessage)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.green)
                 }
             }
 
-            // 2. PLAYBACK & EPISODES
-            Section(header: Text("Playback Settings")) {
-                Toggle("Autoplay next episode", isOn: $seriesAutoplay)
-                Toggle("Show \"Up Next\" countdown card", isOn: $playerUpNextCard)
-
-                Picker("Stream Buffer Size", selection: $bufferSize) {
-                    Text("Fast Startup (2s)").tag("Fast (2s)")
-                    Text("Auto (Recommended)").tag("Auto (Recommended)")
-                    Text("Large Buffer (10s)").tag("Large Buffer (10s)")
+            // ==========================================
+            // 2. BUFFER DURATION & NETWORK OPTIMIZATION
+            // ==========================================
+            Section(header: Text("Buffer Duration & Network Optimization")) {
+                Picker("Stream Buffer Duration", selection: $bufferDurationSeconds) {
+                    Text("Ultra-Low Latency (1.0s) - Live Sports").tag(1.0)
+                    Text("Fast Startup (3.0s) - Recommended").tag(3.0)
+                    Text("Stable Buffer (6.0s) - Standard Wi-Fi").tag(6.0)
+                    Text("Deep Buffer (12.0s) - Poor Wi-Fi / 4K UHD").tag(12.0)
                 }
 
-                Picker("Preferred Format", selection: $streamFormat) {
+                Picker("Forward Memory Cache", selection: $forwardBufferSizeMB) {
+                    Text("Conservative (64 MB)").tag(64)
+                    Text("Balanced (128 MB) - Default").tag(128)
+                    Text("High Capacity (256 MB)").tag(256)
+                }
+
+                Toggle("Auto-reconnect on dropped stream", isOn: $autoReconnect)
+
+                Picker("Preferred Stream Format", selection: $streamFormat) {
                     Text("HLS (.m3u8)").tag("HLS (m3u8)")
                     Text("MPEG-TS (.ts)").tag("MPEG-TS (ts)")
                 }
             }
 
-            // 3. SUBTITLES (SUBDL ENGINE)
-            Section(header: Text("Subtitles & Captions (SubDL)")) {
-                Picker("Default Subtitle Language", selection: $subtitleLang) {
+            // ==========================================
+            // 3. HARDWARE VIDEO & AUDIO DECODER
+            // ==========================================
+            Section(header: Text("Hardware Video & Audio Decoder")) {
+                Picker("Video Decoding Engine", selection: $videoDecoder) {
+                    Text("Apple VideoToolbox (Metal 4K HDR)").tag("Apple VideoToolbox (Metal 4K HDR)")
+                    Text("Apple AVFoundation Standard").tag("Apple AVFoundation Standard")
+                    Text("Software Codec Fallback").tag("Software Codec Fallback")
+                }
+
+                Toggle("Match Content Dynamic Range & Frame Rate (24p/50p/60p)", isOn: $matchFrameRate)
+
+                Picker("Deinterlacing Mode", selection: $deinterlacing) {
+                    Text("Auto (Hardware Blend)").tag("Auto (Hardware Blend)")
+                    Text("Bob / Double Rate (50/60 fps)").tag("Bob / Double Rate (50/60 fps)")
+                    Text("Disabled").tag("Disabled")
+                }
+
+                Picker("Audio Passthrough & Output", selection: $audioPassthrough) {
+                    Text("Auto (Dolby Atmos & 5.1 Surround)").tag("Auto (Dolby Atmos & 5.1)")
+                    Text("Stereo Downmix (PCM)").tag("Stereo Downmix (PCM)")
+                }
+            }
+
+            // ==========================================
+            // 4. SLEEP TIMER & STANDBY
+            // ==========================================
+            Section(header: Text("Sleep Timer & Auto-Standby")) {
+                Picker("Sleep Timer", selection: $sleepTimerSetting) {
+                    Text("Off").tag(0)
+                    Text("15 Minutes").tag(15)
+                    Text("30 Minutes").tag(30)
+                    Text("45 Minutes").tag(45)
+                    Text("60 Minutes (1 Hour)").tag(60)
+                    Text("90 Minutes (1.5 Hours)").tag(90)
+                    Text("120 Minutes (2 Hours)").tag(120)
+                }
+                .onChange(of: sleepTimerSetting) { newVal in
+                    appState.setSleepTimer(minutes: newVal)
+                }
+
+                if appState.sleepTimerMinutes > 0, let endsAt = appState.sleepTimerEndsAt {
+                    HStack {
+                        Image(systemName: "moon.stars.fill")
+                            .foregroundColor(.indigo)
+                        Text("Sleep Timer Active")
+                            .fontWeight(.bold)
+                        Spacer()
+                        Text("Turns off at \(endsAt, style: .time)")
+                            .foregroundColor(.secondary)
+                    }
+
+                    Button("Cancel Sleep Timer") {
+                        sleepTimerSetting = 0
+                        appState.cancelSleepTimer()
+                    }
+                    .foregroundColor(.red)
+                }
+
+                Toggle("Prevent screen saver during video playback", isOn: $preventSleepDuringPlayback)
+            }
+
+            // ==========================================
+            // 5. PLAYBACK & EPISODES
+            // ==========================================
+            Section(header: Text("Playback & Guide")) {
+                Toggle("Autoplay next episode", isOn: $seriesAutoplay)
+                Toggle("Show \"Up Next\" countdown card", isOn: $playerUpNextCard)
+                Toggle("Display live programme guide schedules (EPG)", isOn: $showEPG)
+
+                Picker("Default Subtitle Language (SubDL)", selection: $subtitleLang) {
                     Text("English").tag("English")
                     Text("Français (French)").tag("French")
                     Text("Español (Spanish)").tag("Spanish")
@@ -87,72 +204,16 @@ public struct SettingsView: View {
                     Text("Português (Portuguese)").tag("Portuguese")
                     Text("Italiano (Italian)").tag("Italian")
                 }
-
-                HStack {
-                    Text("SubDL API Status")
-                    Spacer()
-                    Text("● Connected (Online)")
-                        .foregroundColor(.green)
-                }
             }
 
-            // 4. PROGRAMME GUIDE (EPG)
-            Section(header: Text("Programme Guide (EPG)")) {
-                Toggle("Display live programme guide schedules", isOn: $showEPG)
-                HStack {
-                    Text("EPG Source")
-                    Spacer()
-                    Text("Provider XMLTV / Xtream")
-                        .foregroundColor(.secondary)
-                }
-            }
-
-            // 5. APPLE SIRI REMOTE SHORTCUTS
-            Section(header: Text("Apple Siri Remote Controls")) {
-                HStack {
-                    Text("Touchpad / D-Pad")
-                    Spacer()
-                    Text("Navigate grid & rails")
-                        .foregroundColor(.secondary)
-                }
-                HStack {
-                    Text("Center Click (Select)")
-                    Spacer()
-                    Text("Open / Play / Validate")
-                        .foregroundColor(.secondary)
-                }
-                HStack {
-                    Text("Back / Menu Button (<)")
-                    Spacer()
-                    Text("Previous screen / Close player")
-                        .foregroundColor(.secondary)
-                }
-                HStack {
-                    Text("Play / Pause (⏯)")
-                    Spacer()
-                    Text("Toggle playback")
-                        .foregroundColor(.secondary)
-                }
-            }
-
+            // ==========================================
             // 6. ABOUT YESTREAM
+            // ==========================================
             Section(header: Text("About Yestream")) {
                 HStack {
                     Text("Version")
                     Spacer()
-                    Text("0.25.6 (Apple TV Native Edition)")
-                        .foregroundColor(.secondary)
-                }
-                HStack {
-                    Text("Video Decoder")
-                    Spacer()
-                    Text("Apple AVFoundation / Metal 4K HDR")
-                        .foregroundColor(.secondary)
-                }
-                HStack {
-                    Text("Audio Passthrough")
-                    Spacer()
-                    Text("Dolby Digital Plus (E-AC-3) & Atmos")
+                    Text("0.25.6 (Apple TV Native)")
                         .foregroundColor(.secondary)
                 }
                 HStack {
@@ -160,6 +221,12 @@ public struct SettingsView: View {
                     Spacer()
                     Text("Yestream Cloud Run (Europe West)")
                         .foregroundColor(.secondary)
+                }
+                HStack {
+                    Text("SubDL Subtitles")
+                    Spacer()
+                    Text("● Connected (Online)")
+                        .foregroundColor(.green)
                 }
             }
         }
