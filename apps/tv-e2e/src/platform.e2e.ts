@@ -3,6 +3,29 @@ import { tvBackCodes } from '@iptvnator/tv/util';
 import { addSource, nav, start } from './helpers';
 import { playLive } from './live-media';
 
+test('Samsung remote OK activates Movies and Playlists once per press', async ({ page }) => {
+    await page.addInitScript(() => Object.assign(window, { tizen: {} }));
+    await start(page);
+    const nav = page.getByRole('navigation', { name: 'Main navigation' });
+    for (const name of ['Movies', 'Playlists']) {
+        const button = nav.getByRole('button', { name, exact: true });
+        await button.focus();
+        await button.evaluate((el: HTMLElement) => {
+            el.addEventListener('click', () => {
+                el.dataset.activations = String(Number(el.dataset.activations || 0) + 1);
+            });
+        });
+        if (name === 'Movies') {
+            await button.dispatchEvent('keydown', { key: 'Unidentified', keyCode: 13 });
+            await button.dispatchEvent('keydown', { key: 'Unidentified', keyCode: 13, repeat: true });
+        } else {
+            await page.keyboard.press('Enter');
+        }
+        await expect(button).toHaveAttribute('aria-current', 'page');
+        await expect(button).toHaveAttribute('data-activations', '1');
+    }
+});
+
 for (const platform of ['webos', 'tizen'] as const) {
     test(
         platform +

@@ -3,7 +3,7 @@ import {
     mediaKeyAction,
     type TvMediaAction,
 } from '@iptvnator/tv/util';
-import { registerTvKeys } from './platform';
+import { currentTvPlatform, registerTvKeys } from './platform';
 
 const selectors =
     'button:not(:disabled):not([data-tv-pointer-only]),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),summary,[data-tv-scroll]';
@@ -75,6 +75,20 @@ export function installRemote(
     let spaceHandled = false;
     const handler = (event: KeyboardEvent) => {
         const code = event.keyCode;
+        if (
+            (code === 13 || event.key === 'Enter') &&
+            currentTvPlatform() === 'tizen' &&
+            !event.defaultPrevented && !event.isComposing &&
+            !event.altKey && !event.ctrlKey && !event.metaKey
+        ) {
+            const button = document.activeElement;
+            if (button?.matches('button:enabled') &&
+                (event.target === button || event.target === document.body || event.target === document)) {
+                event.preventDefault();
+                if (!event.repeat) (button as HTMLButtonElement).click();
+                return;
+            }
+        }
         const direction =
             (
                 {
