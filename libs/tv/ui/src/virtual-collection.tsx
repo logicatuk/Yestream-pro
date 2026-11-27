@@ -1,3 +1,4 @@
+import { tr } from './language';
 import { cloneElement, VNode } from 'preact';
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 
@@ -65,7 +66,7 @@ export function VirtualCollection<T extends { id: string }>({
         const root =
             layout === 'channels'
                 ? element.closest<HTMLElement>('.channels')!
-                : document.querySelector('main')!;
+                : element.closest<HTMLElement>('.catalog-results') ?? document.querySelector('main')!;
         if (restoreScroll !== undefined) root.scrollTop = restoreScroll;
         let frame = 0;
         let measured = false;
@@ -94,11 +95,17 @@ export function VirtualCollection<T extends { id: string }>({
             }
             if (!first || !element.offsetWidth || !root.clientHeight) return;
             const style = getComputedStyle(grid.current!);
-            const columns =
-                layout === 'channels'
-                    ? 1
-                    : style.gridTemplateColumns.split(' ').filter(Boolean)
-                          .length;
+            const tracks = style.gridTemplateColumns;
+            // Older Samsung engines omit computed grid tracks. Count visible
+            // cards in the first row so keyboard movement uses the painted layout.
+            let columns = 1;
+            if (layout !== 'channels' && tracks && tracks !== 'none') {
+                columns = Math.max(1, tracks.split(' ').filter(Boolean).length);
+            } else if (layout !== 'channels' && items?.length) {
+                while (columns < items.length && items[columns].offsetTop === items[0].offsetTop) {
+                    columns++;
+                }
+            }
             const gap =
                 parseFloat(style.rowGap) || (layout === 'channels' ? 9 : 0);
             const track =
@@ -313,12 +320,10 @@ export function VirtualCollection<T extends { id: string }>({
                 }}
             />
             {busy ? (
-                <p class="load-more-status" role="status">
-                    Loading more…
-                </p>
+                <p class="load-more-status" role="status">{tr("Loading more…")}</p>
             ) : error ? (
                 <div class="load-more-status" role="alert">
-                    {error} <button onClick={loadMore}>Retry loading</button>
+                    {error} <button onClick={loadMore}>{tr("Retry loading")}</button>
                 </div>
             ) : null}
         </div>

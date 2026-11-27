@@ -7,6 +7,21 @@
         <script>
             // Tizen 4.0 (Chromium 56) / webOS 4.0 runtime polyfills
             if (typeof globalThis === 'undefined') window.globalThis = window;
+            if (typeof Promise.prototype.finally !== 'function') {
+                Object.defineProperty(Promise.prototype, 'finally', {
+                    configurable: true,
+                    writable: true,
+                    value: function (onFinally) {
+                        if (typeof onFinally !== 'function') return this.then(onFinally, onFinally);
+                        var PromiseType = this.constructor;
+                        return this.then(function (value) {
+                            return PromiseType.resolve(onFinally()).then(function () { return value; });
+                        }, function (reason) {
+                            return PromiseType.resolve(onFinally()).then(function () { throw reason; });
+                        });
+                    }
+                });
+            }
             if (typeof AbortController === 'undefined') {
                 function AbortSignal() {
                     this.aborted = false;

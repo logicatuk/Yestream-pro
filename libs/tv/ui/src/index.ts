@@ -12,3 +12,5 @@ export { TvSelect, type TvOption } from './select';
 export { TvDescription } from './description';
 export { HorizontalRail } from './horizontal-rail';
 export { TvDialog } from './dialog';
+
+export * from './language';

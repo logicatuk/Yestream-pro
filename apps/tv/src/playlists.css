@@ -8,17 +8,13 @@
     box-sizing: border-box;
 }
 
-/* Chromium-68-safe Grid layout */
-.playlists-container {
-    display: grid;
-    grid-template-columns: 420px 1fr;
-    grid-gap: 40px;
-    align-items: start;
-}
-
-/* LEFT PANE: Quick Connect Card */
-.playlists-left-pane {
-    width: 420px;
+.playlists-container { display: flex; align-items: flex-start; }
+.playlists-library { flex: 1; min-width: 0; }
+.playlists-connect { flex: 0 0 32%; margin-left: 32px; }
+@media (max-width: 850px) {
+    .playlists-container { flex-direction: column; }
+    .playlists-library, .playlists-connect { width: 100%; }
+    .playlists-connect { margin: 20px 0 0; }
 }
 
 .quick-connect-card {
@@ -182,7 +178,7 @@
 }
 
 /* RIGHT PANE: Playlists List */
-.playlists-right-pane {
+.playlists-library {
     display: flex;
     flex-direction: column;
 }
@@ -638,7 +634,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(circle at 50% 10%, rgba(220, 38, 38, 0.12) 0%, rgba(6, 10, 19, 0.98) 70%, #04060c 100%);
+    background: #0b101b;
     z-index: 99999;
     display: flex;
     align-items: center;
@@ -885,3 +881,27 @@
     color: #38bdf8;
     animation: fadeIn 0.2s ease;
 }
+
+.playlists-screen { padding: 12px 0; }
+.playlists-screen .quick-connect-card, .playlists-screen .playlist-card,
+.playlists-screen .playlist-modal {
+    background: var(--tv-surface); border-color: var(--tv-line); box-shadow: none;
+}
+.playlists-screen .playlist-card.active { border-color: var(--tv-accent); }
+.playlists-screen .sync-btn, .playlists-screen .add-playlist-btn {
+    background: var(--tv-control); border-color: var(--tv-line); color: var(--tv-text); box-shadow: none;
+}
+.playlists-screen button:focus {
+    background: var(--tv-accent); color: var(--tv-on-accent); outline-color: var(--tv-accent);
+}
+.playlists-screen .quick-connect-badge, .playlists-screen .cred-val.highlight { color: var(--tv-accent); }
+
+.tv-expiry-lockscreen .expiry-luxury-container { max-width: 1120px; margin: auto; }
+.tv-expiry-lockscreen { overflow-y: auto; }
+.tv-expiry-lockscreen .expiry-alert-title h2 { font-size: var(--tv-type-title); }
+.tv-expiry-lockscreen .expiry-alert-subtitle, .tv-expiry-lockscreen .qr-scan-hint { font-size: var(--tv-type-meta); }
+.tv-expiry-lockscreen .expiry-card-split { width: 100%; justify-content: space-around; box-sizing: border-box; }
+.tv-expiry-lockscreen .qr-white-card { width: 260px; height: 260px; }
+.tv-expiry-lockscreen .expiry-qr-image { width: 100%; height: 100%; }
+.tv-expiry-lockscreen .field-label { font-size: var(--tv-type-eyebrow); }
+.tv-expiry-lockscreen .cred-field-group { margin-bottom: 12px; }

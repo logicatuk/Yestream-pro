@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { useLayoutEffect, useState, useEffect } from 'preact/hooks';
 import { restoreFocus } from '@iptvnator/tv/ui';
 import type { RefObject } from 'preact';
@@ -166,9 +167,7 @@ export function NativePlayerView({
                     hidden={!!overlay.panel}
                 >
                     <div class="player-top">
-                        <button data-focus="player-back" onClick={back}>
-                            ← Back
-                        </button>
+                        <button data-focus="player-back" onClick={back}>{tr("← Back")}</button>
                         {current?.kind === 'live' ? (
                             <div class="actions">
                                 {tv.previousChannel ? (
@@ -184,15 +183,11 @@ export function NativePlayerView({
                                 <button
                                     data-focus="player-channels"
                                     onClick={overlay.openChannels}
-                                >
-                                    Channels
-                                </button>
+                                >{tr("Channels")}</button>
                                 <button
                                     data-focus="player-grid"
                                     onClick={overlay.openGrid}
-                                >
-                                    TV Guide
-                                </button>
+                                >{tr("TV Guide")}</button>
                                 <button
                                     data-focus="player-guide"
                                     onClick={overlay.openGuide}
@@ -324,10 +319,8 @@ export function NativePlayerView({
                             </button>
                         </div>
                         {current?.kind !== 'live' ? (
-                            <label class="seek">
-                                Playback position
-                                <input
-                                    aria-label="Playback position"
+                            <label class="seek">{tr("Playback position")}<input
+                                    aria-label={tr("Playback position")}
                                     type="range"
                                     min="0"
                                     max={
@@ -355,9 +348,7 @@ export function NativePlayerView({
                                         {tv.errorRetryLabel}
                                     </button>
                                 ) : null}
-                                <button onClick={() => tv.setError('')}>
-                                    Dismiss
-                                </button>
+                                <button onClick={() => tv.setError('')}>{tr("Dismiss")}</button>
                             </div>
                         ) : null}
                     </div>

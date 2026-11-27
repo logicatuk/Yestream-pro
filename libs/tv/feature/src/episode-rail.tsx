@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { HorizontalRail } from '@iptvnator/tv/ui';
 import { episodeCode, type Media } from '@iptvnator/tv/util';
@@ -150,7 +151,7 @@ export function EpisodeRail({
             ?.focus();
     return (
         <>
-            <HorizontalRail label="Episodes">
+            <HorizontalRail label={tr("Episodes")}>
                 <div
                     class="rail episode-rail"
                     data-tv-horizontal

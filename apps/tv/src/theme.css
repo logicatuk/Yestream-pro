@@ -1453,3 +1453,35 @@ main.live-page {
     padding: 18px 24px;
     margin-bottom: 24px;
 }
+
+/* Flex layout also runs on Samsung TVs without CSS Grid support. */
+.live-page .live-layout { display: flex; gap: 0; }
+.live-layout > .channel-pane { flex: 0 0 30%; padding-right: 12px; box-sizing: border-box; }
+.live-layout > .live-information { flex: 1 1 40%; }
+.catalog-browser { display: flex; align-items: flex-start; }
+.catalog-categories { flex: 0 0 24%; min-width: 0; position: sticky; top: 0; }
+.catalog-categories h2 { margin: 8px; }
+.catalog-categories .channels { height: 62vh; }
+.catalog-results { flex: 1; min-width: 0; padding-left: 16px; }
+.catalog-results .poster-grid, .search-results .poster-grid, .search-results .station-grid { display: flex; flex-wrap: wrap; gap: 0; margin: 0; padding: 0; }
+.catalog-results .poster-grid > *, .search-results .poster-grid > *, .search-results .station-grid > * { flex: 0 0 calc(20% - 12px); width: calc(20% - 12px); min-width: 0; margin: 0 6px; box-sizing: border-box; }
+@media (max-width: 1400px) {
+    .catalog-results .poster-grid > *, .search-results .poster-grid > *, .search-results .station-grid > * { flex-basis: calc(25% - 12px); width: calc(25% - 12px); }
+}
+
+.poster-grid.history-list { display: flex; flex-wrap: wrap; gap: 0; }
+.history-list > .resume-card, .history-list > .resume-entry {
+    flex: 0 0 192px; width: 192px; margin: 8px 16px 20px 0;
+}
+
+main.catalog-page { display: flex; flex-direction: column; overflow: hidden; }
+.catalog-page > :not(.catalog-browser) { flex-shrink: 0; }
+.catalog-page .catalog-browser { flex: 1; min-height: 0; align-items: stretch; }
+.catalog-page .catalog-categories { position: static; display: flex; flex-direction: column; }
+.catalog-page .catalog-categories .channels { height: auto; min-height: 0; }
+.catalog-page .catalog-results { overflow-y: auto; }
+[dir=rtl] .tv-app > aside { left: auto; right: 0; }
+[dir=rtl] .tv-app > main { margin-left: 0; margin-right: 230px; }
+[dir=rtl] nav button { text-align: right; }
+@media (max-width: 1400px) { [dir=rtl] .tv-app > main { margin-right: 190px; } }
+@media (max-width: 900px) { [dir=rtl] .tv-app > main { margin-right: 90px; } }

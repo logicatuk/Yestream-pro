@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import type { ComponentChildren } from 'preact';
 import { useState } from 'preact/hooks';
 import { TvDialog } from '@iptvnator/tv/ui';
@@ -114,9 +115,7 @@ export function WatchOptions({
                         close();
                         void tv.watch(item, 'reset', returnFocus);
                     }}
-                >
-                    Reset progress
-                </button>
+                >{tr("Reset progress")}</button>
             ) : null}
             {startOver && state === 'in-progress' ? (
                 <button

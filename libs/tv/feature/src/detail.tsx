@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { Empty, TvSelect, TvDescription } from '@iptvnator/tv/ui';
 import { TvModel } from './use-tv';
 import { TvMetadata } from '@iptvnator/tv/data-access';
@@ -173,7 +174,7 @@ export function Detail({
             {item.kind === 'series' ? (
                 <section class="detail-episodes">
                     <div class="section-title">
-                        <h2>Episodes</h2>
+                        <h2>{tr("Episodes")}</h2>
                         <label>
                             Season
                             <TvSelect

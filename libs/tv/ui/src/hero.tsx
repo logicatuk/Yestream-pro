@@ -1,3 +1,4 @@
+import { tr } from './language';
 import {
     mediaTitle,
     progressLabel,
@@ -65,7 +66,7 @@ export function Hero({
                                 {progress.item.kind === 'live'
                                     ? 'Live TV'
                                     : watchState(progress) === 'unwatched'
-                                      ? 'Next episode'
+                                      ? tr('Next episode')
                                       : watchState(progress) === 'watched'
                                         ? 'Watched'
                                         : progressLabel(progress)}
@@ -89,8 +90,8 @@ export function Hero({
                                 onClick={() => play(progress.item)}
                             >
                                 {watchState(progress) === 'in-progress'
-                                    ? 'Continue watching'
-                                    : 'Next episode'}{' '}
+                                    ? tr('Continue watching')
+                                    : tr('Next episode')}{' '}
                                 ▷
                             </button>
                         ) : null}
@@ -103,8 +104,8 @@ export function Hero({
                             {detailsBusy
                                 ? 'Finding series…'
                                 : progress
-                                  ? 'Details →'
-                                  : 'Explore title →'}
+                                  ? tr('Details →')
+                                  : tr('Explore title →')}
                         </button>
                     </div>
                 ) : null}

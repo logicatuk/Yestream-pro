@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { TvSelect } from '@iptvnator/tv/ui';
 import { TvModel } from './use-tv';
 import { FavoriteSources, favoritesFor } from './favorites';
@@ -36,12 +37,10 @@ export function PageHeader({
                         view === 'person' ? 'person-back' : 'detail-back'
                     }
                     onClick={tv.back}
-                >
-                    ← Back
-                </button>
+                >{tr("← Back")}</button>
             ) : (
                 <div class="page-heading">
-                    {title ? <h1>{title}</h1> : null}
+                    {title ? <h1>{tr(title)}</h1> : null}
                     {count !== undefined ? (
                         <span class="catalog-count">
                             {count}{' '}
@@ -52,12 +51,12 @@ export function PageHeader({
                 </div>
             )}
             {view === 'home' || view === 'history' ? (
-                <span class="home-scope">All playlists</span>
+                <span class="home-scope">{tr("All playlists")}</span>
             ) : view === 'favorites' ? (
                 <FavoriteSources tv={tv} cancel={cancelOpening} />
             ) : (
                 <TvSelect
-                    label="Active playlist"
+                    label={tr("Active playlist")}
                     focusKey="source-picker"
                     value={tv.data.activeId}
                     placeholder="No playlist connected"

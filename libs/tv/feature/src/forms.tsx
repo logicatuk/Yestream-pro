@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { useState, useEffect } from 'preact/hooks';
 import QRCode from 'qrcode';
 import {
@@ -212,69 +213,10 @@ export function Sources({ tv }: { tv: TvModel }) {
             {/* Split Screen Layout */}
             <div class="playlists-container">
                 {/* LEFT PANE: Quick Connect Card */}
-                <div class="playlists-left-pane">
-                    <div class="quick-connect-card">
-                        <div class="quick-connect-header">
-                            <span class="quick-connect-badge">
-                                QUICK CONNECT
-                            </span>
-                            <span class={`status-pill ${status}`}>
-                                ● {status.toUpperCase()} ({plan})
-                            </span>
-                        </div>
-
-                        <div class="qr-wrapper">
-                            {qrDataUrl ? (
-                                <img
-                                    src={qrDataUrl}
-                                    alt="Pairing QR Code"
-                                    class="qr-image"
-                                />
-                            ) : (
-                                <div class="qr-placeholder">Loading QR…</div>
-                            )}
-                        </div>
-
-                        <p class="quick-connect-instructions">
-                            Scan to manage your playlists from your smartphone or
-                            computer without typing with your TV remote.
-                        </p>
-
-                        <div class="credentials-box">
-                            <div class="credential-row">
-                                <span class="cred-label">MAC ADDRESS</span>
-                                <span class="cred-val highlight">{mac}</span>
-                            </div>
-                            <div class="credential-row">
-                                <span class="cred-label">DEVICE KEY</span>
-                                <span class="cred-val highlight key-badge">
-                                    {key}
-                                </span>
-                            </div>
-                            <div class="credential-row">
-                                <span class="cred-label">WEB PORTAL</span>
-                                <span class="cred-val muted-val">
-                                    /customer/login
-                                </span>
-                            </div>
-                        </div>
-
-                        <button
-                            class="sync-btn"
-                            onClick={handleSyncCloud}
-                            disabled={syncing}
-                        >
-                            {syncing ? 'Syncing Cloud…' : '↻ Sync Cloud Playlists'}
-                        </button>
-                        {syncMsg ? <p class="sync-status">{syncMsg}</p> : null}
-                    </div>
-                </div>
-
-                {/* RIGHT PANE: Playlists List */}
-                <div class="playlists-right-pane">
+                <div class="playlists-library">
                     <div class="pane-header">
                         <div>
-                            <h2>Playlists</h2>
+                            <h2>{tr("Playlists")}</h2>
                             <p class="muted">
                                 Active IPTV and Xtream playlists configured on this TV.
                             </p>
@@ -282,9 +224,7 @@ export function Sources({ tv }: { tv: TvModel }) {
                         <button
                             class="add-playlist-btn primary"
                             onClick={openAddModal}
-                        >
-                            + Add Playlist
-                        </button>
+                        >{tr("+ Add Playlist")}</button>
                     </div>
 
                     <div class="playlists-list">
@@ -334,9 +274,7 @@ export function Sources({ tv }: { tv: TvModel }) {
                                                                 source.id
                                                             );
                                                         }}
-                                                    >
-                                                        Select
-                                                    </button>
+                                                    >{tr("Select")}</button>
                                                 ) : null}
                                                 <button
                                                     class="action-btn edit-btn"
@@ -371,9 +309,7 @@ export function Sources({ tv }: { tv: TvModel }) {
                                                             );
                                                         }
                                                     }}
-                                                >
-                                                    Remove
-                                                </button>
+                                                >{tr("Remove")}</button>
                                             </div>
                                         </div>
                                     </div>
@@ -382,6 +318,63 @@ export function Sources({ tv }: { tv: TvModel }) {
                         )}
                     </div>
                 </div>
+
+                <div class="playlists-connect">
+                    <div class="quick-connect-card">
+                        <div class="quick-connect-header">
+                            <span class="quick-connect-badge">{tr("QUICK CONNECT")}</span>
+                            <span class={`status-pill ${status}`}>
+                                ● {status.toUpperCase()} ({plan})
+                            </span>
+                        </div>
+
+                        <div class="qr-wrapper">
+                            {qrDataUrl ? (
+                                <img
+                                    src={qrDataUrl}
+                                    alt="Pairing QR Code"
+                                    class="qr-image"
+                                />
+                            ) : (
+                                <div class="qr-placeholder">Loading QR…</div>
+                            )}
+                        </div>
+
+                        <p class="quick-connect-instructions">
+                            Scan to manage your playlists from your smartphone or
+                            computer without typing with your TV remote.
+                        </p>
+
+                        <div class="credentials-box">
+                            <div class="credential-row">
+                                <span class="cred-label">{tr("MAC ADDRESS")}</span>
+                                <span class="cred-val highlight">{mac}</span>
+                            </div>
+                            <div class="credential-row">
+                                <span class="cred-label">{tr("DEVICE KEY")}</span>
+                                <span class="cred-val highlight key-badge">
+                                    {key}
+                                </span>
+                            </div>
+                            <div class="credential-row">
+                                <span class="cred-label">{tr("WEB PORTAL")}</span>
+                                <span class="cred-val muted-val">
+                                    /customer/login
+                                </span>
+                            </div>
+                        </div>
+
+                        <button
+                            class="sync-btn"
+                            onClick={handleSyncCloud}
+                            disabled={syncing}
+                        >
+                            {syncing ? 'Syncing Cloud…' : '↻ Sync Cloud Playlists'}
+                        </button>
+                        {syncMsg ? <p class="sync-status">{syncMsg}</p> : null}
+                    </div>
+                </div>
+
             </div>
 
             {/* ADD / EDIT PLAYLIST MODAL WITH PREMIUM GLASSMORPHIC DESIGN */}
@@ -398,7 +391,7 @@ export function Sources({ tv }: { tv: TvModel }) {
                             <button
                                 class="close-btn"
                                 onClick={() => setShowDialog(false)}
-                                title="Close dialog"
+                                title={tr("Close dialog")}
                             >
                                 ✕
                             </button>
@@ -511,9 +504,7 @@ export function Sources({ tv }: { tv: TvModel }) {
                                     type="button"
                                     class="cancel-btn"
                                     onClick={() => setShowDialog(false)}
-                                >
-                                    Cancel
-                                </button>
+                                >{tr("Cancel")}</button>
                                 <button
                                     type="submit"
                                     class="save-btn primary"

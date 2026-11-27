@@ -1,6 +1,6 @@
 import { prepareLiveMedia } from './live-media';
 import { expect, Page, test } from '@playwright/test';
-import { addSource, backend, nav, start, xtream } from './helpers';
+import { addSource, backend, chooseTv, nav, start, xtream } from './helpers';
 
 async function geometry(page: Page) {
     return page.evaluate(() => {
@@ -74,27 +74,7 @@ test('Live categories use large rows, remote Back restores category/channel focu
 });
 
 test('two OK presses expand the live preview and Back returns to the channel', async ({ page }) => {
-    await start(page);
-    await page.evaluate(async ({ backend, xtream }) => {
-        const db = await new Promise<IDBDatabase>((resolve, reject) => {
-            const request = indexedDB.open('iptvnator-tv-user-data', 1);
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-        });
-        await new Promise<void>((resolve, reject) => {
-            const tx = db.transaction('state', 'readwrite');
-            tx.objectStore('state').put({ version: 1, data: {
-                backend, activeId: 'test-live', sources: [{
-                    id: 'test-live', name: 'Test live', provider: 'xtream',
-                    url: xtream, username: 'user1', password: 'pass1',
-                }],
-            } }, 'user');
-            tx.oncomplete = () => resolve();
-            tx.onerror = () => reject(tx.error);
-        });
-        db.close();
-    }, { backend, xtream });
-    await page.reload();
+    await startWithPlaylist(page);
     await prepareLiveMedia(page);
     const channel = page.locator('.channel').first();
     await expect(channel).toBeFocused();
@@ -278,4 +258,47 @@ test('Live category round trip restores a scrolled channel window without starti
         .toBeGreaterThan(scroll - 120);
     expect(await page.locator('.channel').count()).toBeLessThanOrEqual(20);
     await expect(page.locator('video[src], video source')).toHaveCount(0);
+});
+
+async function startWithPlaylist(page: Page) {
+    await start(page);
+    await page.evaluate(async ({ backend, xtream }) => {
+        const db = await new Promise<IDBDatabase>((resolve, reject) => {
+            const request = indexedDB.open('iptvnator-tv-user-data', 1);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
+        await new Promise<void>((resolve, reject) => {
+            const tx = db.transaction('state', 'readwrite');
+            tx.objectStore('state').put({ version: 1, data: {
+                backend, activeId: 'test-live', sources: [{
+                    id: 'test-live', name: 'Test live', provider: 'xtream',
+                    url: xtream, username: 'user1', password: 'pass1',
+                }],
+            } }, 'user');
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error);
+        });
+        db.close();
+    }, { backend, xtream });
+    await page.reload();
+}
+
+test('TV search lays out posters across the screen and Arabic persists after restart', async ({ page }) => {
+    await startWithPlaylist(page);
+    await nav(page, 'Search');
+    const posters = page.locator('.search-results .poster-grid > *');
+    await expect(posters.nth(3)).toBeVisible();
+    const first = await posters.first().boundingBox();
+    const fourth = await posters.nth(3).boundingBox();
+    expect(fourth!.y).toBeCloseTo(first!.y, 0);
+    expect(fourth!.x).toBeGreaterThan(first!.x);
+    await nav(page, 'Movies');
+    await expect(page.locator('main.catalog-page .catalog-categories')).toBeVisible();
+    await nav(page, 'Settings');
+    await page.locator('#settings-tab-appearance').click();
+    await chooseTv(page, 'App language', 'ar');
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+    await page.reload();
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
 });

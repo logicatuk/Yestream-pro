@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { useEffect, useState } from 'preact/hooks';
 import { TvModel } from './use-tv';
 
@@ -112,16 +113,16 @@ export function AccountPanel({ tv }: { tv: TvModel }) {
     }, [activeSource?.id, tv.data.backend]);
 
     return (
-        <section class="account-panel" aria-label="Account & Device">
+        <section class="account-panel" aria-label={tr("Account & Device")}>
             <h2>Account &amp; Device</h2>
 
             {/* Device Identity */}
             <section class="account-section">
                 <h3>Device Identity</h3>
                 <dl>
-                    <InfoRow label="MAC Address" value={mac} />
-                    <InfoRow label="Device Key" value={deviceKey} />
-                    <InfoRow label="Portal" value={portalUrl} />
+                    <InfoRow label={tr("MAC Address")} value={mac} />
+                    <InfoRow label={tr("Device Key")} value={deviceKey} />
+                    <InfoRow label={tr("Portal")} value={portalUrl} />
                     {tv.data.backend ? (
                         <InfoRow label="Backend" value={tv.data.backend} />
                     ) : null}
@@ -133,9 +134,9 @@ export function AccountPanel({ tv }: { tv: TvModel }) {
                 <section class="account-section">
                     <h3>Active Playlist</h3>
                     <dl>
-                        <InfoRow label="Name" value={activeSource.name} />
-                        <InfoRow label="Type" value={activeSource.provider.toUpperCase()} />
-                        <InfoRow label="URL" value={activeSource.url} />
+                        <InfoRow label={tr("Name")} value={activeSource.name} />
+                        <InfoRow label={tr("Type")} value={activeSource.provider.toUpperCase()} />
+                        <InfoRow label={tr("URL")} value={activeSource.url} />
                     </dl>
                 </section>
             ) : (
@@ -157,7 +158,7 @@ export function AccountPanel({ tv }: { tv: TvModel }) {
                         <>
                             <dl>
                                 <InfoRow
-                                    label="Username"
+                                    label={tr("Username")}
                                     value={xtream.username ?? activeSource.username ?? '—'}
                                 />
                                 <InfoRow
@@ -165,7 +166,7 @@ export function AccountPanel({ tv }: { tv: TvModel }) {
                                     value={`${xtream.activeConnections ?? '—'} / ${xtream.maxConnections ?? '—'}`}
                                 />
                                 <InfoRow
-                                    label="Expires"
+                                    label={tr("Expires")}
                                     value={formatDate(xtream.expDate)}
                                 />
                                 <InfoRow
@@ -187,21 +188,21 @@ export function AccountPanel({ tv }: { tv: TvModel }) {
                             </dl>
                             {xtream.serverUrl ? (
                                 <>
-                                    <h3 class="account-subheading">Server</h3>
+                                    <h3 class="account-subheading">{tr("Server")}</h3>
                                     <dl>
-                                        <InfoRow label="URL" value={xtream.serverUrl} />
+                                        <InfoRow label={tr("URL")} value={xtream.serverUrl} />
                                         {xtream.serverProtocol ? (
-                                            <InfoRow label="Protocol" value={xtream.serverProtocol} />
+                                            <InfoRow label={tr("Protocol")} value={xtream.serverProtocol} />
                                         ) : null}
                                         {xtream.serverTimezone ? (
-                                            <InfoRow label="Timezone" value={xtream.serverTimezone} />
+                                            <InfoRow label={tr("Timezone")} value={xtream.serverTimezone} />
                                         ) : null}
                                         {xtream.serverTime ? (
                                             <InfoRow label="Server time" value={xtream.serverTime} />
                                         ) : null}
                                         {xtream.port || xtream.httpsPort || xtream.rtmpPort ? (
                                             <InfoRow
-                                                label="Ports"
+                                                label={tr("Ports")}
                                                 value={[
                                                     xtream.port && `HTTP ${xtream.port}`,
                                                     xtream.httpsPort && `HTTPS ${xtream.httpsPort}`,

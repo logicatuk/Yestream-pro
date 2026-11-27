@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { useRef } from 'preact/hooks';
 import {
     ChannelLogo,
@@ -11,11 +12,14 @@ export function LiveChannels({
     tv,
     browse,
     overlay = false,
+    pane,
 }: {
     tv: TvModel;
     overlay?: boolean;
+    pane?: 'categories' | 'channels';
     browse: ReturnType<typeof useLiveBrowse>;
 }) {
+    const categories = pane ? pane === 'categories' : browse.categoriesOpen;
     const lastClickRef = useRef<{ id: string; time: number }>({
         id: '',
         time: 0,
@@ -29,14 +33,14 @@ export function LiveChannels({
     const items = pinned ? [pinned, ...tv.catalog.items] : tv.catalog.items;
     return (
         <section
-            class="channel-pane"
+            class={`channel-pane ${categories ? 'category-pane' : 'station-pane'}`}
             aria-label={
-                browse.categoriesOpen ? 'Channel categories' : 'Channels'
+                categories ? 'Channel categories' : 'Channels'
             }
         >
             <div class="channel-pane-header">
-                {browse.categoriesOpen ? (
-                    <h2>Categories</h2>
+                {categories ? (
+                    <h2>{tr("Categories")}</h2>
                 ) : (
                     <button
                         data-focus="live-categories"
@@ -48,7 +52,7 @@ export function LiveChannels({
                     </button>
                 )}
                 <span class="muted">
-                    {browse.categoriesOpen
+                    {categories
                         ? 'Choose a category'
                         : overlay
                           ? 'OK: switch channel · Back: close'
@@ -57,9 +61,9 @@ export function LiveChannels({
             </div>
             <div
                 class="channels"
-                key={browse.categoriesOpen ? 'categories' : tv.catalogKey}
+                key={categories ? 'categories' : tv.catalogKey}
             >
-                {browse.categoriesOpen ? (
+                {categories ? (
                     <VirtualCollection
                         layout="channels"
                         items={browse.categories}
@@ -76,7 +80,7 @@ export function LiveChannels({
                                     browse.choose(category.categoryId)
                                 }
                             >
-                                <strong>{category.name}</strong>
+                                <strong>{category.categoryId ? category.name : tr('All channels')}</strong>
                                 <span aria-hidden="true">→</span>
                             </button>
                         )}
@@ -149,16 +153,16 @@ export function LiveChannels({
                         )}
                     />
                 )}
-                {!browse.categoriesOpen &&
+                {!categories &&
                 !tv.busy &&
                 !tv.catalogError &&
                 !items.length ? (
-                    <Empty>No channels in this category.</Empty>
+                    <Empty>{tr("No channels in this category.")}</Empty>
                 ) : null}
-                {browse.categoriesOpen && tv.catalogError ? (
+                {categories && tv.catalogError ? (
                     <div role="alert" class="load-more-status">
                         {tv.catalogError}{' '}
-                        <button onClick={tv.loadMore}>Retry loading</button>
+                        <button onClick={tv.loadMore}>{tr("Retry loading")}</button>
                     </div>
                 ) : null}
             </div>

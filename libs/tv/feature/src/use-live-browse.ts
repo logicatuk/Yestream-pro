@@ -4,7 +4,7 @@ import type { TvModel } from './use-tv';
 function visibleChannels() {
     return (
         document.querySelector('[data-tv-modal] .channels') ??
-        document.querySelector('main .channels')
+        document.querySelector('main .station-pane .channels')
     );
 }
 export const categoryKey = (id: string) => `live-category:${id}`;
@@ -61,7 +61,7 @@ export function useLiveBrowse(tv: TvModel) {
         }
     }, [tv.data.activeId, tv.route.view]);
     function choose(id: string) {
-        categoryScroll.current = visibleChannels()?.scrollTop ?? 0;
+        categoryScroll.current = document.querySelector('.category-pane .channels')?.scrollTop ?? 0;
         const same = id === tv.route.category;
         pending.current = same ? channel.current.key : '';
         setChannelScroll(same ? channel.current.scroll : 0);
@@ -86,6 +86,7 @@ export function useLiveBrowse(tv: TvModel) {
         if (
             focusKey() === 'live-categories' ||
             focusKey() === 'channels-close' ||
+            focusKey() === categoryKey(tv.route.category) ||
             document.activeElement === document.body
         )
             restoreFocus(

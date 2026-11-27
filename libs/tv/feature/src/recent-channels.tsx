@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { ChannelCard, HorizontalRail } from '@iptvnator/tv/ui';
 import { recentChannels, type Media, type UserData } from '@iptvnator/tv/util';
 
@@ -12,7 +13,7 @@ export function RecentChannels({
     if (!channels.length) return null;
     return (
         <section aria-label="Recent channels">
-            <h2>Recent channels</h2>
+            <h2>{tr("Recent channels")}</h2>
             <HorizontalRail label="Recent channels">
                 <div class="rail" data-tv-horizontal>
                     {channels.map((item) => (

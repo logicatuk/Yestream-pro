@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { isBackKey } from '@iptvnator/tv/util';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { focusKey, restoreFocus } from '@iptvnator/tv/ui';
@@ -153,9 +154,7 @@ export function LiveOverlay({
                         <button
                             class="drawer-grid-button"
                             onClick={overlay.openGrid}
-                        >
-                            TV Guide
-                        </button>
+                        >{tr("TV Guide")}</button>
                         <LiveChannels tv={tv} browse={browse} overlay />
                         {tv.error ? (
                             <p role="alert">

@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { isBackKey } from '@iptvnator/tv/util';
 import { LiveChannels } from './live-channels';
 import { useLiveBrowse } from './use-live-browse';
@@ -36,7 +37,10 @@ export function Live({
                 }
             }}
         >
-            {!overlayOpen ? <LiveChannels tv={tv} browse={browse} /> : <div />}
+            {!overlayOpen ? <>
+                <LiveChannels tv={tv} browse={browse} pane="categories" />
+                <LiveChannels tv={tv} browse={browse} pane="channels" />
+            </> : <><div /><div /></>}
             <section class="live-information">
                 <div class="preview-placeholder">
                     {tv.playing ? (
@@ -51,7 +55,7 @@ export function Live({
                             Fullscreen ↗
                         </button>
                     ) : (
-                        <span>Select a channel to start preview</span>
+                        <span>{tr("Select a channel to start preview")}</span>
                     )}
                 </div>
                 <div class="section-title">
@@ -64,9 +68,7 @@ export function Live({
                         }
                     </p>
                     <div class="actions">
-                        <button data-focus="live-grid-guide" onClick={openGrid}>
-                            TV Guide
-                        </button>
+                        <button data-focus="live-grid-guide" onClick={openGrid}>{tr("TV Guide")}</button>
                         <button
                             data-focus="live-expand-guide"
                             onClick={openGuide}
@@ -76,7 +78,7 @@ export function Live({
                         </button>
                         {selected ? (
                             <button
-                                aria-label="Favorite channel"
+                                aria-label={tr("Favorite channel")}
                                 onClick={() => tv.favorite(selected)}
                             >
                                 {tv.data.favorites.some(
@@ -95,7 +97,7 @@ export function Live({
                     data-tv-scroll
                     data-focus="live-guide"
                     role="region"
-                    aria-label="Programme guide"
+                    aria-label={tr("Programme guide")}
                     onKeyDown={(event) => {
                         const pane = event.currentTarget;
                         const down =

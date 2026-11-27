@@ -1,4 +1,6 @@
+import { tr } from '@iptvnator/tv/ui';
 import { useState, useEffect, useLayoutEffect, useRef } from 'preact/hooks';
+import { installRemote } from '@iptvnator/tv/ui';
 import QRCode from 'qrcode';
 import {
     TvDeviceRegistration,
@@ -25,14 +27,16 @@ export function TvExpiryGuard({
         buildCustomerLoginUrl(registration.mac, registration.key6 || registration.deviceKey);
 
     useLayoutEffect(() => {
-        refreshBtnRef.current?.focus();
+        const focusRefresh = () => refreshBtnRef.current?.focus();
+        focusRefresh();
+        return installRemote(focusRefresh, () => false, () => undefined);
     }, []);
 
     useEffect(() => {
         let mounted = true;
         void QRCode.toDataURL(portalUrl, {
-            width: 260,
-            margin: 2,
+            width: 320,
+            margin: 4,
             errorCorrectionLevel: 'M',
             color: { dark: '#04060b', light: '#ffffff' },
         }).then((qr) => {
@@ -63,7 +67,7 @@ export function TvExpiryGuard({
     }
 
     return (
-        <div class="tv-expiry-lockscreen" role="alertdialog" aria-modal aria-label="Subscription Expired">
+        <div class="tv-expiry-lockscreen" data-tv-modal role="alertdialog" aria-modal aria-label={tr("Subscription Expired")}>
             <div class="expiry-luxury-container">
                 {/* 1. BRAND HEADER (Authentic white origami bird logo) */}
                 <div class="expiry-brand-header">
@@ -85,11 +89,9 @@ export function TvExpiryGuard({
                 <div class="expiry-alert-header">
                     <div class="expiry-alert-title">
                         <span class="hourglass-icon">⏳</span>
-                        <h2>Your trial period has expired.</h2>
+                        <h2>{tr("Your trial period has expired.")}</h2>
                     </div>
-                    <p class="expiry-alert-subtitle">
-                        To continue enjoying Live TV, Movies, Series, and the EPG Timeline, please renew or activate your device.
-                    </p>
+                    <p class="expiry-alert-subtitle">{tr("To continue enjoying Live TV, Movies, Series, and the EPG Timeline, please renew or activate your device.")}</p>
                 </div>
 
                 {/* 3. ACTIVATION HERO CARD (Split Screen: QR Code + Credentials) */}
@@ -103,7 +105,7 @@ export function TvExpiryGuard({
                                 <div class="qr-loading-box">Loading QR…</div>
                             )}
                         </div>
-                        <span class="qr-scan-hint">Scan with phone to activate</span>
+                        <span class="qr-scan-hint">{tr("Scan with phone to activate")}</span>
                     </div>
 
                     <div class="expiry-divider" />
@@ -111,21 +113,21 @@ export function TvExpiryGuard({
                     {/* Right: Hardware MAC + Activation Key */}
                     <div class="expiry-details-col">
                         <div class="cred-field-group">
-                            <span class="field-label">DEVICE MAC ADDRESS</span>
+                            <span class="field-label">{tr("DEVICE MAC ADDRESS")}</span>
                             <div class="field-value-pill mac-pill">
-                                {registration.mac || 'DA:E5:4A:7C:18:3F'}
+                                {registration.mac || '—'}
                             </div>
                         </div>
 
                         <div class="cred-field-group">
-                            <span class="field-label">DEVICE ACTIVATION KEY</span>
+                            <span class="field-label">{tr("DEVICE ACTIVATION KEY")}</span>
                             <div class="field-value-pill key-pill">
                                 {registration.key6 || registration.deviceKey || '••••••'}
                             </div>
                         </div>
 
                         <div class="cred-field-group">
-                            <span class="field-label">PORTAL URL</span>
+                            <span class="field-label">{tr("PORTAL URL")}</span>
                             <a href="https://yestream.ai.studio/" target="_blank" rel="noopener noreferrer" class="portal-url-text">https://yestream.ai.studio/</a>
                         </div>
                     </div>
@@ -140,7 +142,7 @@ export function TvExpiryGuard({
                         onClick={handleCheckStatus}
                         disabled={checking}
                     >
-                        {checking ? 'Checking…' : '↻ Refresh Status'}
+                        {tr(checking ? 'Checking…' : '↻ Refresh Status')}
                     </button>
                 </div>
 

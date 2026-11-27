@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { HorizontalRail } from '@iptvnator/tv/ui';
 import {
     GuideProgram,
@@ -47,7 +48,7 @@ export function ProgrammeGuide({
         <div class="programme-guide">
             <header class="programme-guide-header">
                 <div>
-                    <span class="muted">Programme guide</span>
+                    <span class="muted">{tr("Programme guide")}</span>
                     <h1>{channel?.title ?? 'Live TV'}</h1>
                     <p class="muted source-name">{sourceName}</p>
                 </div>
@@ -147,9 +148,7 @@ function ProgrammeSchedule({ rows }: { rows: GuideProgram[] }) {
                                 true
                             );
                         }}
-                    >
-                        Now
-                    </button>
+                    >{tr("Now")}</button>
                     {dayStart > 0 ? (
                         <button
                             aria-label="Earlier dates"
@@ -239,7 +238,7 @@ function ProgrammeSchedule({ rows }: { rows: GuideProgram[] }) {
                                         </time>
                                         <strong>{row.title}</strong>
                                         {row.start <= now && row.end > now ? (
-                                            <small>Now playing</small>
+                                            <small>{tr("Now playing")}</small>
                                         ) : null}
                                     </button>
                                 );

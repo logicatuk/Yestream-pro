@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { useState, useRef, useEffect, useLayoutEffect } from 'preact/hooks';
 import QRCode from 'qrcode';
 import { TvModel } from './use-tv';
@@ -81,7 +82,7 @@ export function ExpiryLock({ tv }: { tv: TvModel }) {
     }
 
     return (
-        <div class="expiry-lock" role="alertdialog" aria-label="Subscription Expired" aria-modal>
+        <div class="expiry-lock" role="alertdialog" aria-label={tr("Subscription Expired")} aria-modal>
             <div class="expiry-luxury-container">
                 {/* 1. BRAND HEADER (Authentic white origami bird logo) */}
                 <div class="expiry-brand-header">
@@ -103,11 +104,9 @@ export function ExpiryLock({ tv }: { tv: TvModel }) {
                 <div class="expiry-alert-header">
                     <div class="expiry-alert-title">
                         <span class="hourglass-icon">⏳</span>
-                        <h2>Your trial period has expired.</h2>
+                        <h2>{tr("Your trial period has expired.")}</h2>
                     </div>
-                    <p class="expiry-alert-subtitle">
-                        To continue enjoying Live TV, Movies, Series, and the EPG Timeline, please renew or activate your device.
-                    </p>
+                    <p class="expiry-alert-subtitle">{tr("To continue enjoying Live TV, Movies, Series, and the EPG Timeline, please renew or activate your device.")}</p>
                 </div>
 
                 {/* 3. HERO CARD */}
@@ -120,24 +119,24 @@ export function ExpiryLock({ tv }: { tv: TvModel }) {
                                 <div class="qr-loading-box">Loading QR…</div>
                             )}
                         </div>
-                        <span class="qr-scan-hint">Scan with phone to activate</span>
+                        <span class="qr-scan-hint">{tr("Scan with phone to activate")}</span>
                     </div>
 
                     <div class="expiry-divider" />
 
                     <div class="expiry-details-col">
                         <div class="cred-field-group">
-                            <span class="field-label">DEVICE MAC ADDRESS</span>
+                            <span class="field-label">{tr("DEVICE MAC ADDRESS")}</span>
                             <div class="field-value-pill mac-pill">{mac}</div>
                         </div>
 
                         <div class="cred-field-group">
-                            <span class="field-label">DEVICE ACTIVATION KEY</span>
+                            <span class="field-label">{tr("DEVICE ACTIVATION KEY")}</span>
                             <div class="field-value-pill key-pill">{deviceKey}</div>
                         </div>
 
                         <div class="cred-field-group">
-                            <span class="field-label">PORTAL URL</span>
+                            <span class="field-label">{tr("PORTAL URL")}</span>
                             <a href="https://yestream.ai.studio/" target="_blank" rel="noopener noreferrer" class="portal-url-text">https://yestream.ai.studio/</a>
                         </div>
                     </div>

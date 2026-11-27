@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { useState, useEffect } from 'preact/hooks';
 import {
     loadStoredTvRegistration,
@@ -54,7 +55,7 @@ export function TvAccountDetails({ tv }: { tv: TvModel }) {
 
     return (
         <div class="tv-account-details">
-            <h2>Account & Device</h2>
+            <h2>{tr("Account & Device")}</h2>
             <p class="muted">
                 Hardware identity, active subscription plan, and server diagnostics.
             </p>
@@ -76,7 +77,7 @@ export function TvAccountDetails({ tv }: { tv: TvModel }) {
 
                 <div class="account-grid">
                     <div class="grid-item">
-                        <span class="grid-label">Platform</span>
+                        <span class="grid-label">{tr("Platform")}</span>
                         <span class="grid-value highlight">
                             {platformInfo.platform}
                         </span>
@@ -131,27 +132,27 @@ export function TvAccountDetails({ tv }: { tv: TvModel }) {
                     </div>
 
                     <div class="grid-item">
-                        <span class="grid-label">Protocol</span>
+                        <span class="grid-label">{tr("Protocol")}</span>
                         <span class="grid-value uppercase">{serverProtocol}</span>
                     </div>
 
                     <div class="grid-item">
-                        <span class="grid-label">Active Connections</span>
+                        <span class="grid-label">{tr("Active Connections")}</span>
                         <span class="grid-value">1 / 1 Allowed</span>
                     </div>
 
                     <div class="grid-item">
-                        <span class="grid-label">Timezone</span>
+                        <span class="grid-label">{tr("Timezone")}</span>
                         <span class="grid-value">Auto-detected</span>
                     </div>
 
                     <div class="grid-item">
-                        <span class="grid-label">Allowed Formats</span>
+                        <span class="grid-label">{tr("Allowed Formats")}</span>
                         <span class="grid-value">M3U8 · TS</span>
                     </div>
 
                     <div class="grid-item">
-                        <span class="grid-label">Web Portal</span>
+                        <span class="grid-label">{tr("Web Portal")}</span>
                         <span class="grid-value monospace">/customer/login</span>
                     </div>
                 </div>

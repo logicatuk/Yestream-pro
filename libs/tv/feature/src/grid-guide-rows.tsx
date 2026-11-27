@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import {
     buildGuideTicks,
     clipGuideSpan,
@@ -42,7 +43,7 @@ export function GridGuideRows({
     return (
         <>
             <div class="grid-axis" aria-hidden="true">
-                <span>Channel</span>
+                <span>{tr("Channel")}</span>
                 <div>
                     {buildGuideTicks(axis, 50).map((tick) => (
                         <time key={tick.ms} style={{ left: `${tick.leftPx}%` }}>
@@ -206,7 +207,7 @@ export function GridGuideRows({
                     </div>
                 ) : null}
                 {!busy && !error && !items.length ? (
-                    <p>No channels in this category.</p>
+                    <p>{tr("No channels in this category.")}</p>
                 ) : null}
             </div>
         </>

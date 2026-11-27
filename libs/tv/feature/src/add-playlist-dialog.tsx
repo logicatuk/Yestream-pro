@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { useState, useRef, useLayoutEffect } from 'preact/hooks';
 import { httpUrl, removeSourceData, Source, Provider } from '@iptvnator/tv/util';
 import { isBackKey } from '@iptvnator/tv/util';
@@ -79,7 +80,7 @@ export function AddPlaylistDialog({
                     <button
                         data-focus="add-playlist-cancel"
                         onClick={onClose}
-                        aria-label="Cancel"
+                        aria-label={tr("Cancel")}
                     >
                         ✕ Cancel
                     </button>
@@ -137,18 +138,14 @@ export function AddPlaylistDialog({
 
                     {type !== 'm3u' ? (
                         <>
-                            <label>
-                                Username
-                                <input
+                            <label>{tr("Username")}<input
                                     name="username"
                                     required
                                     data-focus="add-playlist-user"
                                     autoComplete="off"
                                 />
                             </label>
-                            <label>
-                                Password
-                                <input
+                            <label>{tr("Password")}<input
                                     name="password"
                                     type="password"
                                     required

@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { restoreFocus, VirtualCollection } from '@iptvnator/tv/ui';
 import { useCatalog } from './use-catalog';
@@ -44,8 +45,8 @@ export function GridGuide({ tv, close }: { tv: TvModel; close: () => void }) {
         <div class="grid-guide" ref={root}>
             <header class="grid-guide-header">
                 <div>
-                    <span class="muted">LIVE TELEVISION</span>
-                    <h1>TV Guide</h1>
+                    <span class="muted">{tr("LIVE TELEVISION")}</span>
+                    <h1>{tr("TV Guide")}</h1>
                 </div>
                 <button
                     data-focus="grid-category"

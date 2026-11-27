@@ -1,0 +1,674 @@
+{
+  "Home": [
+    "Accueil",
+    "Inicio",
+    "الرئيسية",
+    "Home"
+  ],
+  "TV": [
+    "TV",
+    "TV",
+    "التلفزيون",
+    "TV"
+  ],
+  "Movies": [
+    "Films",
+    "Películas",
+    "الأفلام",
+    "Film"
+  ],
+  "Series": [
+    "Séries",
+    "Series",
+    "المسلسلات",
+    "Serie"
+  ],
+  "Favorites": [
+    "Favoris",
+    "Favoritos",
+    "المفضلة",
+    "Preferiti"
+  ],
+  "History": [
+    "Historique",
+    "Historial",
+    "السجل",
+    "Cronologia"
+  ],
+  "Search": [
+    "Recherche",
+    "Buscar",
+    "بحث",
+    "Cerca"
+  ],
+  "Playlists": [
+    "Listes de lecture",
+    "Listas de reproducción",
+    "قوائم التشغيل",
+    "Playlist"
+  ],
+  "Settings": [
+    "Paramètres",
+    "Ajustes",
+    "الإعدادات",
+    "Impostazioni"
+  ],
+  "Appearance": [
+    "Apparence",
+    "Apariencia",
+    "المظهر",
+    "Aspetto"
+  ],
+  "App language": [
+    "Langue de l’application",
+    "Idioma de la aplicación",
+    "لغة التطبيق",
+    "Lingua dell’app"
+  ],
+  "Home composition": [
+    "Disposition de l’accueil",
+    "Diseño de inicio",
+    "تخطيط الرئيسية",
+    "Layout della Home"
+  ],
+  "Account & Device": [
+    "Compte et appareil",
+    "Cuenta y dispositivo",
+    "الحساب والجهاز",
+    "Account e dispositivo"
+  ],
+  "Subscription & server details": [
+    "Abonnement et serveur",
+    "Suscripción y servidor",
+    "الاشتراك والخادم",
+    "Abbonamento e server"
+  ],
+  "Programme guide": [
+    "Guide TV",
+    "Guía de programación",
+    "دليل البرامج",
+    "Guida TV"
+  ],
+  "Provider schedules": [
+    "Horaires du fournisseur",
+    "Horarios del proveedor",
+    "جدول المزوّد",
+    "Palinsesto del fornitore"
+  ],
+  "Playback": [
+    "Lecture",
+    "Reproducción",
+    "التشغيل",
+    "Riproduzione"
+  ],
+  "Your remote": [
+    "Votre télécommande",
+    "Tu mando",
+    "جهاز التحكم",
+    "Telecomando"
+  ],
+  "Buttons & navigation": [
+    "Touches et navigation",
+    "Botones y navegación",
+    "الأزرار والتنقل",
+    "Tasti e navigazione"
+  ],
+  "About": [
+    "À propos",
+    "Acerca de",
+    "حول التطبيق",
+    "Informazioni"
+  ],
+  "Version & device information": [
+    "Version et appareil",
+    "Versión y dispositivo",
+    "الإصدار ومعلومات الجهاز",
+    "Versione e dispositivo"
+  ],
+  "Choose a category to adjust settings.": [
+    "Choisissez une catégorie de réglages.",
+    "Elige una categoría de ajustes.",
+    "اختر فئة لتعديل الإعدادات.",
+    "Scegli una categoria di impostazioni."
+  ],
+  "Find your next story.": [
+    "Recherche",
+    "Buscar",
+    "بحث",
+    "Cerca"
+  ],
+  "Search this source": [
+    "Rechercher dans cette source",
+    "Buscar en esta fuente",
+    "البحث في هذا المصدر",
+    "Cerca in questa sorgente"
+  ],
+  "Content": [
+    "Contenu",
+    "Contenido",
+    "المحتوى",
+    "Contenuti"
+  ],
+  "Content type": [
+    "Type de contenu",
+    "Tipo de contenido",
+    "نوع المحتوى",
+    "Tipo di contenuto"
+  ],
+  "Category": [
+    "Catégorie",
+    "Categoría",
+    "الفئة",
+    "Categoria"
+  ],
+  "Categories": [
+    "Catégories",
+    "Categorías",
+    "الفئات",
+    "Categorie"
+  ],
+  "All categories": [
+    "Toutes les catégories",
+    "Todas las categorías",
+    "كل الفئات",
+    "Tutte le categorie"
+  ],
+  "Sort by": [
+    "Trier par",
+    "Ordenar por",
+    "ترتيب حسب",
+    "Ordina per"
+  ],
+  "Recently added": [
+    "Ajouts récents",
+    "Añadidos recientemente",
+    "المضافة حديثًا",
+    "Aggiunti di recente"
+  ],
+  "Active playlist": [
+    "Liste active",
+    "Lista activa",
+    "قائمة التشغيل النشطة",
+    "Playlist attiva"
+  ],
+  "All playlists": [
+    "Toutes les listes",
+    "Todas las listas",
+    "كل قوائم التشغيل",
+    "Tutte le playlist"
+  ],
+  "Live television": [
+    "Télévision en direct",
+    "Televisión en directo",
+    "التلفزيون المباشر",
+    "Televisione in diretta"
+  ],
+  "All channels": [
+    "Toutes les chaînes",
+    "Todos los canales",
+    "كل القنوات",
+    "Tutti i canali"
+  ],
+  "Choose a category": [
+    "Choisissez une catégorie",
+    "Elige una categoría",
+    "اختر فئة",
+    "Scegli una categoria"
+  ],
+  "Your trial period has expired.": [
+    "Votre période d’essai a expiré.",
+    "Tu período de prueba ha caducado.",
+    "انتهت فترة التجربة.",
+    "Il periodo di prova è scaduto."
+  ],
+  "To continue enjoying Live TV, Movies, Series, and the EPG Timeline, please renew or activate your device.": [
+    "Renouvelez votre abonnement ou activez votre appareil pour continuer.",
+    "Renueva la suscripción o activa el dispositivo para continuar.",
+    "جدّد اشتراكك أو فعّل جهازك للمتابعة.",
+    "Rinnova l’abbonamento o attiva il dispositivo per continuare."
+  ],
+  "Scan with phone to activate": [
+    "Scannez avec votre téléphone pour activer",
+    "Escanea con el teléfono para activar",
+    "امسح الرمز بهاتفك للتفعيل",
+    "Scansiona con il telefono per attivare"
+  ],
+  "DEVICE MAC ADDRESS": [
+    "ADRESSE MAC",
+    "DIRECCIÓN MAC",
+    "عنوان MAC للجهاز",
+    "INDIRIZZO MAC"
+  ],
+  "DEVICE ACTIVATION KEY": [
+    "CLÉ D’ACTIVATION",
+    "CLAVE DE ACTIVACIÓN",
+    "مفتاح تفعيل الجهاز",
+    "CHIAVE DI ATTIVAZIONE"
+  ],
+  "PORTAL URL": [
+    "ADRESSE DU PORTAIL",
+    "URL DEL PORTAL",
+    "رابط البوابة",
+    "URL DEL PORTALE"
+  ],
+  "↻ Refresh Status": [
+    "↻ Actualiser le statut",
+    "↻ Actualizar estado",
+    "↻ تحديث الحالة",
+    "↻ Aggiorna stato"
+  ],
+  "Checking…": [
+    "Vérification…",
+    "Comprobando…",
+    "جارٍ التحقق…",
+    "Verifica…"
+  ],
+  "Dismiss": [
+    "Masquer",
+    "Ocultar",
+    "إخفاء",
+    "Nascondi"
+  ],
+  "Now": [
+    "Maintenant",
+    "Ahora",
+    "الآن",
+    "Ora"
+  ],
+  "Previous day": [
+    "Jour précédent",
+    "Día anterior",
+    "اليوم السابق",
+    "Giorno precedente"
+  ],
+  "Next day": [
+    "Jour suivant",
+    "Día siguiente",
+    "اليوم التالي",
+    "Giorno successivo"
+  ],
+  "Now playing": [
+    "En cours de lecture",
+    "Reproduciendo ahora",
+    "قيد التشغيل",
+    "In riproduzione"
+  ],
+  "Episodes": [
+    "Épisodes",
+    "Episodios",
+    "الحلقات",
+    "Episodi"
+  ],
+  "Reset progress": [
+    "Réinitialiser la progression",
+    "Restablecer progreso",
+    "إعادة ضبط التقدم",
+    "Azzera avanzamento"
+  ],
+  "Subscription Expired": [
+    "Abonnement Expiré",
+    "Suscripción Vencida",
+    "انتهت صلاحية الاشتراك",
+    "Abbonamento Scaduto"
+  ],
+  "Platform": [
+    "Plateforme",
+    "Plataforma",
+    "المنصة",
+    "Piattaforma"
+  ],
+  "Protocol": [
+    "Protocole",
+    "Protocolo",
+    "البروتوكول",
+    "Protocollo"
+  ],
+  "Active Connections": [
+    "Connexions actives",
+    "Conexiones Activas",
+    "الاتصالات النشطة",
+    "Connessioni Attive"
+  ],
+  "Timezone": [
+    "Fuseau horaire",
+    "Zona Horaria",
+    "المنطقة الزمنية",
+    "Fuso orario"
+  ],
+  "Allowed Formats": [
+    "Formats autorisés",
+    "Formatos permitidos",
+    "التنسيقات المسموح بها",
+    "Formati consentiti"
+  ],
+  "Web Portal": [
+    "Portail Web",
+    "Portal Web",
+    "بوابة الويب",
+    "Portale Web"
+  ],
+  "Channel": [
+    "Chaîne",
+    "Canal",
+    "قناة",
+    "Canale"
+  ],
+  "Details": [
+    "Détails",
+    "Detalles",
+    "التفاصيل",
+    "Dettagli"
+  ],
+  "Channels": [
+    "Canaux",
+    "Canales",
+    "القنوات",
+    "Canali"
+  ],
+  "Playback position": [
+    "Position de lecture",
+    "Posición de reproducción",
+    "موضع التشغيل",
+    "Posizione di riproduzione"
+  ],
+  "Username": [
+    "Nom d'utilisateur",
+    "Usuario",
+    "اسم المستخدم",
+    "Nome utente"
+  ],
+  "Password": [
+    "Mot de passe",
+    "Contraseña",
+    "كلمة المرور",
+    "Password"
+  ],
+  "Cancel": [
+    "Annuler",
+    "Cancelar",
+    "إلغاء",
+    "Annulla"
+  ],
+  "Favorite channel": [
+    "Chaîne favorite",
+    "Canal favorito",
+    "قناة مفضلة",
+    "Canale preferito"
+  ],
+  "Remove": [
+    "Supprimer",
+    "Eliminar",
+    "إزالة",
+    "Rimuovi"
+  ],
+  "Close dialog": [
+    "Fermer la boîte de dialogue",
+    "Cerrar el diálogo",
+    "إغلاق مربع الحوار",
+    "Chiudi la finestra di dialogo"
+  ],
+  "Server": [
+    "État du serveur",
+    "Datos del servidor",
+    "بيانات الخادم",
+    "Dati del server"
+  ],
+  "MAC Address": [
+    "Adresse MAC",
+    "Dirección MAC",
+    "عنوان MAC",
+    "Indirizzo MAC"
+  ],
+  "Device Key": [
+    "Clé de l'appareil",
+    "Clave del Dispositivo",
+    "مفتاح الجهاز",
+    "Chiave Dispositivo"
+  ],
+  "Portal": [
+    "Portail",
+    "Portal",
+    "البوابة",
+    "Portale"
+  ],
+  "Name": [
+    "Nom",
+    "Nombre",
+    "الاسم",
+    "Nome"
+  ],
+  "Type": [
+    "Type",
+    "Tipo",
+    "النوع",
+    "Tipo"
+  ],
+  "URL": [
+    "URL",
+    "URL",
+    "الرابط",
+    "URL"
+  ],
+  "Expires": [
+    "Expire le",
+    "Vence",
+    "تاريخ الانتهاء",
+    "Scade"
+  ],
+  "Ports": [
+    "Ports",
+    "Puertos",
+    "المنافذ",
+    "Porte"
+  ],
+  "Explore title →": [
+    "Découvrir →",
+    "Ver título →",
+    "استكشف العنوان ←",
+    "Scopri il titolo →"
+  ],
+  "Details →": [
+    "Détails →",
+    "Detalles →",
+    "التفاصيل ←",
+    "Dettagli →"
+  ],
+  "Continue watching": [
+    "Reprendre la lecture",
+    "Seguir viendo",
+    "متابعة المشاهدة",
+    "Continua a guardare"
+  ],
+  "Recent channels": [
+    "Chaînes récentes",
+    "Canales recientes",
+    "القنوات الأخيرة",
+    "Canali recenti"
+  ],
+  "Favorite channels": [
+    "Chaînes favorites",
+    "Canales favoritos",
+    "القنوات المفضلة",
+    "Canali preferiti"
+  ],
+  "Saved films": [
+    "Films enregistrés",
+    "Películas guardadas",
+    "الأفلام المحفوظة",
+    "Film salvati"
+  ],
+  "Saved series": [
+    "Séries enregistrées",
+    "Series guardadas",
+    "المسلسلات المحفوظة",
+    "Serie salvate"
+  ],
+  "On television": [
+    "À la télévision",
+    "En televisión",
+    "على التلفزيون",
+    "In televisione"
+  ],
+  "Title · A–Z": [
+    "Titre · A–Z",
+    "Título · A–Z",
+    "العنوان · أبجديًا",
+    "Titolo · A–Z"
+  ],
+  "Provider order": [
+    "Ordre du fournisseur",
+    "Orden del proveedor",
+    "ترتيب المزوّد",
+    "Ordine del fornitore"
+  ],
+  "Browse movies": [
+    "Parcourir les films",
+    "Explorar películas",
+    "تصفح الأفلام",
+    "Sfoglia i film"
+  ],
+  "Your viewing history is empty.": [
+    "Votre historique est vide.",
+    "Tu historial está vacío.",
+    "سجل المشاهدة فارغ.",
+    "La cronologia è vuota."
+  ],
+  "Recently played across all sources, including watched titles.": [
+    "Titres récemment lus de toutes les sources, y compris les titres vus.",
+    "Títulos recientes de todas las fuentes, incluidos los ya vistos.",
+    "آخر ما شاهدته من جميع المصادر، بما في ذلك العناوين المكتملة.",
+    "Titoli riprodotti di recente da tutte le sorgenti, inclusi quelli già visti."
+  ],
+  "Previous page": [
+    "Page précédente",
+    "Página anterior",
+    "الصفحة السابقة",
+    "Pagina precedente"
+  ],
+  "Next page": [
+    "Page suivante",
+    "Página siguiente",
+    "الصفحة التالية",
+    "Pagina successiva"
+  ],
+  "+ Add Playlist": [
+    "+ Ajouter une liste",
+    "+ Añadir lista",
+    "+ إضافة قائمة",
+    "+ Aggiungi playlist"
+  ],
+  "Edit playlists": [
+    "Modifier les listes",
+    "Editar listas",
+    "تعديل القوائم",
+    "Modifica playlist"
+  ],
+  "Connecting to your playlist…": [
+    "Connexion à votre liste…",
+    "Conectando con tu lista…",
+    "جارٍ الاتصال بقائمتك…",
+    "Connessione alla playlist…"
+  ],
+  "Select": [
+    "Sélectionner",
+    "Seleccionar",
+    "اختيار",
+    "Seleziona"
+  ],
+  "QUICK CONNECT": [
+    "CONNEXION RAPIDE",
+    "CONEXIÓN RÁPIDA",
+    "اتصال سريع",
+    "CONNESSIONE RAPIDA"
+  ],
+  "DEVICE KEY": [
+    "CLÉ DE L’APPAREIL",
+    "CLAVE DEL DISPOSITIVO",
+    "مفتاح الجهاز",
+    "CHIAVE DISPOSITIVO"
+  ],
+  "MAC ADDRESS": [
+    "ADRESSE MAC",
+    "DIRECCIÓN MAC",
+    "عنوان MAC",
+    "INDIRIZZO MAC"
+  ],
+  "WEB PORTAL": [
+    "PORTAIL WEB",
+    "PORTAL WEB",
+    "بوابة الويب",
+    "PORTALE WEB"
+  ],
+  "No channels in this category.": [
+    "Aucune chaîne dans cette catégorie.",
+    "No hay canales en esta categoría.",
+    "لا توجد قنوات في هذه الفئة.",
+    "Nessun canale in questa categoria."
+  ],
+  "Select a channel to start preview": [
+    "Sélectionnez une chaîne pour un aperçu",
+    "Selecciona un canal para previsualizarlo",
+    "اختر قناة لبدء المعاينة",
+    "Seleziona un canale per l’anteprima"
+  ],
+  "Refresh guide": [
+    "Actualiser le guide",
+    "Actualizar guía",
+    "تحديث الدليل",
+    "Aggiorna guida"
+  ],
+  "No titles in this category. Try another category or search.": [
+    "Aucun titre. Essayez une autre catégorie ou une recherche.",
+    "Sin títulos. Prueba otra categoría o búsqueda.",
+    "لا توجد عناوين. جرّب فئة أخرى أو ابحث.",
+    "Nessun titolo. Prova un’altra categoria o una ricerca."
+  ],
+  "Loading more…": [
+    "Chargement…",
+    "Cargando más…",
+    "جارٍ تحميل المزيد…",
+    "Caricamento…"
+  ],
+  "Retry loading": [
+    "Réessayer",
+    "Volver a cargar",
+    "إعادة التحميل",
+    "Riprova"
+  ],
+  "← Back": [
+    "← Retour",
+    "← Volver",
+    "رجوع →",
+    "← Indietro"
+  ],
+  "Settings saved on this TV.": [
+    "Paramètres enregistrés sur ce téléviseur.",
+    "Ajustes guardados en este televisor.",
+    "حُفظت الإعدادات على هذا التلفزيون.",
+    "Impostazioni salvate su questa TV."
+  ],
+  "Autoplay next episode": [
+    "Lecture automatique de l’épisode suivant",
+    "Reproducir el siguiente episodio",
+    "تشغيل الحلقة التالية تلقائيًا",
+    "Riproduci automaticamente il prossimo episodio"
+  ],
+  "LIVE TELEVISION": [
+    "TÉLÉVISION EN DIRECT",
+    "TELEVISIÓN EN DIRECTO",
+    "البث المباشر",
+    "TV IN DIRETTA"
+  ],
+  "TV Guide": [
+    "Guide TV",
+    "Guía de TV",
+    "دليل التلفزيون",
+    "Guida TV"
+  ],
+  "Refresh Status": [
+    "Actualiser le statut",
+    "Actualizar estado",
+    "تحديث الحالة",
+    "Aggiorna stato"
+  ]
+}

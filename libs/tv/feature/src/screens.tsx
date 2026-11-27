@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { RecentChannels } from './recent-channels';
 import type { HomeFeature } from './use-home-feature';
 import { storedMediaPoster } from '@iptvnator/tv/data-access';
@@ -38,12 +39,12 @@ export function Home({
     const rails: [string, string, Media[]][] = [
         [
             'favorite-channels',
-            'Favorite channels',
+            tr('Favorite channels'),
             tv.data.favorites.filter((m) => m.kind === 'live').slice(0, 8),
         ],
         [
             'saved-movies',
-            'Saved films',
+            tr('Saved films'),
             tv.data.favorites
                 .filter((m) => m.kind === 'movie')
                 .slice(-12)
@@ -51,7 +52,7 @@ export function Home({
         ],
         [
             'saved-series',
-            'Saved series',
+            tr('Saved series'),
             tv.data.favorites
                 .filter((m) => m.kind === 'series' || m.kind === 'episode')
                 .slice(-12)
@@ -89,7 +90,7 @@ export function Home({
             />
             {history.length ? (
                 <section>
-                    <h2>Continue watching</h2>
+                    <h2>{tr("Continue watching")}</h2>
                     <HorizontalRail label="Continue watching">
                         <div class="rail" data-tv-horizontal>
                             {history.map((p) => (
@@ -157,9 +158,7 @@ export function Home({
                             <button
                                 class="primary"
                                 onClick={() => tv.navigate('movies')}
-                            >
-                                Browse movies
-                            </button>
+                            >{tr("Browse movies")}</button>
                         </>
                     ) : (
                         <>
@@ -180,14 +179,13 @@ export function Home({
 export function CatalogScreen({ tv }: { tv: TvModel }) {
     const r = tv.route;
     const list = tv.catalog.items;
+    const categoryList = r.view === 'movies' || r.view === 'series';
     return (
         <>
             <div class="catalog-filters">
-                <label>
-                    Search this source
-                    <input
+                <label>{tr("Search this source")}<input
                         type="search"
-                        aria-label="Search this source"
+                        aria-label={tr("Search this source")}
                         value={r.query}
                         onInput={(e) =>
                             tv.setRoute({
@@ -199,14 +197,12 @@ export function CatalogScreen({ tv }: { tv: TvModel }) {
                     />
                 </label>
                 {r.view === 'search' ? (
-                    <label>
-                        Content
-                        <TvSelect
-                            label="Content type"
+                    <label>{tr("Content")}<TvSelect
+                            label={tr("Content type")}
                             value={r.kind}
                             options={[
-                                { value: 'movie', label: 'Movies' },
-                                { value: 'series', label: 'Series' },
+                                { value: 'movie', label: tr('Movies') },
+                                { value: 'series', label: tr('Series') },
                                 { value: 'live', label: 'Live TV' },
                             ]}
                             onChange={(value) =>
@@ -220,13 +216,11 @@ export function CatalogScreen({ tv }: { tv: TvModel }) {
                         />
                     </label>
                 ) : null}
-                <label>
-                    Category
-                    <TvSelect
-                        label="Category"
+                {!categoryList && (<label>{tr("Category")}<TvSelect
+                        label={tr("Category")}
                         value={r.category}
                         options={[
-                            { value: '', label: 'All categories' },
+                            { value: '', label: tr('All categories') },
                             ...tv.catalog.categories.map((c) => ({
                                 value: c.id,
                                 label: c.name,
@@ -236,12 +230,29 @@ export function CatalogScreen({ tv }: { tv: TvModel }) {
                             tv.setRoute({ ...r, category: value, page: 0 })
                         }
                     />
-                </label>
+                </label>) }
                 {r.kind === 'movie' || r.kind === 'series' ? (
                     <CatalogOrder tv={tv} kind={r.kind} />
                 ) : null}
             </div>
             <CatalogSortNotice tv={tv} />
+            <div class={categoryList ? 'catalog-browser' : undefined}>
+            {categoryList && <section class="catalog-categories" aria-label={tr("Categories")}>
+                <h2>{tr("Categories")}</h2>
+                <div class="channels">
+                    <VirtualCollection layout="channels"
+                        items={[{ id: '', name: 'All categories' }, ...tv.catalog.categories]}
+                        render={(category) => (
+                            <button class="live-category" data-focus={`catalog-category:${category.id}`}
+                                aria-pressed={r.category === category.id}
+                                onClick={() => tv.setRoute({ ...r, category: category.id, page: 0 })}>
+                                <strong>{category.id ? category.name : tr('All categories')}</strong>
+                            </button>
+                        )}
+                    />
+                </div>
+            </section>}
+            <div class={categoryList ? 'catalog-results' : 'search-results'}>
             <VirtualCollection
                 key={tv.catalogKey}
                 layout={r.kind === 'live' ? 'stations' : 'posters'}
@@ -255,10 +266,9 @@ export function CatalogScreen({ tv }: { tv: TvModel }) {
                 render={(item) => <Poster item={item} open={tv.open} />}
             />
             {!tv.busy && !list.length ? (
-                <Empty>
-                    No titles in this category. Try another category or search.
-                </Empty>
+                <Empty>{tr("No titles in this category. Try another category or search.")}</Empty>
             ) : null}
+            </div></div>
         </>
     );
 }

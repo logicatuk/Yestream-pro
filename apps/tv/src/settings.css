@@ -131,7 +131,7 @@
 }
 
 .account-card {
-    background: linear-gradient(145deg, #131c31 0%, #0e1526 100%);
+    background: var(--tv-surface);
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 16px;
     padding: 24px;
@@ -146,10 +146,10 @@
 }
 
 .card-subtitle {
-    font-size: 11px;
+    font-size: var(--tv-type-eyebrow);
     font-weight: 700;
     letter-spacing: 1.5px;
-    color: #64748b;
+    color: var(--tv-muted);
     display: block;
     margin-bottom: 6px;
 }
@@ -157,14 +157,15 @@
 .mac-display-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    flex-wrap: wrap;
 }
 
 .mac-text {
+    margin-right: 12px;
     font-family: monospace;
     font-size: 22px;
     font-weight: 700;
-    color: #38bdf8;
+    color: var(--tv-accent);
     letter-spacing: 1px;
 }
 
@@ -179,13 +180,15 @@
 }
 
 .account-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .grid-item {
-    background: rgba(15, 23, 42, 0.5);
+    box-sizing: border-box;
+    width: calc(50% - 8px);
+    margin: 4px;
+    background: var(--tv-control);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 10px;
     padding: 12px 16px;
@@ -195,25 +198,25 @@
 }
 
 .grid-label {
-    font-size: 11px;
+    font-size: var(--tv-type-eyebrow);
     font-weight: 600;
-    color: #64748b;
+    color: var(--tv-muted);
     letter-spacing: 0.5px;
 }
 
 .grid-value {
-    font-size: 15px;
+    font-size: var(--tv-type-meta);
     font-weight: 600;
-    color: #f1f5f9;
+    color: var(--tv-text);
 }
 
 .grid-value.highlight {
-    color: #38bdf8;
+    color: var(--tv-accent);
 }
 
 .grid-value.monospace {
     font-family: monospace;
-    font-size: 13px;
+    font-size: var(--tv-type-eyebrow);
 }
 
 .grid-value.uppercase {

@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { TvSelect } from '@iptvnator/tv/ui';
 import { useState } from 'preact/hooks';
 import { normalizeCatalogSort } from '@iptvnator/tv/util';
@@ -12,10 +13,8 @@ export function CatalogOrder({
     const [saving, setSaving] = useState(false);
     const sort = tv.data.catalogSort[kind];
     return (
-        <label>
-            Sort by
-            <TvSelect
-                label="Sort by"
+        <label>{tr("Sort by")}<TvSelect
+                label={tr("Sort by")}
                 focusKey="catalog-sort"
                 value={sort}
                 disabled={saving}
@@ -44,9 +43,9 @@ export function CatalogOrder({
                     }
                 }}
                 options={[
-                    { value: 'recent', label: 'Recently added' },
-                    { value: 'title', label: 'Title · A–Z' },
-                    { value: 'provider', label: 'Provider order' },
+                    { value: 'recent', label: tr('Recently added') },
+                    { value: 'title', label: tr('Title · A–Z') },
+                    { value: 'provider', label: tr('Provider order') },
                 ]}
             />
         </label>

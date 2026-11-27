@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { SettingsPreferences } from './settings-preferences';
 import {
     settingsCategories,
@@ -26,7 +27,7 @@ export function Settings({
             onKeyDown={navigation.onKeyDown}
         >
             <div class="settings-toolbar">
-                <p class="muted">Choose a category to adjust settings.</p>
+                <p class="muted">{tr("Choose a category to adjust settings.")}</p>
             </div>
             <div class="settings-workspace">
                 <div
@@ -46,8 +47,8 @@ export function Settings({
                             onFocus={() => navigation.select(id)}
                             onClick={() => navigation.select(id)}
                         >
-                            <span id={`settings-label-${id}`}>{title}</span>
-                            <small>{subtitle}</small>
+                            <span id={`settings-label-${id}`}>{tr(title)}</span>
+                            <small>{tr(subtitle)}</small>
                         </button>
                     ))}
                 </div>
@@ -86,7 +87,7 @@ export function Settings({
                             <About build={buildInfo} />
                         ) : (
                             <>
-                                <h2>Your remote</h2>
+                                <h2>{tr("Your remote")}</h2>
                                 <p class="muted">
                                     Arrows move focus. OK selects. Back returns
                                     to categories, then to your last title.

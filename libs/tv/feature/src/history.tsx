@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { Empty, restoreFocus } from '@iptvnator/tv/ui';
 import type { Media } from '@iptvnator/tv/util';
 import type { TvModel } from './use-tv';
@@ -53,17 +54,13 @@ export function History({
     if (!entries.length)
         return (
             <Empty>
-                <p>Your viewing history is empty.</p>
-                <button class="primary" onClick={() => tv.navigate('movies')}>
-                    Browse movies
-                </button>
+                <p>{tr("Your viewing history is empty.")}</p>
+                <button class="primary" onClick={() => tv.navigate('movies')}>{tr("Browse movies")}</button>
             </Empty>
         );
     return (
         <>
-            <p class="muted">
-                Recently played across all sources, including watched titles.
-            </p>
+            <p class="muted">{tr("Recently played across all sources, including watched titles.")}</p>
             <div class="poster-grid history-list">
                 {entries
                     .slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
@@ -83,18 +80,14 @@ export function History({
                     <button
                         disabled={page === 0}
                         onClick={() => changePage(page - 1)}
-                    >
-                        Previous page
-                    </button>
+                    >{tr("Previous page")}</button>
                     <span>
                         {page + 1} / {pages}
                     </span>
                     <button
                         disabled={page + 1 === pages}
                         onClick={() => changePage(page + 1)}
-                    >
-                        Next page
-                    </button>
+                    >{tr("Next page")}</button>
                 </div>
             ) : null}
         </>

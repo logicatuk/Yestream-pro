@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { useSourceActions } from './use-source-actions';
 import { usePlayerPlaylist } from './use-player-playlist';
 import { HomeSourceStatus } from './home-source-status';
@@ -49,6 +50,13 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
         };
     }, []);
     const expired = isTvExpired(registration);
+    if (expired && registration) {
+        return <TvExpiryGuard registration={registration} onStatusRefreshed={setRegistration} />;
+    }
+    return <TvWorkspace buildInfo={buildInfo} />;
+}
+
+function TvWorkspace({ buildInfo }: { buildInfo: TvBuildInfo }) {
     const personMemory = useRef<FilmographyMemory>(new WeakMap());
     const settingsMemory = useRef<SettingsMemory>({
         category: 'appearance',
@@ -187,7 +195,7 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
                             <span class="nav-icon" aria-hidden="true">
                                 <TvIcon name={view} />
                             </span>
-                            {label}
+                            {tr(label)}
                         </button>
                     ))}
                 </nav>
@@ -204,6 +212,8 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
                         ? `cinematic-page ${r.view}-page`
                         : r.view === 'settings'
                             ? 'settings-page'
+                            : r.view === 'movies' || r.view === 'series'
+                              ? 'catalog-page'
                             : r.view === 'live'
                                 ? 'live-page'
                                 : ''
@@ -226,30 +236,20 @@ export function TvApp({ buildInfo }: { buildInfo: TvBuildInfo }) {
                                 {tv.errorRetryLabel}
                             </button>
                         ) : null}
-                        <button onClick={() => tv.setError('')}>Dismiss</button>
+                        <button onClick={() => tv.setError('')}>{tr("Dismiss")}</button>
                         <button
                             onClick={() => {
                                 homeActions.leave();
                                 tv.navigate('sources');
                             }}
-                        >
-                            Edit playlists
-                        </button>
+                        >{tr("Edit playlists")}</button>
                     </div>
                 ) : null}
                 {tv.reconnectStatus ? (
                     <p role="status">{tv.reconnectStatus}</p>
                 ) : null}
                 {tv.busy ? (
-                    <div class="loading" role="status">
-                        Connecting to your playlist…
-                    </div>
-                ) : null}
-                {expired && registration ? (
-                    <TvExpiryGuard
-                        registration={registration}
-                        onStatusRefreshed={(updated) => setRegistration(updated)}
-                    />
+                    <div class="loading" role="status">{tr("Connecting to your playlist…")}</div>
                 ) : null}
                 {r.view === 'home' ? (
                     <Home

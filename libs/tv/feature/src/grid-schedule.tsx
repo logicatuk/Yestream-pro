@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import {
     useEffect,
     useLayoutEffect,
@@ -163,10 +164,8 @@ export function GridSchedule({
                             window
                         );
                     }}
-                >
-                    Now
-                </button>
-                <button aria-label="Previous day" onClick={() => shiftDay(-1)}>
+                >{tr("Now")}</button>
+                <button aria-label={tr("Previous day")} onClick={() => shiftDay(-1)}>
                     −1 day
                 </button>
                 <button
@@ -189,7 +188,7 @@ export function GridSchedule({
                 >
                     Later →
                 </button>
-                <button aria-label="Next day" onClick={() => shiftDay(1)}>
+                <button aria-label={tr("Next day")} onClick={() => shiftDay(1)}>
                     +1 day
                 </button>
             </div>
@@ -271,7 +270,7 @@ export function GridSchedule({
                         Back to programmes ↑
                     </button>
                     {!unavailable ? (
-                        <button onClick={guide.retry}>Refresh guide</button>
+                        <button onClick={guide.retry}>{tr("Refresh guide")}</button>
                     ) : null}
                 </div>
             </footer>

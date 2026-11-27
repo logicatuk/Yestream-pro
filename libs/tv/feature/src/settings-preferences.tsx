@@ -1,3 +1,4 @@
+import { tr, tvLanguage, setTvLanguage, languageOptions } from '@iptvnator/tv/ui';
 import { TvSelect } from '@iptvnator/tv/ui';
 import type { UserData } from '@iptvnator/tv/util';
 import { useEffect, useState } from 'preact/hooks';
@@ -113,13 +114,17 @@ export function SettingsPreferences({
     };
     return (
         <form class="source-form" onSubmit={save}>
-            <h2>{copy[category].title}</h2>
-            <p class="muted">{copy[category].description}</p>
+            {category === 'layout' && <label>
+                {tr('App language')}
+                <TvSelect label={tr('App language')} focusKey="settings:language"
+                    value={tvLanguage} options={languageOptions}
+                    onChange={setTvLanguage} />
+            </label>}
+            <h2>{tr(copy[category].title)}</h2>
+            <p class="muted">{tr(copy[category].description)}</p>
             {category === 'layout' ? (
-                <label>
-                    Home composition
-                    <TvSelect
-                        label="Home composition"
+                <label>{tr("Home composition")}<TvSelect
+                        label={tr("Home composition")}
                         focusKey="settings:layout:value"
                         value={String(values.layout)}
                         options={[
@@ -145,7 +150,7 @@ export function SettingsPreferences({
                                 change({ [field]: event.currentTarget.checked })
                             }
                         />
-                        {label}
+                        {tr(label)}
                     </label>
                 ))
             )}
@@ -156,7 +161,7 @@ export function SettingsPreferences({
             >
                 {saving ? 'Saving…' : 'Save settings'}
             </button>
-            {saved ? <p role="status">Settings saved on this TV.</p> : null}
+            {saved ? <p role="status">{tr("Settings saved on this TV.")}</p> : null}
         </form>
     );
 }

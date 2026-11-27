@@ -1,3 +1,4 @@
+import { tr } from '@iptvnator/tv/ui';
 import { useRef, useState } from 'preact/hooks';
 import { storedMediaPoster } from '@iptvnator/tv/data-access';
 import { ResumeCard, TvDialog, restoreFocus } from '@iptvnator/tv/ui';
@@ -90,9 +91,7 @@ export function ViewingCard({
                                     close();
                                     actions.open(item, origin.current);
                                 }}
-                            >
-                                Details
-                            </button>
+                            >{tr("Details")}</button>
                         ) : null}
                         {item.kind === 'movie' || item.kind === 'episode' ? (
                             <WatchedButton
