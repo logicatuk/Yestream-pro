@@ -101,13 +101,12 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
     `,
     styles: [`
         .yqc-card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%);
-            border: 1px solid rgba(148, 163, 184, 0.15);
+            background: var(--app-widget-bg);
+            border: 1px solid var(--app-widget-border);
             border-radius: 14px;
             padding: 16px 20px;
             margin-bottom: 24px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(8px);
+            color: var(--app-on-surface);
         }
         .yqc-header {
             display: flex;
@@ -115,7 +114,7 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
             justify-content: center;
             margin-bottom: 14px;
             padding-bottom: 10px;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            border-bottom: 1px solid var(--app-separator);
         }
         .yqc-badge {
             display: inline-flex;
@@ -123,9 +122,9 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
             gap: 6px;
             font-size: 0.82rem;
             font-weight: 600;
-            text-transform: uppercase;
+            text-transform: none;
             letter-spacing: 0.05em;
-            color: #38bdf8;
+            color: var(--app-selection-text-color);
             mat-icon {
                 font-size: 16px;
                 width: 16px;
@@ -151,7 +150,7 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
         .yqc-qr-placeholder {
             width: min(224px, 100%);
             aspect-ratio: 1;
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--app-content-bg);
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -160,18 +159,18 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
                 font-size: 48px;
                 width: 48px;
                 height: 48px;
-                color: #64748b;
+                color: var(--app-muted-color);
             }
         }
         .yqc-qr-caption {
             font-size: 0.72rem;
-            color: #94a3b8;
+            color: var(--app-muted-color);
             text-align: center;
         }
         .yqc-details {
             min-width: 0;
             padding-top: 16px;
-            border-top: 1px solid var(--app-line);
+            border-top: 1px solid var(--app-separator);
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -185,26 +184,26 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
         }
         .yqc-label {
             font-size: 0.8rem;
-            color: #94a3b8;
+            color: var(--app-muted-color);
             font-weight: 500;
         }
         .yqc-value-pill {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(148, 163, 184, 0.2);
+            background: transparent;
+            border: 1px solid var(--app-separator);
             padding: 3px 8px;
             border-radius: 6px;
             code {
                 font-family: monospace;
                 font-size: 0.85rem;
                 font-weight: 600;
-                color: #f1f5f9;
+                color: var(--app-heading-color);
                 letter-spacing: 0.04em;
             }
             .yqc-key {
-                color: #38bdf8;
+                color: var(--app-selection-text-color);
                 font-size: 0.95rem;
                 letter-spacing: 0.08em;
             }
@@ -212,13 +211,13 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
         .yqc-copy-btn {
             background: transparent;
             border: none;
-            color: #94a3b8;
+            color: var(--app-muted-color);
             cursor: pointer;
             padding: 0;
             display: flex;
             align-items: center;
             &:hover {
-                color: #f1f5f9;
+                color: var(--app-heading-color);
             }
             mat-icon {
                 font-size: 14px;
@@ -230,7 +229,7 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            color: #38bdf8;
+            color: var(--app-selection-text-color);
             text-decoration: none;
             font-size: 0.84rem;
             font-weight: 500;
@@ -241,7 +240,7 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
             }
             &:hover {
                 text-decoration: underline;
-                color: #7dd3fc;
+                color: var(--app-selection-text-color);
             }
         }
         .yqc-actions {
@@ -257,11 +256,7 @@ import { YESTREAM_CLOUD_BRIDGE } from '@iptvnator/services';
             padding: 0 16px;
             height: 36px;
             border-radius: 8px;
-            background: #2563eb;
-            color: #ffffff;
-            &:hover:not([disabled]) {
-                background: #1d4ed8;
-            }
+
             mat-icon {
                 font-size: 18px;
                 width: 18px;

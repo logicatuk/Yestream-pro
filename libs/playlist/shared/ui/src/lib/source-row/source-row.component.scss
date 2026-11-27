@@ -261,10 +261,7 @@ app-source-tile {
     }
 }
 
-// Row actions appear on hover, keyboard focus and while the menu is open.
-// A failing row keeps Retry in view; touch screens, which cannot hover,
-// always show them.
-.source-row__action,
+// Only the compact playlist switcher reveals its menu on interaction.
 .source-row__more--compact {
     opacity: 0;
     transition: opacity 120ms ease;
@@ -275,25 +272,18 @@ app-source-tile {
 .source-row--menu-open,
 .source-row--current,
 .source-row--highlighted {
-    .source-row__action,
     .source-row__more--compact {
         opacity: 1;
     }
 }
 
-.source-row__action--visible {
-    opacity: 1;
-}
-
 @media (hover: none) {
-    .source-row__action,
     .source-row__more--compact {
         opacity: 1;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .source-row__action,
     .source-row__more--compact {
         transition: none;
     }
@@ -345,17 +335,11 @@ app-source-tile {
     }
 }
 
-// Phones keep the ⋯ menu, which holds every action, and drop the rest.
+// Leave room for playlist actions on phones.
 @media (max-width: 480px) {
     .source-row {
         gap: 10px;
         padding-inline: 8px;
-    }
-
-    .source-row__action:not(.source-row__more):not(
-            .source-row__action--visible
-        ) {
-        display: none;
     }
 
     .source-row__part--url,
