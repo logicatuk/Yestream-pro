@@ -33,7 +33,7 @@ function parseProgramme(programmeNode as object) as object
 end function
 
 '/ Build EPG grid for display
-function buildEpgGrid(epgData as object, channelIds as array, timeRange as object) as object
+function buildEpgGrid(epgData as object, channelIds as object, timeRange as object) as object
     grid = {
         channels: [],
         programs: []
@@ -71,7 +71,7 @@ function getCurrentNextProgramme(channelId as string, epgData as object) as obje
 end function
 
 '/ Get programmes for a time window
-function getProgrammesForWindow(channelId as string, startTime as integer, endTime as integer, epgData as object) as array
+function getProgrammesForWindow(channelId as string, startTime as integer, endTime as integer, epgData as object) as object
     result = []
 
     for each programme in epgData.programs

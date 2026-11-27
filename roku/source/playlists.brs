@@ -53,9 +53,9 @@ end function
 
 function extractAttribute(attrString as string, attrName as string) as string
     search = attrName + "="""
-    pos = InStr(1, attrString, search)
-    if pos > 0
-        startPos = pos + Len(search)
+    attributeIndex = InStr(1, attrString, search)
+    if attributeIndex > 0
+        startPos = attributeIndex + Len(search)
         endPos = InStr(startPos, attrString, """")
         if endPos > startPos
             return Mid(attrString, startPos, endPos - startPos)

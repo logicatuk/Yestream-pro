@@ -1,0 +1,9 @@
+<component name="CatalogTask" extends="Task">
+    <interface>
+        <field id="request" type="assocarray" />
+        <field id="result" type="assocarray" alwaysNotify="true" />
+    </interface>
+    <script type="text/brightscript" uri="pkg:/source/content.brs" />
+    <script type="text/brightscript" uri="pkg:/source/playlists.brs" />
+    <script type="text/brightscript" uri="pkg:/components/CatalogTask.brs" />
+</component>

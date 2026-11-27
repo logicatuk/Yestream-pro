@@ -17,9 +17,9 @@
         <!-- Screens Container -->
         <Group id="screensContainer" translation="[0, 90]">
             <HomeScreen id="homeScreen" visible="true" />
-            <LiveTVScreen id="liveTvScreen" visible="false" />
-            <MovieScreen id="movieScreen" visible="false" />
-            <SeriesScreen id="seriesScreen" visible="false" />
+            <MediaBrowser kind="live" id="liveTvScreen" visible="false" />
+            <MediaBrowser kind="movie" id="movieScreen" visible="false" />
+            <MediaBrowser kind="series" id="seriesScreen" visible="false" />
             <EPGScreen id="epgScreen" visible="false" />
             <PlaylistsScreen id="playlistsScreen" visible="false" />
             <SettingsScreen id="settingsScreen" visible="false" />
@@ -33,146 +33,6 @@
     <script type="text/brightscript" uri="pkg:/source/device-identity.brs" />
     <script type="text/brightscript" uri="pkg:/source/cloud-api.brs" />
     <script type="text/brightscript" uri="pkg:/source/access-evaluation.brs" />
-    <script type="text/brightscript">
-    <![CDATA[
-    sub init()
-        m.topNav = m.top.findNode("topNav")
-        m.homeScreen = m.top.findNode("homeScreen")
-        m.liveTvScreen = m.top.findNode("liveTvScreen")
-        m.movieScreen = m.top.findNode("movieScreen")
-        m.seriesScreen = m.top.findNode("seriesScreen")
-        m.epgScreen = m.top.findNode("epgScreen")
-        m.playlistsScreen = m.top.findNode("playlistsScreen")
-        m.settingsScreen = m.top.findNode("settingsScreen")
-        m.expiryLockScreen = m.top.findNode("expiryLockScreen")
-
-        m.topNav.observeField("activeTabIndex", "onTabChanged")
-        m.homeScreen.observeField("selectedAction", "onHomeAction")
-        m.expiryLockScreen.observeField("selectedAction", "onExpiryAction")
-
-        ' Observe back events from sub-screens
-        m.movieScreen.observeField("onBack", "onSubScreenBack")
-        m.seriesScreen.observeField("onBack", "onSubScreenBack")
-        m.epgScreen.observeField("onBack", "onSubScreenBack")
-        m.settingsScreen.observeField("onBack", "onSubScreenBack")
-
-        initializeDevice()
-    end sub
-
-    sub initializeDevice()
-        identity = loadStoredIdentity()
-        m.top.deviceId = getDeviceId()
-        m.top.macAddress = identity.mac
-        m.top.deviceKey = identity.key6
-
-        ' Set device info on HomeScreen
-        m.homeScreen.macAddress = identity.mac
-        m.homeScreen.planText = "● ACTIVE • TRIAL • Yestream Cloud"
-        m.homeScreen.callFunc("updateDeviceInfo")
-
-        ' Register device with backend
-        payload = {
-            mac: identity.mac,
-            hardwareFingerprint: m.top.deviceId,
-            platform: "Roku",
-            model: CreateObject("roDeviceInfo").GetModel(),
-            appVersion: "0.1.0"
-        }
-        
-        regRes = registerDevice(payload)
-        if regRes.ok and regRes.data <> invalid
-            if regRes.data.credential <> invalid
-                identity.credential = regRes.data.credential
-                saveStoredIdentity(identity)
-            end if
-
-            ' Check if subscription is expired
-            status = regRes.data.status
-            plan = regRes.data.plan
-            if status = "expired" or status = "suspended"
-                m.expiryLockScreen.visible = true
-                m.expiryLockScreen.setFocus(true)
-            else
-                m.expiryLockScreen.visible = false
-                m.homeScreen.planText = "● ACTIVE • " + UCase(plan ? plan : "PRO") + " • Active Subscription"
-                m.homeScreen.callFunc("updateDeviceInfo")
-                m.homeScreen.setFocus(true)
-            end if
-        else
-            m.homeScreen.setFocus(true)
-        end if
-    end sub
-
-    sub onTabChanged()
-        idx = m.topNav.activeTabIndex
-        m.homeScreen.visible = (idx = 0)
-        m.liveTvScreen.visible = (idx = 1)
-        m.movieScreen.visible = (idx = 2)
-        m.seriesScreen.visible = (idx = 3)
-        m.epgScreen.visible = (idx = 4)
-        m.playlistsScreen.visible = (idx = 5)
-        m.settingsScreen.visible = (idx = 6)
-
-        if idx = 0
-            m.homeScreen.setFocus(true)
-        else if idx = 1
-            m.liveTvScreen.setFocus(true)
-        else if idx = 2
-            m.movieScreen.setFocus(true)
-        else if idx = 3
-            m.seriesScreen.setFocus(true)
-        else if idx = 4
-            m.epgScreen.setFocus(true)
-        else if idx = 5
-            m.playlistsScreen.setFocus(true)
-        else if idx = 6
-            m.settingsScreen.setFocus(true)
-        end if
-    end sub
-
-    sub onHomeAction()
-        action = m.homeScreen.selectedAction
-        if action = "liveTV"
-            m.topNav.callFunc("setFocusToTab", 1)
-            m.topNav.activeTabIndex = 1
-        else if action = "movies"
-            m.topNav.callFunc("setFocusToTab", 2)
-            m.topNav.activeTabIndex = 2
-        else if action = "series"
-            m.topNav.callFunc("setFocusToTab", 3)
-            m.topNav.activeTabIndex = 3
-        else if action = "epg"
-            m.topNav.callFunc("setFocusToTab", 4)
-            m.topNav.activeTabIndex = 4
-        else if action = "playlists"
-            m.topNav.callFunc("setFocusToTab", 5)
-            m.topNav.activeTabIndex = 5
-        else if action = "settings"
-            m.topNav.callFunc("setFocusToTab", 6)
-            m.topNav.activeTabIndex = 6
-        else if action = "refresh"
-            initializeDevice()
-        else if action = "focusNav"
-            m.topNav.callFunc("setFocusToTab", 0)
-        end if
-    end sub
-
-    sub onSubScreenBack()
-        ' Return to Home
-        m.topNav.callFunc("setFocusToTab", 0)
-        m.topNav.activeTabIndex = 0
-    end sub
-
-    sub onExpiryAction()
-        action = m.expiryLockScreen.selectedAction
-        if action = "refresh"
-            initializeDevice()
-        else if action = "playlists"
-            m.expiryLockScreen.visible = false
-            m.topNav.callFunc("setFocusToTab", 5)
-            m.topNav.activeTabIndex = 5
-        end if
-    end sub
-    ]]>
-    </script>
+    <script type="text/brightscript" uri="pkg:/source/sha256.brs" />
+    <script type="text/brightscript" uri="pkg:/components/YestreamScene.brs" />
 </component>

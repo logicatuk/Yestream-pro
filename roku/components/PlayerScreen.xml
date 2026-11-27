@@ -7,50 +7,10 @@
     </interface>
 
     <children>
-        <Video id="player" translation="[0, 0]" width="1920" height="1080" visible="false" />
         <Rectangle width="1920" height="1080" color="#000000" />
+        <Video id="player" translation="[0, 0]" width="1920" height="1080" visible="false" />
         <Label id="bufferingLabel" text="Loading..." font="font:MediumBoldSystemFont" translation="[760, 500]" />
     </children>
 
-    <script type="text/brightscript">
-    <![CDATA[
-    sub init()
-        m.top.streamUrl = ""
-        m.top.streamFormat = "hls"
-        m.top.contentTitle = ""
-        m.player = m.top.findNode("player")
-        m.bufferingLabel = m.top.findNode("bufferingLabel")
-    end sub
-
-    sub playStream()
-        if m.top.streamUrl <> ""
-            m.player.content.streamformat = m.top.streamFormat
-            m.player.content.url = m.top.streamUrl
-            m.player.visible = true
-            m.bufferingLabel.visible = false
-            m.player.play()
-        end if
-    end sub
-
-    sub onKeyDown(key as Integer)
-        ' Handle playback controls
-        select case key
-            case 285 ' Play/Pause
-                if m.player.state = "playing"
-                    m.player.pause()
-                else
-                    m.player.resume()
-                end if
-            case 283 ' Back
-                m.player.stop()
-                m.player.visible = false
-                m.top.close()
-        end select
-    end sub
-
-    sub close()
-        print "Closing player"
-    end sub
-    ]]>
-    </script>
+    <script type="text/brightscript" uri="pkg:/components/PlayerScreen.brs" />
 </component>

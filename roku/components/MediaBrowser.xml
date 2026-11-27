@@ -1,0 +1,19 @@
+<component name="MediaBrowser" extends="Group">
+    <interface>
+        <field id="kind" type="string" />
+        <function name="openPage" />
+        <function name="leavePage" />
+    </interface>
+    <children>
+        <Rectangle width="1920" height="990" color="0x0B101BFF" />
+        <Label id="heading" translation="[72,45]" width="1710" font="font:LargeBoldSystemFont" />
+        <Label id="notice" translation="[72,118]" width="1740" color="0x9FBCD3FF" />
+        <LabelList id="list" translation="[72,196]" itemSize="[970,72]" numRows="10" />
+        <Poster id="art" translation="[1160,180]" width="370" height="460" loadDisplayMode="scaleToFit" />
+        <Label id="summary" translation="[1100,666]" width="690" height="245" wrap="true" vertAlign="top" color="0xD6E3EDFF" />
+        <Video id="video" width="1920" height="1080" translation="[0,-90]" visible="false" />
+    </children>
+    <script type="text/brightscript" uri="pkg:/source/playlists.brs" />
+    <script type="text/brightscript" uri="pkg:/source/content.brs" />
+    <script type="text/brightscript" uri="pkg:/components/MediaBrowser.brs" />
+</component>

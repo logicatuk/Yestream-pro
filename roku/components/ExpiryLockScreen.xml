@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <component name="ExpiryLockScreen" extends="Group">
     <interface>
+        <field id="macAddress" type="string" alias="macDisplay.text" />
+        <field id="deviceKey" type="string" alias="keyDisplay.text" />
         <field id="entitlement" type="assocarray" value="" />
         <field id="isLoading" type="boolean" value="false" />
         <field id="checkNotice" type="string" value="" />
-        <field id="selectedAction" type="string" value="" />
+        <field id="selectedAction" alwaysNotify="true" type="string" value="" />
     </interface>
 
     <children>
@@ -33,7 +35,7 @@
 
             <!-- Credentials Box (Split Screen: QR Code + MAC/Key) -->
             <!-- Left: QR Code -->
-            <Poster id="qrImage" uri="pkg:/images/splash_hd.png" width="200" height="200" translation="[140, 215]" />
+            <Poster id="qrImage" uri="pkg:/images/activation-portal.png" width="200" height="200" translation="[140, 215]" />
             <Label text="Scan with phone to activate" font="font:SmallSystemFont" color="#94A3B8" horizAlign="center" width="240" translation="[120, 430]" />
 
             <!-- Divider -->
@@ -43,11 +45,11 @@
             <Group translation="[530, 215]">
                 <Label text="DEVICE MAC ADDRESS" font="font:SmallBoldSystemFont" color="#64748B" />
                 <Rectangle width="380" height="48" color="#1E293B" translation="[0, 28]" />
-                <Label id="macDisplay" text="DA:E5:4A:7C:18:3F" font="font:MediumBoldSystemFont" color="#FFFFFF" translation="[20, 39]" />
+                <Label id="macDisplay" text="" font="font:MediumBoldSystemFont" color="#FFFFFF" translation="[20, 39]" />
 
                 <Label text="DEVICE ACTIVATION KEY" font="font:SmallBoldSystemFont" color="#64748B" translation="[0, 95]" />
                 <Rectangle width="380" height="48" color="#1E293B" translation="[0, 123]" />
-                <Label id="keyDisplay" text="187828" font="font:MediumBoldSystemFont" color="#38BDF8" translation="[20, 134]" />
+                <Label id="keyDisplay" text="" font="font:MediumBoldSystemFont" color="#38BDF8" translation="[20, 134]" />
 
                 <Label text="PORTAL URL" font="font:SmallBoldSystemFont" color="#475569" translation="[0, 190]" />
                 <Label id="portalLink" text="https://yestream.ai.studio/" font="font:SmallSystemFont" color="#94A3B8" translation="[0, 215]" />
@@ -64,62 +66,5 @@
         </Group>
     </children>
 
-    <script type="text/brightscript">
-    <![CDATA[
-    sub init()
-        m.macDisplay = m.top.findNode("macDisplay")
-        m.keyDisplay = m.top.findNode("keyDisplay")
-        m.noticeText = m.top.findNode("noticeText")
-        m.btnRefreshBg = m.top.findNode("btnRefreshBg")
-        m.btnRefreshText = m.top.findNode("btnRefreshText")
-        m.btnPlaylistsBg = m.top.findNode("btnPlaylistsBg")
-        m.btnPlaylistsText = m.top.findNode("btnPlaylistsText")
-
-        m.focusedBtn = 0 ' 0 = Refresh, 1 = Playlists
-        updateFocus()
-    end sub
-
-    sub updateFocus()
-        if m.focusedBtn = 0
-            m.btnRefreshBg.color = "#38BDF8"
-            m.btnRefreshText.color = "#020617"
-            m.btnPlaylistsBg.color = "#1E293B"
-            m.btnPlaylistsText.color = "#FFFFFF"
-        else
-            m.btnRefreshBg.color = "#1E293B"
-            m.btnRefreshText.color = "#FFFFFF"
-            m.btnPlaylistsBg.color = "#38BDF8"
-            m.btnPlaylistsText.color = "#020617"
-        end if
-    end sub
-
-    function onKeyEvent(key as String, press as Boolean) as Boolean
-        if not press then return false
-
-        if key = "left"
-            if m.focusedBtn = 1
-                m.focusedBtn = 0
-                updateFocus()
-                return true
-            end if
-        else if key = "right"
-            if m.focusedBtn = 0
-                m.focusedBtn = 1
-                updateFocus()
-                return true
-            end if
-        else if key = "OK"
-            if m.focusedBtn = 0
-                m.noticeText.text = "Checking activation with Yestream Cloud..."
-                m.top.selectedAction = "refresh"
-            else
-                m.top.selectedAction = "playlists"
-            end if
-            return true
-        end if
-
-        return false
-    end function
-    ]]>
-    </script>
+    <script type="text/brightscript" uri="pkg:/components/ExpiryLockScreen.brs" />
 </component>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="DeviceCloudTask" extends="Task">
+    <interface>
+        <field id="operation" type="string" />
+        <field id="payload" type="assocarray" />
+        <field id="result" type="assocarray" alwaysNotify="true" />
+    </interface>
+    <script type="text/brightscript" uri="pkg:/source/config.brs" />
+    <script type="text/brightscript" uri="pkg:/source/cloud-api.brs" />
+    <script type="text/brightscript" uri="pkg:/source/playlists.brs" />
+    <script type="text/brightscript" uri="pkg:/components/DeviceCloudTask.brs" />
+</component>

@@ -43,22 +43,10 @@ end function
 function getAccessStateLabel(entitlement as object, serverTime as string) as string
     access = evaluateDeviceAccess(entitlement, serverTime)
 
-    select case access.state
-        case "trial"
-            return "Trial - " + access.remainingDays.toStr() + " days remaining"
-        case "active"
-            return "Active"
-        case "lifetime"
-            return "Lifetime"
-        case "expired"
-            return "Expired"
-        case "suspended"
-            return "Suspended"
-        case "decommissioned"
-            return "Decommissioned"
-        case else
-            return "Unknown"
-    end select
+    if access.state = "trial" then return "Trial - " + access.remainingDays.toStr() + " days remaining"
+    labels = { active: "Active", lifetime: "Lifetime", expired: "Expired", suspended: "Suspended", decommissioned: "Decommissioned" }
+    if labels.DoesExist(access.state) then return labels[access.state]
+    return "Unknown"
 end function
 
 '/ Format expiration date for display
@@ -71,7 +59,7 @@ function formatExpirationDate(expiresAt as string) as string
     dt = createObject("roDateTime")
     dt.fromISO8601String(expiresAt)
 
-    if dt.isValid()
+    if dt.AsSeconds() > 0
         ' Format as "Nov 28, 2026"
         monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
         month = monthNames[dt.getMonth() - 1]

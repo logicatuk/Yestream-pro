@@ -8,22 +8,14 @@ function getDeviceId() as string
         channelClientId = info.GetModel() + "_" + info.GetVersion()
     end if
 
-    ba = CreateObject("roByteArray")
-    ba.FromAsciiString(channelClientId)
-    digest = CreateObject("roEVPDigest")
-    digest.Setup("sha256")
-    hash = digest.Process(ba)
+    hash = sha256(channelClientId)
     return Left(hash, 24)
 end function
 
 ' Generate deterministic MAC address (formatted as 02:XX:XX:XX:XX:XX)
 function getMacAddress() as string
     deviceId = getDeviceId()
-    ba = CreateObject("roByteArray")
-    ba.FromAsciiString(deviceId)
-    digest = CreateObject("roEVPDigest")
-    digest.Setup("sha256")
-    hash = digest.Process(ba)
+    hash = sha256(deviceId)
     
     ' Format as 02:XX:XX:XX:XX:XX
     mac = "02:" + Mid(hash, 3, 2) + ":" + Mid(hash, 5, 2) + ":" + Mid(hash, 7, 2) + ":" + Mid(hash, 9, 2) + ":" + Mid(hash, 11, 2)
@@ -33,11 +25,7 @@ end function
 ' Generate 6-digit device key
 function getDeviceKey() as string
     mac = getMacAddress()
-    ba = CreateObject("roByteArray")
-    ba.FromAsciiString(mac)
-    digest = CreateObject("roEVPDigest")
-    digest.Setup("sha256")
-    hash = digest.Process(ba)
+    hash = sha256(mac)
     
     ' Extract 6 numeric/hex characters
     key = Mid(hash, 1, 6)

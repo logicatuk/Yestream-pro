@@ -46,48 +46,8 @@
         </Button>
     </children>
 
-    <script type="text/brightscript">
-    <![CDATA[
-    sub init()
-        m.top.deviceIdentity = invalid
-        m.top.entitlement = invalid
-        m.top.onRefresh = false
-        m.top.onBack = false
-        m.macValue = m.top.findNode("macValue")
-        m.keyValue = m.top.findNode("keyValue")
-        m.planValue = m.top.findNode("planValue")
-        m.statusValue = m.top.findNode("statusValue")
-        m.expiryValue = m.top.findNode("expiryValue")
-        m.playlistCountValue = m.top.findNode("playlistCountValue")
-    end sub
-
-    sub setAccountInfo(identity as object, entitlement as object)
-        m.top.deviceIdentity = identity
-        m.top.entitlement = entitlement
-        m.macValue.text = identity.mac ? identity.mac : ""
-        m.keyValue.text = identity.key6 ? identity.key6 : ""
-        m.planValue.text = entitlement.plan ? entitlement.plan : "TRIAL"
-        m.statusValue.text = entitlement.status ? entitlement.status : "trial"
-        m.expiryValue.text = formatExpirationDate(entitlement.expiresAt ? entitlement.expiresAt : "")
-        m.playlistCountValue.text = (entitlement.playlistCount ? entitlement.playlistCount : 0) + " / 5"
-    end sub
-
-    sub onKeyDown(key as Integer)
-        if key = 283
-            m.top.onBack = true
-        end if
-    end sub
-
-    sub formatExpirationDate(expiresAt as string) as string
-        if expiresAt = "" return "Never" end if
-        dt = createObject("roDateTime")
-        dt.fromISO8601String(expiresAt)
-        if dt.isValid()
-            monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
-            return monthNames[dt.getMonth()-1] + " " + dt.getDayOfMonth().toStr() + ", " + dt.getYear().toStr()
-        end if
-        return expiresAt
-    end sub
-    ]]>
-    </script>
+    <script type="text/brightscript" uri="pkg:/source/content.brs" />
+    <script type="text/brightscript" uri="pkg:/source/licensing.brs" />
+    <script type="text/brightscript" uri="pkg:/source/access-evaluation.brs" />
+    <script type="text/brightscript" uri="pkg:/components/AccountScreen.brs" />
 </component>

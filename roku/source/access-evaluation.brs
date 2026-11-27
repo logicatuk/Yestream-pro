@@ -13,7 +13,8 @@ function evaluateDeviceAccess(entitlement as object, serverTimeIso as string) as
 
     status = entitlement.status
     plan = entitlement.plan
-    trialDays = val(entitlement.trialDays)
+    trialDays = 7
+    if entitlement.trialDays <> invalid then trialDays = val(entitlement.trialDays.toStr())
     if trialDays = 0
         trialDays = 7
     end if
@@ -56,12 +57,13 @@ function evaluateDeviceAccess(entitlement as object, serverTimeIso as string) as
 
     ' Calculate remaining days
     remainingMs = expMs - nowMs
-    remainingDays = ceil(remainingMs / (1000 * 60 * 60 * 24))
+    remainingDays = -Int(-remainingMs / 86400000#)
     if remainingDays < 1
         remainingDays = 1
     end if
 
-    state = iif(status = "active", "active", "trial")
+    state = "trial"
+    if status = "active" then state = "active"
 
     return {
         allowed: true,
@@ -72,25 +74,15 @@ function evaluateDeviceAccess(entitlement as object, serverTimeIso as string) as
     }
 end function
 
-'/ Get current time in milliseconds (approximate)
-function dateNow() as integer
-    ' roTimespan.TotalMilliseconds() gives milliseconds since epoch
-    ts = createObject("roTimespan")
-    return ts.TotalMilliseconds()
+function dateNow() as double
+    dt = CreateObject("roDateTime")
+    return dt.AsSeconds() * 1000#
 end function
 
-'/ Parse ISO 8601 date string to milliseconds
-function dateParse(isoString as string) as integer
-    if isoString = invalid or isoString = ""
-        return invalid
-    end if
-
-    ' Parse ISO 8601: "2026-11-21T19:42:00.000Z"
-    ' BrightScript has no built-in ISO parser; using roDateTime
-    dt = createObject("roDateTime")
-    dt.fromISO8601String(isoString)
-    if dt.isValid()
-        return dt.totalMilliseconds()
-    end if
-    return invalid
+function dateParse(isoString as dynamic) as double
+    if isoString = invalid or isoString = "" then return -1
+    dt = CreateObject("roDateTime")
+    dt.FromISO8601String(isoString)
+    if dt.AsSeconds() <= 0 then return -1
+    return dt.AsSeconds() * 1000# + dt.GetMilliseconds()
 end function
