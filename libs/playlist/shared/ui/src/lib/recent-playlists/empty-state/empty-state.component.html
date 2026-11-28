@@ -47,41 +47,39 @@
     }
     @case ('welcome-sources') {
         <div class="empty-state welcome-sources">
-            <header class="welcome-sources__header">
-                <div class="welcome-sources__icon-wrap">
-                    <mat-icon class="welcome-sources__icon">playlist_add</mat-icon>
+            <div class="welcome-sources__methods">
+                <header class="welcome-sources__header">
+                    <h2 class="welcome-sources__title">{{ 'HOME.PLAYLISTS.SOURCES_WELCOME_TITLE' | translate }}</h2>
+                    <p class="welcome-sources__body">{{ 'HOME.PLAYLISTS.SOURCES_WELCOME_BODY' | translate }}</p>
+                </header>
+
+                <div class="welcome-sources__grid">
+                    @for (card of sourceCards; track card.type) {
+                        <article class="source-card">
+                            <div class="source-card__head">
+                                <mat-icon class="source-card__icon">{{ card.icon }}</mat-icon>
+                                <h3 class="source-card__name">{{ card.nameKey | translate }}</h3>
+                            </div>
+                            <p class="source-card__needs">{{ card.needsKey | translate }}</p>
+                            <ul class="source-card__chips" role="list">
+                                @for (chip of card.contentKeys; track chip) {
+                                    <li class="source-card__chip">{{ chip | translate }}</li>
+                                }
+                            </ul>
+                            <button
+                                mat-raised-button
+                                type="button"
+                                class="source-card__cta"
+                                (click)="onAddPlaylist(card.type)"
+                            >
+                                <mat-icon>add</mat-icon>
+                                {{ card.addLabelKey | translate }}
+                            </button>
+                        </article>
+                    }
                 </div>
-                <h2 class="welcome-sources__title">{{ 'HOME.PLAYLISTS.SOURCES_WELCOME_TITLE' | translate }}</h2>
-                <p class="welcome-sources__body">{{ 'HOME.PLAYLISTS.SOURCES_WELCOME_BODY' | translate }}</p>
-            </header>
-
-            <app-yestream-quick-connect />
-
-            <div class="welcome-sources__grid">
-                @for (card of sourceCards; track card.type) {
-                    <article class="source-card">
-                        <div class="source-card__head">
-                            <mat-icon class="source-card__icon">{{ card.icon }}</mat-icon>
-                            <h3 class="source-card__name">{{ card.nameKey | translate }}</h3>
-                        </div>
-                        <p class="source-card__needs">{{ card.needsKey | translate }}</p>
-                        <ul class="source-card__chips" role="list">
-                            @for (chip of card.contentKeys; track chip) {
-                                <li class="source-card__chip">{{ chip | translate }}</li>
-                            }
-                        </ul>
-                        <button
-                            mat-raised-button
-                            type="button"
-                            class="source-card__cta"
-                            (click)="onAddPlaylist(card.type)"
-                        >
-                            <mat-icon>add</mat-icon>
-                            {{ card.addLabelKey | translate }}
-                        </button>
-                    </article>
-                }
             </div>
+            <app-yestream-quick-connect />
         </div>
     }
     @case ('no-data') {

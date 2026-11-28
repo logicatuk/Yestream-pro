@@ -120,9 +120,6 @@
     font-variant-numeric: tabular-nums;
 }
 
-.sort-trigger__chevron {
-    @include controls.trigger-chevron;
-}
 
 .sources-content {
     display: flex;
@@ -165,6 +162,3 @@
 // The unchecked failing-first item keeps its check slot, so its label lines
 // up with the radio items above. Menu items come from this template, so the
 // component's scoping reaches them inside the overlay.
-.sort-failing-first__check--off {
-    visibility: hidden;
-}

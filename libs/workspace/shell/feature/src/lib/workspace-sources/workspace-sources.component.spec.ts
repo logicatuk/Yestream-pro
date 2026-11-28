@@ -1,7 +1,7 @@
 import { PORTAL_EXTERNAL_PLAYBACK } from '@iptvnator/portal/shared/util';
 import { SourceActivityService } from '@iptvnator/services';
 import { MatDialog } from '@angular/material/dialog';
-import { PlaylistRefreshActionService } from '@iptvnator/playlist/shared/ui';
+import { PlaylistRefreshActionService, YestreamQuickConnectComponent } from '@iptvnator/playlist/shared/ui';
 import {
     Component,
     input,
@@ -172,7 +172,7 @@ describe('WorkspaceSourcesComponent', () => {
                         MatButtonModule,
                         MatDividerModule,
                         MatIconModule,
-                        MatMenuModule,
+                        YestreamQuickConnectComponent,
                         MenuItemRadioCheckDirective,
                         MenuItemRadioDirective,
                         MockRecentPlaylistsComponent,
@@ -273,45 +273,11 @@ describe('WorkspaceSourcesComponent', () => {
         expect(pill?.textContent?.trim()).toBe('1');
     });
 
-    it('offers the source sorts as radio rows with the active one checked', async () => {
+    it('opens the add playlist dialog from the Sources header', async () => {
         fixture.detectChanges();
         await fixture.whenStable();
-
-        (
-            fixture.nativeElement.querySelector(
-                '.sort-trigger'
-            ) as HTMLButtonElement
-        ).click();
-        fixture.detectChanges();
-
-        const rows = Array.from(
-            document.querySelectorAll<HTMLElement>(
-                '.cdk-overlay-container [mat-menu-item]'
-            )
-        );
-        expect(rows.map((row) => row.getAttribute('role'))).toEqual([
-            ...Array(7).fill('menuitemradio'),
-            'menuitemcheckbox',
-        ]);
-        // The radio group is named by its section, as every menu group is.
-        expect(
-            rows[0].closest('[role="group"]')?.getAttribute('aria-label')
-        ).toBe('WORKSPACE.REFINE_SORT_SECTION');
-        expect(rows.map((row) => row.getAttribute('aria-checked'))).toEqual([
-            'true',
-            ...Array(7).fill('false'),
-        ]);
-        for (const row of rows.slice(0, 7)) {
-            expect(row.firstElementChild?.classList).toContain(
-                'app-menu-item-radio-check'
-            );
-        }
-
-        rows[7].click();
-        expect(setSortOptions).toHaveBeenCalledWith({
-            by: SortBy.DATE_ADDED,
-            order: SortOrder.DESC,
-            failingFirst: true,
-        });
+        fixture.nativeElement.querySelector('.add-playlist-trigger').click();
+        expect(TestBed.inject(WORKSPACE_SHELL_ACTIONS).openAddPlaylistDialog)
+            .toHaveBeenCalledWith(undefined);
     });
 });

@@ -263,13 +263,6 @@ export const SETTINGS_SEARCH_ENTRIES: readonly SettingsSearchEntry[] = [
         keywords: ['tmdb', 'credits', 'attribution'],
     },
     {
-        id: 'community',
-        section: 'about',
-        labelKey: 'SETTINGS.COMMUNITY',
-        descriptionKey: 'SETTINGS.COMMUNITY_DESCRIPTION',
-        keywords: ['github', 'telegram', 'help', 'feedback', 'bug'],
-    },
-    {
         id: 'support',
         section: 'about',
         labelKey: 'SETTINGS.SUPPORT_TITLE',

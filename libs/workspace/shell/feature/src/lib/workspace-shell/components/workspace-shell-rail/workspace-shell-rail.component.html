@@ -3,6 +3,17 @@
 <aside class="app-rail" [class.is-macos]="isMacOS()">
     <app-workspace-shell-rail-links [links]="workspaceLinks()" />
 
+    <a
+        class="rail-shortcut nav-item"
+        routerLink="/workspace/settings"
+        [class.is-active]="isSettingsRoute()"
+        [matTooltip]="'WORKSPACE.SHELL.RAIL_SETTINGS' | translate"
+        [matTooltipPosition]="'right'"
+        [attr.aria-label]="'WORKSPACE.SHELL.OPEN_SETTINGS' | translate"
+    >
+        <mat-icon aria-hidden="true">settings</mat-icon>
+    </a>
+
     @if (primaryContextLinks().length > 0) {
         <div class="rail-context-region" [class]="railProviderClass()">
             <app-workspace-shell-rail-links
@@ -37,15 +48,6 @@
                 <span class="rail-server__dot" aria-hidden="true"></span>
             </a>
         }
-        <a
-            class="rail-shortcut nav-item"
-            routerLink="/workspace/settings"
-            [class.is-active]="isSettingsRoute()"
-            [matTooltip]="'WORKSPACE.SHELL.RAIL_SETTINGS' | translate"
-            [matTooltipPosition]="'right'"
-            [attr.aria-label]="'WORKSPACE.SHELL.OPEN_SETTINGS' | translate"
-        >
-            <mat-icon aria-hidden="true">settings</mat-icon>
-        </a>
+
     </div>
 </aside>

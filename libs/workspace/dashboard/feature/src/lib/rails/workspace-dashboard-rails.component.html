@@ -12,7 +12,7 @@
         <app-empty-state
             [type]="'welcome-dashboard'"
             [showElectronOnlyValueProps]="isElectron"
-            (addPlaylistClicked)="onAddPlaylist($event)"
+            (addPlaylistClicked)="openSources()"
         />
     } @else {
         <!-- Hero: rotating cinematic banner. Renders its own skeleton while

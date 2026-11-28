@@ -28,7 +28,6 @@ import {
 } from '@iptvnator/playlist/shared/ui';
 import {
     WORKSPACE_SHELL_ACTIONS,
-    WorkspacePlaylistType,
 } from '@iptvnator/workspace/shell/util';
 import { DialogService } from '@iptvnator/ui/components';
 import { PlaylistActions } from '@iptvnator/m3u-state';
@@ -375,8 +374,8 @@ export class WorkspaceDashboardRailsComponent {
         });
     }
 
-    onAddPlaylist(type?: WorkspacePlaylistType): void {
-        this.shellActions.openAddPlaylistDialog(type);
+    openSources(): void {
+        void this.router.navigateByUrl('/workspace/sources');
     }
 
     onSourceActionSelected(selection: DashboardRailActionSelection): void {

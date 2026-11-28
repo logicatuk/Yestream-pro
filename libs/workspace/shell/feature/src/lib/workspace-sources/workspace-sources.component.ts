@@ -10,9 +10,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -42,7 +40,6 @@ import {
 import {
     injectTranslationTick,
     RuntimeCapabilitiesService,
-    SortService,
     SourceActivityService,
 } from '@iptvnator/services';
 import {
@@ -50,18 +47,9 @@ import {
     sourceHealthType,
 } from '@iptvnator/shared/interfaces';
 import {
-    MenuItemRadioCheckDirective,
-    MenuItemRadioDirective,
-} from '@iptvnator/ui/components';
-import {
     WORKSPACE_SHELL_ACTIONS,
     WorkspacePlaylistType,
 } from '@iptvnator/workspace/shell/util';
-import {
-    isSortOptionActive,
-    SOURCE_SORT_OPTIONS,
-    SourceSortOption,
-} from './workspace-sources-sort-options';
 
 const TYPE_TITLE_KEYS: Record<string, string> = {
     all: 'WORKSPACE.SOURCES.ALL_PLAYLISTS',
@@ -71,18 +59,14 @@ const TYPE_TITLE_KEYS: Record<string, string> = {
 
 /**
  * The Sources page: a 28px title with the visible count, Clean up (desktop,
- * with a count of sources that do not respond) and the sort menu, above the
+ * with a count of sources that do not respond) and Add Your Playlist, above the
  * list. The side list's filters live in `SourcesViewStateService`.
  */
 @Component({
     selector: 'app-workspace-sources',
     imports: [
         MatButtonModule,
-        MatDividerModule,
         MatIconModule,
-        MatMenuModule,
-        MenuItemRadioCheckDirective,
-        MenuItemRadioDirective,
         RecentPlaylistsComponent,
         YestreamQuickConnectComponent,
         TranslatePipe,
@@ -97,7 +81,6 @@ export class WorkspaceSourcesComponent {
     private readonly store = inject(Store);
     private readonly translate = inject(TranslateService);
     private readonly runtime = inject(RuntimeCapabilitiesService);
-    private readonly sortService = inject(SortService);
     private readonly statusService = inject(SourceStatusService);
     private readonly removal = inject(SourceRemovalService);
     private readonly viewState = inject(SourcesViewStateService);
@@ -111,11 +94,7 @@ export class WorkspaceSourcesComponent {
     private readonly sourceList = viewChild(RecentPlaylistsComponent);
     private readonly languageTick = injectTranslationTick();
 
-    readonly sortOptions = SOURCE_SORT_OPTIONS;
     readonly showFailingFirst = this.statusService.supportsStatusFilter;
-    private readonly currentSort = toSignal(this.sortService.getSortOptions(), {
-        requireSync: true,
-    });
     readonly searchQuery = toSignal(
         this.route.queryParamMap.pipe(map((params) => params.get('q') ?? '')),
         { initialValue: '' }
@@ -163,37 +142,6 @@ export class WorkspaceSourcesComponent {
     readonly failingCount = computed(
         () => this.playlists().filter((p) => this.bucketOf(p) === 'bad').length
     );
-
-    readonly activeSortLabel = computed(() => {
-        this.languageTick();
-        const current = this.currentSort();
-        const match = this.sortOptions.find((option) =>
-            isSortOptionActive(option, current)
-        );
-        return this.translate.instant(
-            match?.translationKey ?? 'HOME.SORT_OPTIONS.NEWEST'
-        );
-    });
-    readonly failingFirst = computed(() => !!this.currentSort().failingFirst);
-
-    isSortActive(option: SourceSortOption): boolean {
-        return isSortOptionActive(option, this.currentSort());
-    }
-
-    setSortOption(option: SourceSortOption): void {
-        this.sortService.setSortOptions({
-            ...this.currentSort(),
-            by: option.by,
-            order: option.order,
-        });
-    }
-
-    toggleFailingFirst(): void {
-        this.sortService.setSortOptions({
-            ...this.currentSort(),
-            failingFirst: !this.failingFirst(),
-        });
-    }
 
     onAddPlaylist(type?: WorkspacePlaylistType): void {
         this.workspaceActions.openAddPlaylistDialog(type);
