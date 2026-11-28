@@ -53,7 +53,7 @@ export function installImeGuard() {
     };
     const onFocus = (event: FocusEvent) => {
         const element = targetOf(event);
-        if (!element || element.readOnly || activating) return;
+        if (!element || element.readOnly || activating || element.hasAttribute("data-ime-active")) return;
         if (event.type === 'focusin' && invalidFields.has(element)) {
             invalidFields.clear();
             return;

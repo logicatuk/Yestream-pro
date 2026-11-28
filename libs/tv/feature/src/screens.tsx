@@ -1,3 +1,4 @@
+import { CatalogSearch } from './catalog-search';
 import { tr } from '@iptvnator/tv/ui';
 import { RecentChannels } from './recent-channels';
 import type { HomeFeature } from './use-home-feature';
@@ -182,20 +183,8 @@ export function CatalogScreen({ tv }: { tv: TvModel }) {
     const categoryList = r.view === 'movies' || r.view === 'series';
     return (
         <>
-            <div class="catalog-filters">
-                <label>{tr("Search this source")}<input
-                        type="search"
-                        aria-label={tr("Search this source")}
-                        value={r.query}
-                        onInput={(e) =>
-                            tv.setRoute({
-                                ...r,
-                                query: e.currentTarget.value,
-                                page: 0,
-                            })
-                        }
-                    />
-                </label>
+            {!categoryList && <div class="catalog-filters">
+                <CatalogSearch tv={tv} />
                 {r.view === 'search' ? (
                     <label>{tr("Content")}<TvSelect
                             label={tr("Content type")}
@@ -234,8 +223,8 @@ export function CatalogScreen({ tv }: { tv: TvModel }) {
                 {r.kind === 'movie' || r.kind === 'series' ? (
                     <CatalogOrder tv={tv} kind={r.kind} />
                 ) : null}
-            </div>
-            <CatalogSortNotice tv={tv} />
+            </div>}
+            {!categoryList && <CatalogSortNotice tv={tv} />}
             <div class={categoryList ? 'catalog-browser' : undefined}>
             {categoryList && <section class="catalog-categories" aria-label={tr("Categories")}>
                 <h2>{tr("Categories")}</h2>
@@ -265,7 +254,7 @@ export function CatalogScreen({ tv }: { tv: TvModel }) {
                 restoreScroll={tv.restoreScroll}
                 render={(item) => <Poster item={item} open={tv.open} />}
             />
-            {!tv.busy && !list.length ? (
+            {!tv.busy && !tv.catalogBusy && !list.length ? (
                 <Empty>{tr("No titles in this category. Try another category or search.")}</Empty>
             ) : null}
             </div></div>

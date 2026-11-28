@@ -23,16 +23,8 @@ export function useContent(
     pendingScroll: { current?: number },
     sorts: CatalogSortPreferences
 ) {
-    const key = JSON.stringify([
-        sourceId,
-        route.view,
-        route.kind,
-        route.category,
-        route.page,
-        route.query,
-        route.item?.id,
-        ready,
-    ]);
+    const key = JSON.stringify([sourceId, ready]);
+    const homeFresh = useRef({ key: '', time: 0 });
     const [homeState, setHomeState] = useState<{ key: string; value: Media[] }>(
         { key: '', value: [] }
     );
@@ -82,15 +74,27 @@ export function useContent(
                 finishFocus();
             return;
         }
-        setBusy(true);
+        const warmHome = route.view === 'home' && homeState.key === key;
+        if (warmHome && homeFresh.current.key === key && Date.now() - homeFresh.current.time < 300000) {
+            setBusy(false);
+            finishFocus();
+            return;
+        }
+        setBusy(!warmHome);
         const load = async () => {
             if (route.view === 'home') {
                 let failed = 0;
-                const lists = await Promise.all(
+                const rows = new Map<Kind, Media[]>();
+                for (const kind of ['movie', 'series', 'live'] as Kind[])
+                    rows.set(kind, home.filter(item => item.kind === kind));
+                await Promise.all(
                     (['movie', 'series', 'live'] as Kind[]).map((kind) =>
                         client
                             .catalog(kind, '', 0, '', job.signal)
-                            .then((c) => c.items.slice(0, 12))
+                            .then((c) => {
+                                rows.set(kind, c.items.slice(0, 12));
+                                if (lane.owns(job)) setHome(([] as Media[]).concat(...Array.from(rows.values())));
+                            })
                             .catch(() => {
                                 failed++;
                                 return [];
@@ -99,7 +103,8 @@ export function useContent(
                 );
                 if (failed === 3) throw new Error('Catalog unavailable');
                 if (lane.owns(job)) {
-                    const items = [...lists[0], ...lists[1], ...lists[2]];
+                    const items = ([] as Media[]).concat(...Array.from(rows.values()));
+                    if (!failed) homeFresh.current = { key, time: Date.now() };
                     setHome(items);
                     // Catalog rows often have only posters. Fill the featured
                     // title's actual provider backdrop without holding the page.
@@ -156,6 +161,7 @@ export function useContent(
             lane.cancel();
         };
     }, [
+        sourceId,
         route.view,
         route.kind,
         route.category,

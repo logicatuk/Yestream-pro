@@ -206,6 +206,7 @@ function TvWorkspace({ buildInfo }: { buildInfo: TvBuildInfo }) {
                 </div>
             </aside>
             <main
+                onFocusCapture={(event) => tv.rememberFocus(event.target as HTMLElement)}
                 hidden={tv.fullscreen || !tv.storageReady}
                 class={
                     cinematic
@@ -248,7 +249,7 @@ function TvWorkspace({ buildInfo }: { buildInfo: TvBuildInfo }) {
                 {tv.reconnectStatus ? (
                     <p role="status">{tv.reconnectStatus}</p>
                 ) : null}
-                {tv.busy ? (
+                {tv.connecting ? (
                     <div class="loading" role="status">{tr("Connecting to your playlist…")}</div>
                 ) : null}
                 {r.view === 'home' ? (

@@ -33,6 +33,8 @@ export function useCatalog(
         error: '',
         more: false,
     });
+    const cache = useRef(new Map<string, { value: typeof state; time: number }>());
+    useEffect(() => { cache.current.clear(); }, [source, ready, provider.current]);
     const lane = useRef(new LatestRequest());
     const snapshot = useRef(state);
     snapshot.current = state;
@@ -105,6 +107,9 @@ export function useCatalog(
                     result.items.length > 0 &&
                     (page + 1) * (result.pageSize || 60) < result.total,
             };
+            cache.current.delete(current.key);
+            cache.current.set(current.key, { value: next, time: Date.now() });
+            if (cache.current.size > 8) cache.current.delete(cache.current.keys().next().value!);
             snapshot.current = next;
             setState(next);
             current.reportConnection('');
@@ -129,17 +134,19 @@ export function useCatalog(
         lane.current.cancel();
         request.current = false;
         if (!active || !ready) return;
-        if (
-            snapshot.current.key === key &&
-            snapshot.current.catalog.items.length
-        ) {
-            setState((s) => ({ ...s, busy: false }));
+        const cached = cache.current.get(key);
+        if (cached && Date.now() - cached.time < 300000) {
+            snapshot.current = cached.value;
+            setState(cached.value);
             finishFocus();
             return;
         }
+        const previous = snapshot.current;
+        const sameSearch = route.query && previous.key &&
+            JSON.parse(previous.key)[0] === source && JSON.parse(previous.key)[1] === route.kind;
         const initial = {
             key,
-            catalog: empty(),
+            catalog: cached?.value.catalog ?? (sameSearch ? previous.catalog : empty()),
             busy: true,
             error: '',
             more: false,
@@ -154,8 +161,8 @@ export function useCatalog(
         };
     }, [key, active]);
     return {
-        catalog: state.key === key ? state.catalog : empty(),
-        catalogBusy: active && state.busy,
+        catalog: state.key === key ? state.catalog : cache.current.get(key)?.value.catalog ?? empty(),
+        catalogBusy: active && (state.busy || state.key !== key),
         catalogError: state.key === key ? state.error : '',
         hasMore: state.key === key && state.more,
         loadMore: () => void load(snapshot.current.catalog.items.length > 0),

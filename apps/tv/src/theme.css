@@ -1485,3 +1485,25 @@ main.catalog-page { display: flex; flex-direction: column; overflow: hidden; }
 [dir=rtl] nav button { text-align: right; }
 @media (max-width: 1400px) { [dir=rtl] .tv-app > main { margin-right: 190px; } }
 @media (max-width: 900px) { [dir=rtl] .tv-app > main { margin-right: 90px; } }
+
+.catalog-search-control { display: flex; flex-direction: column; min-width: 0; }
+.catalog-search-control button { text-align: start; margin-top: 4px; }
+.tv-dialog-backdrop:has(.catalog-search-dialog) { align-items: flex-start; }
+.tv-dialog.catalog-search-dialog { position: fixed; top: 4%; width: 68%; left: 16%; box-sizing: border-box; }
+.catalog-search-dialog form { display: flex; }
+.catalog-search-dialog input { flex: 1; min-width: 0; }
+.catalog-search-dialog li { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.catalog-page .page-header { align-items: flex-end; }
+.catalog-page .page-header > * { flex: 1 1 0; min-width: 0; margin: 0; }
+.catalog-page .page-header > * + * { margin-left: 18px; }
+.catalog-page .page-heading { align-self: center; }
+.catalog-page .page-header .tv-select,
+.catalog-page .page-header .catalog-search-control button {
+    width: 100%;
+    max-width: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+[dir="rtl"] .catalog-page .page-header > * + * { margin-left: 0; margin-right: 18px; }

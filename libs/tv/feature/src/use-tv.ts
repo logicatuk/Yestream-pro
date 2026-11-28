@@ -3,7 +3,7 @@ import { useNotice, connectionNotice } from './use-notice';
 import { useReconnect } from './use-reconnect';
 import { useLibrary } from './use-library';
 import { useBackend } from './use-backend';
-import { firstRoute, isSavedView, type View } from './navigation';
+import { firstRoute, isSavedView, type Route, type View } from './navigation';
 import { useRouteHistory, type NavigationOrigin } from './use-route-history';
 import { usePlaybackOrigin, type FailedPlayback } from './use-playback-origin';
 import { useUserData } from './user-data';
@@ -41,6 +41,11 @@ export function useTv(video: { current: HTMLVideoElement | null }) {
     const playingCategory = useRef('');
     const pendingFocus = useRef('');
     const pendingScroll = useRef<number>();
+    const pages = useRef(new Map<View, { route: Route; focus: string; scroll: number }>());
+    const focusedItem = useRef('');
+    function rememberFocus(target: HTMLElement) {
+        if (target.dataset.focus) focusedItem.current = target.dataset.focus;
+    }
     const user = useUserData(
         video,
         (message) => setError(message, retryPlayback, 'Retry playback'),
@@ -59,6 +64,8 @@ export function useTv(video: { current: HTMLVideoElement | null }) {
     );
     const { data, storageReady, repo, player, update } = user;
     useSourceNavigation(data.activeId, route, setRoute, () => {
+        pages.current.clear();
+        focusedItem.current = '';
         stack.current = [];
         pendingFocus.current = '';
         pendingScroll.current = undefined;
@@ -129,6 +136,20 @@ export function useTv(video: { current: HTMLVideoElement | null }) {
         else stop();
         stack.current = [];
         pendingFocus.current = '';
+        if (['movies', 'series', 'search'].includes(route.view)) {
+            const pane = document.querySelector('.catalog-results') ?? document.querySelector('main');
+            pages.current.set(route.view, { route, focus: focusedItem.current, scroll: pane?.scrollTop ?? 0 });
+        }
+        focusedItem.current = '';
+        const saved = pages.current.get(view);
+        if (saved && saved.route.view !== route.view) {
+            pendingFocus.current = saved.focus;
+            pendingScroll.current = saved.scroll;
+            setRoute(saved.route);
+            if (!saved.focus) restoreFocus('nav:' + view);
+            return;
+        }
+        pendingScroll.current = undefined;
         setRoute({
             ...firstRoute(),
             view,
@@ -376,6 +397,8 @@ export function useTv(video: { current: HTMLVideoElement | null }) {
         clearError,
         ready,
         ...content,
+        connecting: busy,
+        rememberFocus,
         busy: busy || content.busy,
         selected,
         setSelected,

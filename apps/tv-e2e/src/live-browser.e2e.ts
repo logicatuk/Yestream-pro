@@ -302,3 +302,23 @@ test('TV search lays out posters across the screen and Arabic persists after res
     await page.reload();
     await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
 });
+
+test('catalog search opens on OK and returning from Home restores the poster', async ({ page }) => {
+    await startWithPlaylist(page);
+    await nav(page, 'Movies');
+    const poster = page.locator('.catalog-results .poster-grid button').first();
+    await expect(poster).toBeVisible();
+    await poster.focus();
+    await nav(page, 'Home');
+    await nav(page, 'Movies');
+    await expect(poster).toBeFocused();
+    const trigger = page.locator('[data-focus="catalog-search"]');
+    await trigger.focus();
+    await page.keyboard.press('Enter');
+    const input = page.getByRole('dialog').getByRole('searchbox');
+    await expect(input).toBeFocused();
+    await input.fill('test');
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await expect(trigger).toBeFocused();
+});

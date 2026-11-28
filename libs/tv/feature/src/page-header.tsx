@@ -1,3 +1,5 @@
+import { CatalogSearch } from './catalog-search';
+import { CatalogOrder } from './catalog-order';
 import { tr } from '@iptvnator/tv/ui';
 import { TvSelect } from '@iptvnator/tv/ui';
 import { TvModel } from './use-tv';
@@ -41,7 +43,7 @@ export function PageHeader({
             ) : (
                 <div class="page-heading">
                     {title ? <h1>{tr(title)}</h1> : null}
-                    {count !== undefined ? (
+                    {count !== undefined && !(tv.catalogBusy && !count) ? (
                         <span class="catalog-count">
                             {count}{' '}
                             {tv.route.kind === 'live' ? 'channel' : 'title'}
@@ -50,6 +52,10 @@ export function PageHeader({
                     ) : null}
                 </div>
             )}
+            {(view === 'movies' || view === 'series') && <>
+                <CatalogSearch key={view} tv={tv} />
+                <CatalogOrder tv={tv} kind={view === 'movies' ? 'movie' : 'series'} />
+            </>}
             {view === 'home' || view === 'history' ? (
                 <span class="home-scope">{tr("All playlists")}</span>
             ) : view === 'favorites' ? (
